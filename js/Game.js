@@ -1,6 +1,6 @@
 // @ts-check
 
-import { Building } from "./Building.js"
+import { Creature } from "./Creature.js"
 import { Upgrade } from "./Upgrade.js"
 import { fix } from "./Utils.js"
 
@@ -9,7 +9,7 @@ class Game {
         this.words = 0;
         this.words_per_click = 1;
         this.wps = 0;
-        this.buildings = [];
+        this.creatures = [];
         this.fps = 60;
     }
 
@@ -17,32 +17,33 @@ class Game {
         this.words += this.words_per_click;
     }
 
-    buyBuilding(i) {
-        if(this.words >= this.buildings[i].cost) {
-            this.words -= this.buildings[i].cost;
-            this.buildings[i].buy();
+    hireCreature(i) {
+        if(this.words >= this.creatures[i].cost) {
+            this.words -= this.creatures[i].cost;
+            this.creatures[i].buy();
         }
     }
 
-    createBuildings() {
-        this.buildings.push(new Building("Building 1", 1, 10, 0));
-        this.buildings.push(new Building("Building 2", 100, 100, 0));
+    //TODO rethink naming
+    createCreatures() {
+        this.creatures.push(new Creature("Weaseal", 1, 10, 0));
+        this.creatures.push(new Creature("Beaverine", 100, 100, 0));
     }
 
     loop() {
         const words_before = this.words;
-        for (var i = 0; i < this.buildings.length; ++i) {
-            const building = this.buildings[i];
-            this.words += building.wps * building.quantity / this.fps;
+        for (var i = 0; i < this.creatures.length; ++i) {
+            const currentCreature = this.creatures[i];
+            this.words += currentCreature.wps * currentCreature.quantity / this.fps;
 
-            if (this.words >= building.cost) {
-                building.affordable = true;
+            if (this.words >= currentCreature.cost) {
+                currentCreature.affordable = true;
             }
             else {
-                building.affordable = false;
+                currentCreature.affordable = false;
             }
 
-            building.tick();
+            currentCreature.tick();
         }
         const deltawords = this.words - words_before;
         this.wps = deltawords * this.fps;

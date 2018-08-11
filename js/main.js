@@ -6,19 +6,19 @@ var game;
 window.onload = function () {
   game = new Game();
 
-  game.createBuildings();
+  game.createCreatures();
 
   document.
     getElementById("leftCanvas").
     addEventListener("click", game.click.bind(game), false);
 
-  for (var i = 0; i < game.buildings.length; i++) {
+  for (var i = 0; i < game.creatures.length; i++) {
     document.
       getElementById("" + i).
       addEventListener("click",
         function (i) {
           return function () {
-            game.buyBuilding(i);
+            game.hireCreature(i);
           };
         }(i), false);
   }

@@ -1,8 +1,8 @@
 // @ts-check
 
-class Building {
+class Creature {
     constructor(name, wps, cost, quantity) {
-        this._id = Building.counter;
+        this._id = Creature.counter;
 
         this.name = name;
         this.wps = wps;
@@ -30,8 +30,8 @@ class Building {
         this.button.innerHTML = `Buy one <span id="bname${this.id}">${this.name}</span>`;
         buttonDiv.appendChild(this.button);
         buttonDiv.id = `${this.id}`;
-        var buildingDiv = document.getElementById("buildings");
-        buildingDiv.appendChild(buttonDiv);
+        var creatureDiv = document.getElementById("creatures");
+        creatureDiv.appendChild(buttonDiv);
     }
 
     tick() {
@@ -50,7 +50,7 @@ class Building {
     }
 
     static get counter () {
-        return Building._counter++;
+        return Creature._counter++;
     }
 
     get id () {
@@ -58,6 +58,6 @@ class Building {
     }
 }
 
-Building._counter = 0;
+Creature._counter = 0;
 
-export { Building };
+export { Creature };
