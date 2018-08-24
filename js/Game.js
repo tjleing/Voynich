@@ -6,15 +6,19 @@ import { fix } from "./Utils.js"
 
 class Game {
     constructor() {
+        this.resources = [];
+
         this.words = 0;
-        this.words_per_click = 1;
+        this.wordsPerClick = 1;
         this.wps = 0;
         this.creatures = [];
+        this.upgrades = [];
         this.fps = 60;
     }
 
     click() {
-        this.words += this.words_per_click;
+        this.words += this.wordsPerClick;
+        this.upgrades[0].buy();
     }
 
     hireCreature(i) {
@@ -24,14 +28,59 @@ class Game {
         }
     }
 
-    //TODO rethink naming
+    // TODO rethink naming
     createCreatures() {
-        this.creatures.push(new Creature("Weaseal", 1, 10, 0));
-        this.creatures.push(new Creature("Beaverine", 100, 100, 0));
+        this.creatures.push(
+            new Creature(
+                "Weaseal",
+                1,
+                10,
+                0,
+            )
+        );
+        this.creatures.push(
+            new Creature(
+                "Beaverine",
+                100,
+                100,
+                0,
+            )
+        );
+    }
+
+    // TODO rethink naming
+    createResources() {
+        this.resources.push({
+            name: 'Berries???',
+            quantity: 0,
+            active: true,
+        });
+        this.resources.push({
+            name: 'Some unidentified meat???',
+            quantity: 0,
+            active: false,
+        });
+    }
+
+    // TODO rethink naming
+    createUpgrades() {
+        this.upgrades.push(
+            new Upgrade(
+            'Berries???',
+            undefined,
+            () => {
+                this.creatures[0].buy();
+            },
+            () => {return true;},
+            true,
+            true,
+            false,
+        )
+        );
     }
 
     loop() {
-        const words_before = this.words;
+        const wordsBefore = this.words;
         for (var i = 0; i < this.creatures.length; ++i) {
             const currentCreature = this.creatures[i];
             this.words += currentCreature.wps * currentCreature.quantity / this.fps;
@@ -45,7 +94,7 @@ class Game {
 
             currentCreature.tick();
         }
-        const deltawords = this.words - words_before;
+        const deltawords = this.words - wordsBefore;
         this.wps = deltawords * this.fps;
         this.draw();
 
