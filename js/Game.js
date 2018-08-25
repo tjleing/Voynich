@@ -2,6 +2,7 @@
 
 import { Creature } from "./Creature.js"
 import { Upgrade } from "./Upgrade.js"
+import { Resource } from "./Resource.js"
 import { fix } from "./Utils.js"
 
 class Game {
@@ -13,6 +14,7 @@ class Game {
         this.wps = 0;
         this.creatures = [];
         this.upgrades = [];
+        this.resources = [];
         this.fps = 60;
     }
 
@@ -33,6 +35,7 @@ class Game {
         this.creatures.push(
             new Creature(
                 "Weaseal",
+                "Weaseals",
                 1,
                 10,
                 0,
@@ -41,6 +44,7 @@ class Game {
         this.creatures.push(
             new Creature(
                 "Beaverine",
+                "Beaverines",
                 100,
                 100,
                 0,
@@ -49,33 +53,39 @@ class Game {
     }
 
     // TODO rethink naming
-    createResources() {
-        this.resources.push({
-            name: 'Berries???',
-            quantity: 0,
-            active: true,
-        });
-        this.resources.push({
-            name: 'Some unidentified meat???',
-            quantity: 0,
-            active: false,
-        });
-    }
-
-    // TODO rethink naming
     createUpgrades() {
         this.upgrades.push(
             new Upgrade(
-            'Berries???',
-            undefined,
-            () => {
-                this.creatures[0].buy();
-            },
-            () => {return true;},
-            true,
-            true,
-            false,
-        )
+                'Berries???',
+                undefined,
+                () => {
+                    this.creatures[0].buy();
+                },
+                () => {return true;},
+                true,
+                true,
+                false,
+            )
+        );
+    }
+
+    // TODO rethink naming
+    createResources() {
+        this.resources.push(
+            new Resource(
+                'berries',
+                'Liquid Gold Berry',
+                'Liquid Gold Berries',
+                true
+            )
+        );
+        this.resources.push(
+            new Resource(
+                'wood',
+                'Branch of Mahogany',
+                'Branches of Mahogany',
+                true
+            )
         );
     }
 
@@ -103,9 +113,9 @@ class Game {
     }
 
     draw() {
-        var wordsDOM = document.getElementById("words");
+        const wordsDOM = document.getElementById("words");
         wordsDOM.innerHTML = fix(this.words) + " word" + (fix(this.words) == 1 ? "" : "s");
-        var wpsDOM = document.getElementById("wordsps");
+        const wpsDOM = document.getElementById("wordsps");
         wpsDOM.innerHTML = fix(this.wps) + " word" + (fix(this.wps) == 1 ? "" : "s") + " per second";
     }
 }

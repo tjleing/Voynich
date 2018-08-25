@@ -1,10 +1,11 @@
 // @ts-check
 
 class Creature {
-    constructor(name, wps, cost, quantity) {
+    constructor(nameSingular, namePlural, wps, cost, quantity) {
         this._id = Creature.counter;
 
-        this.name = name;
+        this.nameSingular = nameSingular;
+        this.namePlural = namePlural;
         this.wps = wps;
         this.cost = cost;
         this.quantity = quantity;
@@ -27,7 +28,7 @@ class Creature {
         else {
             this.button.classList.add('notgrayed');
         }
-        this.button.innerHTML = `Buy one <span id="bname${this.id}">${this.name}</span>`;
+        this.button.innerHTML = `Buy one <span id="bname${this.id}">${this.nameSingular}</span>`;
         buttonDiv.appendChild(this.button);
         buttonDiv.id = `${this.id}`;
         var creatureDiv = document.getElementById("creatures");

@@ -8,6 +8,7 @@ window.onload = function () {
 
   game.createCreatures();
   game.createUpgrades();
+  game.createResources();
 
   document.
     getElementById("leftCanvas").
