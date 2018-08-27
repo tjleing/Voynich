@@ -9,9 +9,6 @@ class Game {
     constructor() {
         this.resources = [];
 
-        this.words = 0;
-        this.wordsPerClick = 1;
-        this.wps = 0;
         this.creatures = [];
         this.upgrades = [];
         this.resources = [];
@@ -19,7 +16,9 @@ class Game {
     }
 
     click() {
-        this.words += this.wordsPerClick;
+        for (var i = 0; i<this.resources.length; ++i) {
+            this.resources[i].amount += 1;
+        }
         this.upgrades[0].buy();
     }
 
@@ -87,6 +86,7 @@ class Game {
                 'berries',
                 'Liquid Gold Berry',
                 'Liquid Gold Berries',
+                0,
                 true
             )
         );
@@ -95,21 +95,17 @@ class Game {
                 'wood',
                 'Branch of Mahogany',
                 'Branches of Mahogany',
+                0,
                 true
             )
         );
     }
 
     loop() {
-        const wordsBefore = this.words;
         for (var i = 0; i < this.creatures.length; ++i) {
             const currentCreature = this.creatures[i];
-            this.words += currentCreature.wps * currentCreature.quantity / this.fps;
-
-            currentCreature.tick();
+            currentCreature.tick(this.fps);
         }
-        const deltawords = this.words - wordsBefore;
-        this.wps = deltawords * this.fps;
         this.draw();
 
         // bind() to set the this var correctly.
@@ -117,10 +113,9 @@ class Game {
     }
 
     draw() {
-        const wordsDOM = document.getElementById("words");
-        wordsDOM.innerHTML = fix(this.words) + " word" + (fix(this.words) == 1 ? "" : "s");
-        const wpsDOM = document.getElementById("wordsps");
-        wpsDOM.innerHTML = fix(this.wps) + " word" + (fix(this.wps) == 1 ? "" : "s") + " per second";
+        for (var i = 0; i<this.resources.length; ++i) {
+            this.resources[i].draw();
+        }
     }
 }
 

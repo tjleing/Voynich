@@ -41,17 +41,23 @@ class Creature {
 
         buttonDiv.appendChild(this.button);
         buttonDiv.id = `${this.id}`;
-        var creatureDiv = document.getElementById("creatures");
+        const creatureDiv = document.getElementById("creatures");
         creatureDiv.appendChild(buttonDiv);
     }
 
-    tick() {
+    tick(fps) {
         var affordable = true;
         for (var key in this.cost) {
             if (this.cost.hasOwnProperty(key)) {
                 if (this.cost[key] > Resource.Map[key].amount) {
                     affordable = false;
                 }
+            }
+        }
+
+        for (var key in this.production) {
+            if (this.cost.hasOwnProperty(key)) {
+                Resource.Map[key].amount += this.production[key] * this.quantity / fps;
             }
         }
 
@@ -63,20 +69,20 @@ class Creature {
             this.button.classList.toggle('notgrayed', false);
             this.button.classList.toggle('grayed', true);
         }
+
     }
 
     buy() {
         var affordable = true;
         for (var key in this.cost) {
             if (this.cost.hasOwnProperty(key)) {
-                if (this.cost[key] < Resource.Map[key].amount) {
+                if (this.cost[key] > Resource.Map[key].amount) {
                     affordable = false;
                 }
             }
         }
 
-        // Don't want players hacking the game to buy creatures that they can't
-        // afford!  Although if they're hacking nothing's really safe anyway
+        // No buy on click even if greyed out
         if (!affordable) {
             return;
         }
