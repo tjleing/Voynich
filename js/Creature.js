@@ -1,16 +1,29 @@
 // @ts-check
 
+import { Resource } from "./Resource.js"
+
 class Creature {
-    constructor(nameSingular, namePlural, wps, cost, quantity) {
+    constructor(
+        nameSingular,
+        namePlural,
+        cost,
+        production,
+        costScalingFunction,
+        initialQuantity
+    ) {
         this._id = Creature.counter;
 
         this.nameSingular = nameSingular;
         this.namePlural = namePlural;
-        this.wps = wps;
         this.cost = cost;
-        this.quantity = quantity;
-        this.affordable = false;
+        this.production = production;
+        this.costScalingFunction = costScalingFunction;
+        this.quantity = initialQuantity;
 
+        this.constructHTML();
+    }
+
+    constructHTML() {
         // create stat div on left panel
         this.statDiv = document.createElement("div");
         this.statDiv.id = this.id + "stats";
@@ -22,13 +35,10 @@ class Creature {
         this.button = document.createElement("button")
         this.button.id = `button${this.id}`;
         this.button.classList.add('button');
-        if(this.id % 2 == 0) {
-            this.button.classList.add('grayed');
-        }
-        else {
-            this.button.classList.add('notgrayed');
-        }
         this.button.innerHTML = `Buy one <span id="bname${this.id}">${this.nameSingular}</span>`;
+
+        this.button.addEventListener("click", this.buy.bind(this), false);
+
         buttonDiv.appendChild(this.button);
         buttonDiv.id = `${this.id}`;
         var creatureDiv = document.getElementById("creatures");
@@ -36,7 +46,16 @@ class Creature {
     }
 
     tick() {
-        if (this.affordable) {
+        var affordable = true;
+        for (var key in this.cost) {
+            if (this.cost.hasOwnProperty(key)) {
+                if (this.cost[key] > Resource.Map[key].amount) {
+                    affordable = false;
+                }
+            }
+        }
+
+        if (affordable) {
             this.button.classList.toggle('grayed', false);
             this.button.classList.toggle('notgrayed', true);
         }
@@ -47,7 +66,29 @@ class Creature {
     }
 
     buy() {
+        var affordable = true;
+        for (var key in this.cost) {
+            if (this.cost.hasOwnProperty(key)) {
+                if (this.cost[key] < Resource.Map[key].amount) {
+                    affordable = false;
+                }
+            }
+        }
+
+        // Don't want players hacking the game to buy creatures that they can't
+        // afford!  Although if they're hacking nothing's really safe anyway
+        if (!affordable) {
+            return;
+        }
+
+        for (var key in this.cost) {
+            if (this.cost.hasOwnProperty(key)) {
+                Resource.Map[key].amount -= this.cost[key];
+            }
+        }
+
         this.quantity++;
+        this.costScalingFunction();
     }
 
     static get counter () {

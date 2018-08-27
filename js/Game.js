@@ -23,21 +23,23 @@ class Game {
         this.upgrades[0].buy();
     }
 
-    hireCreature(i) {
-        if(this.words >= this.creatures[i].cost) {
-            this.words -= this.creatures[i].cost;
-            this.creatures[i].buy();
-        }
-    }
-
     // TODO rethink naming
     createCreatures() {
         this.creatures.push(
             new Creature(
                 "Weaseal",
                 "Weaseals",
-                1,
-                10,
+                {
+                    berries: 1,
+                    wood: 5,
+                },
+                {
+                    berries: 5,
+                    wood: 1,
+                },
+                function () {
+                    this.cost['berries'] *= 2;
+                },
                 0,
             )
         );
@@ -45,8 +47,17 @@ class Game {
             new Creature(
                 "Beaverine",
                 "Beaverines",
-                100,
-                100,
+                {
+                    berries: 100,
+                    wood: 50,
+                },
+                {
+                    berries: 50,
+                    wood: 100,
+                },
+                function () {
+                    this.cost['wood'] *= 2;
+                },
                 0,
             )
         );
@@ -94,13 +105,6 @@ class Game {
         for (var i = 0; i < this.creatures.length; ++i) {
             const currentCreature = this.creatures[i];
             this.words += currentCreature.wps * currentCreature.quantity / this.fps;
-
-            if (this.words >= currentCreature.cost) {
-                currentCreature.affordable = true;
-            }
-            else {
-                currentCreature.affordable = false;
-            }
 
             currentCreature.tick();
         }
