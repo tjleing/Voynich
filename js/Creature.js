@@ -20,27 +20,36 @@ class Creature {
         this.costScalingFunction = costScalingFunction;
         this.quantity = initialQuantity;
 
-        this.constructHTML();
+        this.constructDOM ();
     }
 
-    constructHTML() {
+    constructDOM () {
         // create button on right panel
         const buttonDiv = document.createElement("div");
+        const br1 = document.createElement("br");
+        const br2 = document.createElement("br");
+
         this.button = document.createElement("button")
         this.button.id = `button${this.id}`;
         this.button.classList.add("button");
         this.button.classList.add("tooltip");
+
         this.nameSpan = document.createElement("span");
         this.quantitySpan = document.createElement("span");
         this.costSpan = document.createElement("span");
         this.tooltipSpan = document.createElement("span");
+
+        this.nameSpan.classList.add("creatureName");
+        this.quantitySpan.classList.add("creatureQuantity");
+        this.costSpan.classList.add("creatureCost");
+        this.tooltipSpan.classList.add("tooltipText");
+
         this.button.appendChild(this.nameSpan);
+        this.button.appendChild(br1);
         this.button.appendChild(this.quantitySpan);
+        this.button.appendChild(br2);
         this.button.appendChild(this.costSpan);
-        this.button.appendChild(this.nameSpan);
-        this.button.innerHTML = `<span class="creatureName">${this.nameSingular}</span>`;
-        this.button.innerHTML += `<br><span class="creatureCostUnaffordable">Look here's a cost!</span>`;
-        this.button.innerHTML += `<span class=tooltiptext>You currently have NOTHING</span>`;
+        this.button.appendChild(this.tooltipSpan);
 
         this.button.addEventListener("click", this.buy.bind(this), false);
 
@@ -48,6 +57,25 @@ class Creature {
         buttonDiv.id = `${this.id}`;
         const creatureDiv = document.getElementById("creatures");
         creatureDiv.appendChild(buttonDiv);
+    }
+
+    updateDOM () {
+        this.nameSpan.innerHTML = `${this.nameSingular}`;
+        this.quantitySpan.innerHTML = `You have ${this.quantity}`;
+        this.costSpan.innerHTML = '';
+        for (var i = 0; i < Object.keys(this.cost).length; ++i) {
+            const resourceName = Object.keys(this.cost)[i];
+            const resource = Resource.Map[resourceName];
+            let affordableClass = "";
+            if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
+                affordableClass = "creatureCostUnaffordable";
+            }
+            else {
+                affordableClass = "creatureCostAffordable";
+            }
+            this.costSpan.innerHTML += `<span class=${affordableClass}>${resource.displayNamePlural}: ${this.cost[resourceName]}</span><br>`;
+        }
+        this.tooltipSpan.innerHTML = `You currently have NOTHING`;
     }
 
     tick(fps) {
@@ -75,6 +103,7 @@ class Creature {
             this.button.classList.toggle("grayed", true);
         }
 
+        this.updateDOM();
     }
 
     buy() {

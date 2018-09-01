@@ -69,13 +69,19 @@ body {
 	font-size: 30px;
 }
 
-.creatureCostAffordable {
+.creatureQuantity {
+	font-size: 20px;
+}
+
+.creatureCost {
 	font-size: 12px;
-	color: green;
+}
+
+.creatureCostAffordable {
+	color: blue;
 }
 
 .creatureCostUnaffordable {
-	font-size: 12px;
 	color: red;
 }
 
@@ -83,7 +89,7 @@ body {
 	position: relative;
 }
 
-.tooltip .tooltiptext {
+.tooltip .tooltipText {
 	visibility: hidden;
     width: 120px;
     background-color: black;
@@ -98,7 +104,7 @@ body {
     margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
 }
 
-.tooltip .tooltiptext::after {
+.tooltip .tooltipText::after {
     content: " ";
     position: absolute;
     top: 100%; /* At the bottom of the tooltip */
@@ -109,13 +115,13 @@ body {
     border-color: black transparent transparent transparent;
 }
 
-.tooltip:hover .tooltiptext {
+.tooltip:hover .tooltipText {
     visibility: visible;
 }
 
 .button {
 	width: 100%;
-	height: 100px;
+	padding: 10px 0;
 }
 
 button:focus {outline:0;}
