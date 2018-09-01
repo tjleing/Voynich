@@ -13,6 +13,12 @@ class Game {
         this.upgrades = [];
         this.resources = [];
         this.fps = 60;
+
+        // create stat div on left panel
+        this.statDiv = document.createElement("div");
+        this.statDiv.id = this.id + "stats";
+        var leftpanel = document.getElementById("leftpanel");
+        leftpanel.appendChild(this.statDiv);
     }
 
     click() {
@@ -37,7 +43,7 @@ class Game {
                     wood: 1,
                 },
                 function () {
-                    this.cost['berries'] *= 2;
+                    this.cost["berries"] *= 2;
                 },
                 0,
             )
@@ -55,7 +61,7 @@ class Game {
                     wood: 100,
                 },
                 function () {
-                    this.cost['wood'] *= 2;
+                    this.cost["wood"] *= 2;
                 },
                 0,
             )
@@ -66,7 +72,7 @@ class Game {
     createUpgrades() {
         this.upgrades.push(
             new Upgrade(
-                'Berries???',
+                "Berries???",
                 undefined,
                 () => {
                     this.creatures[0].buy();
@@ -83,18 +89,18 @@ class Game {
     createResources() {
         this.resources.push(
             new Resource(
-                'berries',
-                'Liquid Gold Berry',
-                'Liquid Gold Berries',
+                "berries",
+                "Liquid Gold Berry",
+                "Liquid Gold Berries",
                 0,
                 true
             )
         );
         this.resources.push(
             new Resource(
-                'wood',
-                'Branch of Mahogany',
-                'Branches of Mahogany',
+                "wood",
+                "Branch of Mahogany",
+                "Branches of Mahogany",
                 0,
                 true
             )

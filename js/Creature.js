@@ -24,18 +24,23 @@ class Creature {
     }
 
     constructHTML() {
-        // create stat div on left panel
-        this.statDiv = document.createElement("div");
-        this.statDiv.id = this.id + "stats";
-        var leftpanel = document.getElementById("leftpanel");
-        leftpanel.appendChild(this.statDiv);
-
-        // create buttons on right panel
+        // create button on right panel
         const buttonDiv = document.createElement("div");
         this.button = document.createElement("button")
         this.button.id = `button${this.id}`;
-        this.button.classList.add('button');
-        this.button.innerHTML = `Buy one <span id="bname${this.id}">${this.nameSingular}</span>`;
+        this.button.classList.add("button");
+        this.button.classList.add("tooltip");
+        this.nameSpan = document.createElement("span");
+        this.quantitySpan = document.createElement("span");
+        this.costSpan = document.createElement("span");
+        this.tooltipSpan = document.createElement("span");
+        this.button.appendChild(this.nameSpan);
+        this.button.appendChild(this.quantitySpan);
+        this.button.appendChild(this.costSpan);
+        this.button.appendChild(this.nameSpan);
+        this.button.innerHTML = `<span class="creatureName">${this.nameSingular}</span>`;
+        this.button.innerHTML += `<br><span class="creatureCostUnaffordable">Look here's a cost!</span>`;
+        this.button.innerHTML += `<span class=tooltiptext>You currently have NOTHING</span>`;
 
         this.button.addEventListener("click", this.buy.bind(this), false);
 
@@ -62,12 +67,12 @@ class Creature {
         }
 
         if (affordable) {
-            this.button.classList.toggle('grayed', false);
-            this.button.classList.toggle('notgrayed', true);
+            this.button.classList.toggle("grayed", false);
+            this.button.classList.toggle("notgrayed", true);
         }
         else {
-            this.button.classList.toggle('notgrayed', false);
-            this.button.classList.toggle('grayed', true);
+            this.button.classList.toggle("notgrayed", false);
+            this.button.classList.toggle("grayed", true);
         }
 
     }
