@@ -6,9 +6,9 @@ var game;
 window.onload = function () {
   game = new Game();
 
+  game.createResources();
   game.createCreatures();
   game.createUpgrades();
-  game.createResources();
 
   document.
     getElementById("leftCanvas").

@@ -1,6 +1,7 @@
 // @ts-check
 
 import { Resource } from "./Resource.js"
+import { fix } from "./Utils.js"
 
 class Creature {
     constructor(
@@ -9,6 +10,7 @@ class Creature {
         cost,
         production,
         costScalingFunction,
+        flavorText,
         initialQuantity
     ) {
         this._id = Creature.counter;
@@ -19,8 +21,9 @@ class Creature {
         this.production = production;
         this.costScalingFunction = costScalingFunction;
         this.quantity = initialQuantity;
+        this.flavorText = flavorText;
 
-        this.constructDOM ();
+        this.constructDOM();
     }
 
     constructDOM () {
@@ -34,6 +37,7 @@ class Creature {
         this.button.classList.add("button");
         this.button.classList.add("tooltip");
 
+        // spans live inside the button
         this.nameSpan = document.createElement("span");
         this.quantitySpan = document.createElement("span");
         this.costSpan = document.createElement("span");
@@ -60,9 +64,15 @@ class Creature {
     }
 
     updateDOM () {
-        this.nameSpan.innerHTML = `${this.nameSingular}`;
-        this.quantitySpan.innerHTML = `You have ${this.quantity}`;
-        this.costSpan.innerHTML = '';
+        const newNameSpanHTML = `${this.nameSingular}`;
+        if (this.nameSpan.innerHTML !== newNameSpanHTML) {
+            this.nameSpan.innerHTML = newNameSpanHTML;
+        }
+        const newQuantitySpanHTML = `You have ${this.quantity}`;
+        if (this.quantitySpan.innerHTML !== newQuantitySpanHTML) {
+            this.quantitySpan.innerHTML = newQuantitySpanHTML;
+        }
+        let newCostSpanHTML = '';
         for (var i = 0; i < Object.keys(this.cost).length; ++i) {
             const resourceName = Object.keys(this.cost)[i];
             const resource = Resource.Map[resourceName];
@@ -73,9 +83,16 @@ class Creature {
             else {
                 affordableClass = "creatureCostAffordable";
             }
-            this.costSpan.innerHTML += `<span class=${affordableClass}>${resource.displayNamePlural}: ${this.cost[resourceName]}</span><br>`;
+            newCostSpanHTML += `<span class=${affordableClass}>${resource.displayNamePlural}: ${fix(this.cost[resourceName])}</span><br>`;
         }
-        this.tooltipSpan.innerHTML = `You currently have NOTHING`;
+        if (this.costSpan.innerHTML !== newCostSpanHTML) {
+            this.costSpan.innerHTML = newCostSpanHTML;
+        }
+
+        const newTooltipSpanHTML = this.flavorText;
+        if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
+            this.tooltipSpan.innerHTML = newTooltipSpanHTML;
+        }
     }
 
     tick(fps) {

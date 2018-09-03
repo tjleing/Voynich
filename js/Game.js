@@ -39,12 +39,13 @@ class Game {
                     wood: 5,
                 },
                 {
-                    berries: 5,
-                    wood: 1,
+                    berries: 1,
+                    wood: 0.2,
                 },
                 function () {
-                    this.cost["berries"] *= 2;
+                    this.cost["berries"] *= 1.15;
                 },
+                "It's got fur and also... blubber?  You don't want to touch this creature at all.",
                 0,
             )
         );
@@ -57,12 +58,13 @@ class Game {
                     wood: 50,
                 },
                 {
-                    berries: 50,
-                    wood: 100,
+                    berries: 10,
+                    wood: 20,
                 },
                 function () {
-                    this.cost["wood"] *= 2;
+                    this.cost["wood"] *= 1.15;
                 },
+                "Sometimes makes dams.  Sometimes tears apart others' dams.  Absolutely terrifying.",
                 0,
             )
         );
