@@ -7,6 +7,8 @@ body {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+
+	font-family: Tahoma;
 }
 
 #game {
@@ -91,7 +93,7 @@ body {
 
 .tooltip .tooltipText {
 	visibility: hidden;
-    width: 120px;
+    width: 100%;
     background-color: black;
     color: #fff;
     text-align: center;
@@ -101,7 +103,9 @@ body {
     z-index: 1;
     bottom: 100%;
     left: 50%;
-    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+    margin-left: -50%; /* Use half of the width to center the tooltip */
+	font-size: 14px;
+	opacity: 0.8;
 }
 
 .tooltip .tooltipText::after {
@@ -117,6 +121,10 @@ body {
 
 .tooltip:hover .tooltipText {
     visibility: visible;
+}
+
+.tooltip .tooltipText:hover {
+    visibility: hidden; /* Get tooltip out of the way of clicks */
 }
 
 .button {
