@@ -55,7 +55,7 @@ class Creature {
         this.button.appendChild(this.costSpan);
         this.button.appendChild(this.tooltipSpan);
 
-        this.button.addEventListener("click", this.buy.bind(this), false);
+        buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
 
         buttonDiv.appendChild(this.button);
         buttonDiv.id = `${this.id}`;
