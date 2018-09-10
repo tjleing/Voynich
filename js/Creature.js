@@ -55,13 +55,7 @@ class Creature {
         this.button.appendChild(this.costSpan);
         this.button.appendChild(this.tooltipSpan);
 
-        if (this._id % 2 == 0) {
-            buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
-        }
-        else {
-            buttonDiv.addEventListener("mousedown", this.buy.bind(this), false);
-        }
-
+        buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
         buttonDiv.appendChild(this.button);
         buttonDiv.id = `${this.id}`;
         const creatureDiv = document.getElementById("creatures");
