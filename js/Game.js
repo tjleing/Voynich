@@ -22,8 +22,8 @@ class Game {
     }
 
     click() {
-        for (var i = 0; i<this.resources.length; ++i) {
-            this.resources[i].amount += 1;
+        for (const resource of this.resources) {
+            resource.amount += 1;
         }
         this.upgrades[0].buy();
     }
@@ -118,9 +118,8 @@ class Game {
     }
 
     loop() {
-        for (var i = 0; i < this.creatures.length; ++i) {
-            const currentCreature = this.creatures[i];
-            currentCreature.tick(this.fps);
+        for (const creature of this.creatures) {
+            creature.tick(this.fps);
         }
         this.draw();
 
@@ -129,8 +128,8 @@ class Game {
     }
 
     draw() {
-        for (var i = 0; i<this.resources.length; ++i) {
-            this.resources[i].draw();
+        for (const resource of this.resources) {
+            resource.draw();
         }
     }
 }

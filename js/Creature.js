@@ -74,8 +74,7 @@ class Creature {
             this.quantitySpan.innerHTML = newQuantitySpanHTML;
         }
         let newCostSpanHTML = '';
-        for (var i = 0; i < Object.keys(this.cost).length; ++i) {
-            const resourceName = Object.keys(this.cost)[i];
+        for (const resourceName of Object.keys(this.cost)) {
             const resource = Resource.Map[resourceName];
             let affordableClass = "";
             if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
@@ -91,16 +90,14 @@ class Creature {
         }
 
         let resourcesPerSecondString = '';
-        for (var i = 0; i < Object.keys(this.production).length; ++i) {
-            const resourceName = Object.keys(this.production)[i];
+        for (const resourceName of Object.keys(this.production)) {
             const resourcePerSecondPerOneCreature = this.production[resourceName];
             // Round to one decimal point (since we have some creatures that produce 0.2/sec)
             const resourcePerSecond = fix(resourcePerSecondPerOneCreature * this.quantity * 10) / 10;
             resourcesPerSecondString += `<br/>+${resourcePerSecond} ${resourceName}/sec`;
         }
         let totalResourcesProducedString = '';
-        for (var i = 0; i < Object.keys(this.totalProduced).length; ++i) {
-            const resourceName = Object.keys(this.totalProduced)[i];
+        for (const resourceName of Object.keys(this.totalProduced)) {
             totalResourcesProducedString += `<br/>+${fix(this.totalProduced[resourceName])} ${resourceName} all time`;
         }
         const newTooltipSpanHTML = `${this.flavorText}<br/><br/>Currently:${resourcesPerSecondString}<br/>${totalResourcesProducedString}`;
