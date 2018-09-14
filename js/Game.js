@@ -42,6 +42,10 @@ class Game {
                     berries: 1,
                     wood: 0.2,
                 },
+                {
+                    berries: 0,
+                    wood: 0,
+                },
                 function () {
                     this.cost["berries"] *= 1.15;
                 },
@@ -60,6 +64,10 @@ class Game {
                 {
                     berries: 10,
                     wood: 20,
+                },
+                {
+                    berries: 0,
+                    wood: 0,
                 },
                 function () {
                     this.cost["wood"] *= 1.15;

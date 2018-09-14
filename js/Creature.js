@@ -9,6 +9,7 @@ class Creature {
         namePlural,
         cost,
         production,
+        totalProduced,
         costScalingFunction,
         flavorText,
         initialQuantity
@@ -19,6 +20,7 @@ class Creature {
         this.namePlural = namePlural;
         this.cost = cost;
         this.production = production;
+        this.totalProduced = totalProduced;
         this.costScalingFunction = costScalingFunction;
         this.quantity = initialQuantity;
         this.flavorText = flavorText;
@@ -96,7 +98,12 @@ class Creature {
             const resourcePerSecond = fix(resourcePerSecondPerOneCreature * this.quantity * 10) / 10;
             resourcesPerSecondString += `<br/>+${resourcePerSecond} ${resourceName}/sec`;
         }
-        const newTooltipSpanHTML = `${this.flavorText}<br/><br/>Currently:${resourcesPerSecondString}`;
+        let totalResourcesProducedString = '';
+        for (var i = 0; i < Object.keys(this.totalProduced).length; ++i) {
+            const resourceName = Object.keys(this.totalProduced)[i];
+            totalResourcesProducedString += `<br/>+${fix(this.totalProduced[resourceName])} ${resourceName} all time`;
+        }
+        const newTooltipSpanHTML = `${this.flavorText}<br/><br/>Currently:${resourcesPerSecondString}<br/>${totalResourcesProducedString}`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
             this.tooltipSpan.innerHTML = newTooltipSpanHTML;
         }
@@ -115,6 +122,7 @@ class Creature {
         for (var key in this.production) {
             if (this.cost.hasOwnProperty(key)) {
                 Resource.Map[key].amount += this.production[key] * this.quantity / fps;
+                this.totalProduced[key] += this.production[key] * this.quantity / fps;
             }
         }
 
