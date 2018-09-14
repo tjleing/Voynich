@@ -88,7 +88,15 @@ class Creature {
             this.costSpan.innerHTML = newCostSpanHTML;
         }
 
-        const newTooltipSpanHTML = this.flavorText;
+        let resourcesPerSecondString = '';
+        for (var i = 0; i < Object.keys(this.production).length; ++i) {
+            const resourceName = Object.keys(this.production)[i];
+            const resourcePerSecondPerOneCreature = this.production[resourceName];
+            // Round to one decimal point (since we have some creatures that produce 0.2/sec)
+            const resourcePerSecond = fix(resourcePerSecondPerOneCreature * this.quantity * 10) / 10;
+            resourcesPerSecondString += `<br/>+${resourcePerSecond} ${resourceName}/sec`;
+        }
+        const newTooltipSpanHTML = `${this.flavorText}<br/><br/>Currently:${resourcesPerSecondString}`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
             this.tooltipSpan.innerHTML = newTooltipSpanHTML;
         }
