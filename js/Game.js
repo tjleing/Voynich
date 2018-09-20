@@ -1,8 +1,9 @@
 // @ts-check
 
 import { Creature } from "./Creature.js"
-import { Upgrade } from "./Upgrade.js"
 import { Resource } from "./Resource.js"
+import { settings, setSetting, setAllSettings } from "./Settings.js"
+import { Upgrade } from "./Upgrade.js"
 import { fix } from "./Utils.js"
 
 class Game {
@@ -12,7 +13,8 @@ class Game {
         this.creatures = [];
         this.upgrades = [];
         this.resources = [];
-        this.fps = 60;
+
+        setAllSettings({'fps': 60});
 
         // create stat div on left panel
         this.statDiv = document.createElement("div");
@@ -118,13 +120,16 @@ class Game {
     }
 
     loop() {
+        for (const resource of this.resources) {
+            resource.startTick();
+        }
         for (const creature of this.creatures) {
-            creature.tick(this.fps);
+            creature.tick(settings.fps);
         }
         this.draw();
 
         // bind() to set the this var correctly.
-        setTimeout(this.loop.bind(this), 1000 / this.fps);
+        setTimeout(this.loop.bind(this), 1000 / settings.fps);
     }
 
     draw() {

@@ -1,6 +1,7 @@
 // @ts-check
 
 import { Resource } from "./Resource.js"
+import { settings } from "./Settings.js"
 import { fix } from "./Utils.js"
 
 class Creature {
@@ -106,21 +107,18 @@ class Creature {
         }
     }
 
-    tick(fps) {
+    tick() {
         var affordable = true;
-        for (var key in this.cost) {
-            if (this.cost.hasOwnProperty(key)) {
-                if (this.cost[key] > Resource.Map[key].amount) {
-                    affordable = false;
-                }
+        for (const resourceName of Object.keys(this.cost)) {
+            if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
+                affordable = false;
             }
         }
 
-        for (var key in this.production) {
-            if (this.cost.hasOwnProperty(key)) {
-                Resource.Map[key].amount += this.production[key] * this.quantity / fps;
-                this.totalProduced[key] += this.production[key] * this.quantity / fps;
-            }
+        for (const resourceName of Object.keys(this.production)) {
+            const amountProduced = this.production[resourceName] * this.quantity / settings.fps;
+            Resource.Map[resourceName].tickAdd(amountProduced);
+            this.totalProduced[resourceName] += amountProduced;
         }
 
         if (affordable) {
@@ -152,7 +150,7 @@ class Creature {
 
         for (var key in this.cost) {
             if (this.cost.hasOwnProperty(key)) {
-                Resource.Map[key].amount -= this.cost[key];
+                Resource.Map[key].noTickConsume(this.cost[key]);
             }
         }
 
