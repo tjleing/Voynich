@@ -126,6 +126,9 @@ class Game {
         for (const creature of this.creatures) {
             creature.tick(settings.fps);
         }
+        for (const creature of this.creatures) {
+            creature.updateDOM();
+        }
         this.draw();
 
         // bind() to set the this var correctly.

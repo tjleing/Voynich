@@ -2,7 +2,7 @@
 
 import { Resource } from "./Resource.js"
 import { settings } from "./Settings.js"
-import { fix } from "./Utils.js"
+import { fix, maximumTimeToGet } from "./Utils.js"
 
 class Creature {
     constructor(
@@ -25,6 +25,7 @@ class Creature {
         this.costScalingFunction = costScalingFunction;
         this.quantity = initialQuantity;
         this.flavorText = flavorText;
+        this.affordable = false;
 
         this.constructDOM();
     }
@@ -101,17 +102,30 @@ class Creature {
         for (const resourceName of Object.keys(this.totalProduced)) {
             totalResourcesProducedString += `<br/>+${fix(this.totalProduced[resourceName])} ${resourceName} all time`;
         }
-        const newTooltipSpanHTML = `${this.flavorText}<br/><br/>Currently:${resourcesPerSecondString}<br/>${totalResourcesProducedString}`;
+        let timeUntilAffordableString = '';
+        if (!this.affordable) {
+            // TODO: two maps? gross
+            const timeUntilAffordable = maximumTimeToGet(
+                Object.keys(this.cost).map(resourceName =>
+                    this.cost[resourceName]-Resource.Map[resourceName].amount
+                ),
+                Object.keys(this.cost).map(resourceName =>
+                    Resource.Map[resourceName].amountPerTick * settings['fps']
+                )
+            );
+            timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`
+        }
+        const newTooltipSpanHTML = `${this.flavorText}<br/><br/>Currently:${resourcesPerSecondString}<br/>${totalResourcesProducedString}${timeUntilAffordableString}`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
             this.tooltipSpan.innerHTML = newTooltipSpanHTML;
         }
     }
 
     tick() {
-        var affordable = true;
+        this.affordable = true;
         for (const resourceName of Object.keys(this.cost)) {
             if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
-                affordable = false;
+                this.affordable = false;
             }
         }
 
@@ -121,7 +135,7 @@ class Creature {
             this.totalProduced[resourceName] += amountProduced;
         }
 
-        if (affordable) {
+        if (this.affordable) {
             this.button.classList.toggle("grayed", false);
             this.button.classList.toggle("notgrayed", true);
         }
@@ -129,22 +143,10 @@ class Creature {
             this.button.classList.toggle("notgrayed", false);
             this.button.classList.toggle("grayed", true);
         }
-
-        this.updateDOM();
     }
 
     buy() {
-        var affordable = true;
-        for (var key in this.cost) {
-            if (this.cost.hasOwnProperty(key)) {
-                if (this.cost[key] > Resource.Map[key].amount) {
-                    affordable = false;
-                }
-            }
-        }
-
-        // No buy on click even if greyed out
-        if (!affordable) {
+        if (!this.affordable) {
             return;
         }
 
