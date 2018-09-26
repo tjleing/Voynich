@@ -78,6 +78,30 @@ class Game {
                 0,
             )
         );
+        this.creatures.push(
+            new Creature(
+                "Ptrocanfer",
+                "Ptrocanfers",
+                {
+                    berries: 1000000000,
+                    wood: 500000000,
+                },
+                {
+                    berries: 100000000,
+                    wood: 200000000,
+                },
+                {
+                    berries: 0,
+                    wood: 0,
+                },
+                function () {
+                    this.cost["wood"] *= 1.15;
+                    this.cost["berries"] *= 1.15;
+                },
+                "Ridiculously expensive!  But maybe worth it?",
+                0,
+            )
+        );
     }
 
     // TODO rethink naming

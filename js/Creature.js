@@ -23,7 +23,7 @@ class Creature {
         this.production = production;
         this.totalProduced = totalProduced;
         this.costScalingFunction = costScalingFunction;
-        this.quantity = initialQuantity;
+        this.quantity = initialQuantity; // TODO: don't put this here; just in save-load?  at the very least don't pass through constructor, just set to 0s based on production (might make it hard for a creature to produce new resources? [can pass in a 0 for that in production, and then special-case it in tooltip??])
         this.flavorText = flavorText;
         this.affordable = false;
 
