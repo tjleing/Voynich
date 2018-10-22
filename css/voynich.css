@@ -1,3 +1,11 @@
+@font-face {
+	font-family: "Monoospace";
+	font-style: normal;
+	font-weight: 400;
+	src: local("Lucida Console"), local("Monaco"), local("monospace");
+	unicode-range: U+30-39;
+}
+
 body {
 	background-color: #888888;
 	-webkit-touch-callout: none;
@@ -8,7 +16,14 @@ body {
 	-ms-user-select: none;
 	user-select: none;
 
-	font-family: -apple-system, BlinkMacSystemFont,
+	font-family: Monoospace, -apple-system, BlinkMacSystemFont,
+    “Segoe UI”, “Roboto”, “Oxygen”,
+    “Ubuntu”, “Cantarell”, “Fira Sans”,
+    “Droid Sans”, “Helvetica Neue”, sans-serif;
+}
+
+button {
+	font-family: Monoospace, -apple-system, BlinkMacSystemFont,
     “Segoe UI”, “Roboto”, “Oxygen”,
     “Ubuntu”, “Cantarell”, “Fira Sans”,
     “Droid Sans”, “Helvetica Neue”, sans-serif;

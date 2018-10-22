@@ -121,20 +121,23 @@ class Creature {
         }
     }
 
-    tick() {
+    setAffordable() {
         this.affordable = true;
         for (const resourceName of Object.keys(this.cost)) {
             if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
                 this.affordable = false;
             }
         }
+    }
 
+    tick() {
         for (const resourceName of Object.keys(this.production)) {
             const amountProduced = this.production[resourceName] * this.quantity / settings.fps;
             Resource.Map[resourceName].tickAdd(amountProduced);
             this.totalProduced[resourceName] += amountProduced;
         }
 
+        this.setAffordable();
         if (this.affordable) {
             this.button.classList.toggle("grayed", false);
             this.button.classList.toggle("notgrayed", true);
@@ -146,6 +149,7 @@ class Creature {
     }
 
     buy() {
+        this.setAffordable();
         if (!this.affordable) {
             return;
         }

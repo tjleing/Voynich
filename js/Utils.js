@@ -54,7 +54,6 @@ var timeToGet = function (totalAmount, amountPerSecond) {
 }
 
 var maximumTimeToGet = function (amounts, amountsPerSecond) {
-    console.log(amounts, amountsPerSecond);
     let maxSecondsSoFar = 0;
     for (var i = 0; i<amounts.length; ++i) {
         if (amountsPerSecond[i] === 0) {
