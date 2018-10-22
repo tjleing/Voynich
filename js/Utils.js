@@ -1,5 +1,7 @@
 // @ts-check
 
+import { settings } from "./Settings.js"
+
 var fix = function (num) {
   return Math.round(num);
 }
