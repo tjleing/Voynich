@@ -2,7 +2,7 @@
 	font-family: "Monoospace";
 	font-style: normal;
 	font-weight: 400;
-	src: local("Lucida Console"), local("Monaco"), local("monospace");
+	src: local("Lucida Console"), local("Monaco"), local("Courier"), local("monospace");
 	unicode-range: U+30-39;
 }
 
