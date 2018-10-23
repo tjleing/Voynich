@@ -44,14 +44,14 @@ var formatDuration = function (seconds) {
     }
 
     return formattedComponents.join(", ");
-}
+};
 
 var timeToGet = function (totalAmount, amountPerSecond) {
     if (amountPerSecond === 0) {
         return "Infinity";
     }
     return formatDuration(totalAmount / amountPerSecond);
-}
+};
 
 var maximumTimeToGet = function (amounts, amountsPerSecond) {
     let maxSecondsSoFar = 0;
@@ -62,6 +62,6 @@ var maximumTimeToGet = function (amounts, amountsPerSecond) {
         maxSecondsSoFar = Math.max(maxSecondsSoFar, amounts[i] / amountsPerSecond[i]);
     }
     return formatDuration(maxSecondsSoFar);
-}
+};
 
 export { fix, formatDuration, timeToGet, maximumTimeToGet };

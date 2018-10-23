@@ -36,7 +36,7 @@ class Creature {
         const br1 = document.createElement("br");
         const br2 = document.createElement("br");
 
-        this.button = document.createElement("button")
+        this.button = document.createElement("button");
         this.button.id = `button${this.id}`;
         this.button.classList.add("button");
         this.button.classList.add("tooltip");
@@ -67,13 +67,13 @@ class Creature {
     }
 
     updateDOM () {
-        const newNameSpanHTML = `${this.nameSingular}`;
-        if (this.nameSpan.innerHTML !== newNameSpanHTML) {
-            this.nameSpan.innerHTML = newNameSpanHTML;
+        const newNameSpan = `${this.nameSingular}`;
+        if (this.nameSpan.textContent !== newNameSpan) {
+            this.nameSpan.textContent = newNameSpan;
         }
-        const newQuantitySpanHTML = `You have ${this.quantity}`;
-        if (this.quantitySpan.innerHTML !== newQuantitySpanHTML) {
-            this.quantitySpan.innerHTML = newQuantitySpanHTML;
+        const newQuantitySpan = `You have ${this.quantity}`;
+        if (this.quantitySpan.textContent !== newQuantitySpan) {
+            this.quantitySpan.textContent = newQuantitySpan;
         }
         let newCostSpanHTML = "";
         for (const resourceName of Object.keys(this.cost)) {
