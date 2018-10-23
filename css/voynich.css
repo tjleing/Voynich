@@ -1,5 +1,5 @@
 @font-face {
-	font-family: "Monoospace";
+	font-family: "MonospaceNumbers";
 	font-style: normal;
 	font-weight: 400;
 	src: local("Lucida Console"), local("Monaco"), local("Courier"), local("monospace");
@@ -16,7 +16,7 @@ body {
 	-ms-user-select: none;
 	user-select: none;
 
-	font-family: Monoospace, -apple-system, BlinkMacSystemFont,
+	font-family: MonospaceNumbers, -apple-system, BlinkMacSystemFont,
     “Segoe UI”, “Roboto”, “Oxygen”,
     “Ubuntu”, “Cantarell”, “Fira Sans”,
     “Droid Sans”, “Helvetica Neue”, sans-serif;

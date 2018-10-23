@@ -1,7 +1,7 @@
 // @ts-check
 
-import { fix } from "./Utils.js"
-import { settings } from "./Settings.js"
+import { fix } from "./Utils.js";
+import { settings } from "./Settings.js";
 
 class Resource {
     constructor (internalName,
@@ -30,7 +30,7 @@ class Resource {
 
     draw () {
         const fixedAmount = fix(this.amount);
-        const nameToUse = fixedAmount == 1 ? this.displayNameSingular : this.displayNamePlural;
+        const nameToUse = fixedAmount === 1 ? this.displayNameSingular : this.displayNamePlural;
         const amountPerSecond = fix(this.amountPerTick * settings.fps * 10) / 10;
         this.amountDiv.innerHTML = `${fixedAmount} ${nameToUse} (+${amountPerSecond}/sec)`;
     }

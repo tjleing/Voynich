@@ -1,8 +1,8 @@
 // @ts-check
 
-import { Resource } from "./Resource.js"
-import { settings } from "./Settings.js"
-import { fix, maximumTimeToGet } from "./Utils.js"
+import { Resource } from "./Resource.js";
+import { settings } from "./Settings.js";
+import { fix, maximumTimeToGet } from "./Utils.js";
 
 class Creature {
     constructor(
@@ -75,7 +75,7 @@ class Creature {
         if (this.quantitySpan.innerHTML !== newQuantitySpanHTML) {
             this.quantitySpan.innerHTML = newQuantitySpanHTML;
         }
-        let newCostSpanHTML = '';
+        let newCostSpanHTML = "";
         for (const resourceName of Object.keys(this.cost)) {
             const resource = Resource.Map[resourceName];
             let affordableClass = "";
@@ -91,29 +91,29 @@ class Creature {
             this.costSpan.innerHTML = newCostSpanHTML;
         }
 
-        let resourcesPerSecondString = '';
+        let resourcesPerSecondString = "";
         for (const resourceName of Object.keys(this.production)) {
             const resourcePerSecondPerOneCreature = this.production[resourceName];
             // Round to one decimal point (since we have some creatures that produce 0.2/sec)
             const resourcePerSecond = fix(resourcePerSecondPerOneCreature * this.quantity * 10) / 10;
             resourcesPerSecondString += `<br/>+${resourcePerSecond} ${resourceName}/sec`;
         }
-        let totalResourcesProducedString = '';
+        let totalResourcesProducedString = "";
         for (const resourceName of Object.keys(this.totalProduced)) {
             totalResourcesProducedString += `<br/>+${fix(this.totalProduced[resourceName])} ${resourceName} all time`;
         }
-        let timeUntilAffordableString = '';
+        let timeUntilAffordableString = "";
         if (!this.affordable) {
             // TODO: two maps? gross
             const timeUntilAffordable = maximumTimeToGet(
-                Object.keys(this.cost).map(resourceName =>
+                Object.keys(this.cost).map((resourceName) =>
                     this.cost[resourceName]-Resource.Map[resourceName].amount
                 ),
-                Object.keys(this.cost).map(resourceName =>
-                    Resource.Map[resourceName].amountPerTick * settings['fps']
+                Object.keys(this.cost).map((resourceName) =>
+                    Resource.Map[resourceName].amountPerTick * settings["fps"]
                 )
             );
-            timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`
+            timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`;
         }
         const newTooltipSpanHTML = `${this.flavorText}<br/><br/>Currently:${resourcesPerSecondString}<br/>${totalResourcesProducedString}${timeUntilAffordableString}`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {

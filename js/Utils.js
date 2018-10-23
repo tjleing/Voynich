@@ -1,10 +1,10 @@
 // @ts-check
 
-import { settings } from "./Settings.js"
+import { settings } from "./Settings.js";
 
 var fix = function (num) {
   return Math.round(num);
-}
+};
 
 var formatDuration = function (seconds) {
     var secNum = parseFloat(seconds);
@@ -40,7 +40,7 @@ var formatDuration = function (seconds) {
 
     if (secNum !== 0) {
         const seconds = (Math.floor(secNum * 10) / 10).toFixed(1);
-        formattedComponents.push(`${seconds} ` + (seconds === '1' ? "second" : "seconds"));
+        formattedComponents.push(`${seconds} ` + (seconds === "1" ? "second" : "seconds"));
     }
 
     return formattedComponents.join(", ");

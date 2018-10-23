@@ -1,5 +1,5 @@
 // @ts-check
-import { Game } from "./Game.js"
+import { Game } from "./Game.js";
 
 var game;
 
@@ -15,6 +15,6 @@ window.onload = function () {
     addEventListener("click", game.click.bind(game), false);
 
   game.loop();
-}
+};
 
 export { game };

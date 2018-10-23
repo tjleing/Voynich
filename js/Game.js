@@ -1,10 +1,10 @@
 // @ts-check
 
-import { Creature } from "./Creature.js"
-import { Resource } from "./Resource.js"
-import { settings, setSetting, setAllSettings } from "./Settings.js"
-import { Upgrade } from "./Upgrade.js"
-import { fix } from "./Utils.js"
+import { Creature } from "./Creature.js";
+import { Resource } from "./Resource.js";
+import { settings, setSetting, setAllSettings } from "./Settings.js";
+import { Upgrade } from "./Upgrade.js";
+import { fix } from "./Utils.js";
 
 class Game {
     constructor() {
@@ -14,7 +14,7 @@ class Game {
         this.upgrades = [];
         this.resources = [];
 
-        setAllSettings({'fps': 60});
+        setAllSettings({"fps": 60});
 
         // create stat div on left panel
         this.statDiv = document.createElement("div");
@@ -109,7 +109,7 @@ class Game {
         this.upgrades.push(
             new Upgrade(
                 "Berries???",
-                undefined,
+                {},
                 () => {
                     this.creatures[0].buy();
                 },
