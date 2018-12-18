@@ -23,8 +23,8 @@ class Creature {
         this.production = production;
         this.totalProduced = totalProduced;
         this.costScalingFunction = costScalingFunction;
-        this.quantity = initialQuantity; // TODO: don't put this here; just in save-load?  at the very least don't pass through constructor, just set to 0s based on production (might make it hard for a creature to produce new resources? [can pass in a 0 for that in production, and then special-case it in tooltip??])
         this.flavorText = flavorText;
+        this.quantity = initialQuantity; // TODO: don't put this here; just in save-load?  at the very least don't pass through constructor, just set to 0s based on production (might make it hard for a creature to produce new resources? [can pass in a 0 for that in production, and then special-case it in tooltip??])
         this.affordable = false;
 
         this.constructDOM();
@@ -110,7 +110,7 @@ class Creature {
                     this.cost[resourceName]-Resource.Map[resourceName].amount
                 ),
                 Object.keys(this.cost).map((resourceName) =>
-                    Resource.Map[resourceName].amountPerTick * settings["fps"]
+                    Resource.Map[resourceName].amountPerTick * settings.fps
                 )
             );
             timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`;
@@ -163,6 +163,24 @@ class Creature {
         this.quantity++;
         this.costScalingFunction();
     }
+
+    // Saving and loading
+    load (saveString) {
+        let saveComponents = saveString.split("$");
+        this.cost = JSON.parse(saveComponents[0]); // JSON stores types, so need to parse values back to ints
+        this.totalProduced = JSON.parse(saveComponents[1]);
+        this.quantity = parseInt(saveComponents[2]);
+    }
+
+    save () {
+        let saveComponents = [];
+        saveComponents.push(JSON.stringify(this.cost));
+        saveComponents.push(JSON.stringify(this.totalProduced));
+        saveComponents.push(this.quantity);
+
+        return saveComponents.join("$");
+    }
+
 
     static get counter () {
         return Creature._counter++;

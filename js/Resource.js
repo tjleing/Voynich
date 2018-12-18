@@ -62,6 +62,21 @@ class Resource {
     noTickConsume (amount) {
         this.amount -= amount;
     }
+
+    // Saving and loading
+    load (saveString) {
+        let saveComponents = saveString.split("$");
+        this.amount = parseInt(saveComponents[0]);
+        this.active = saveComponents[1] === "true";
+    }
+
+    save () {
+        let saveComponents = [];
+        saveComponents.push(this.amount);
+        saveComponents.push(this.active);
+
+        return saveComponents.join("$");
+    }
 }
 
 Resource.Map = {};

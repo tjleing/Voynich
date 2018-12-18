@@ -2,21 +2,19 @@
 
 import { Creature } from "./Creature.js";
 import { Resource } from "./Resource.js";
-import { settings, setSetting, setAllSettings } from "./Settings.js";
+import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
 import { Upgrade } from "./Upgrade.js";
 import { fix } from "./Utils.js";
 
 class Game {
     constructor() {
         this.resources = [];
-
         this.creatures = [];
         this.upgrades = [];
-        this.resources = [];
 
         setAllSettings({"fps": 60});
 
-        // create stat div on left panel
+        // Create stat div on left panel
         this.statDiv = document.createElement("div");
         this.statDiv.id = this.id + "stats";
         var leftpanel = document.getElementById("leftpanel");
@@ -163,6 +161,56 @@ class Game {
         for (const resource of this.resources) {
             resource.draw();
         }
+    }
+
+    save() {
+        // TODO: replace with notification system
+        console.log("Saving");
+        // Get save string by concatenating all of the game state's save strings
+        let save = "";
+
+        save += this.resources.map(resource => resource.save()).join("|");
+        save += "%%";
+        save += this.creatures.map(creature => creature.save()).join("|");
+        save += "%%";
+        save += this.upgrades.map(upgrade => upgrade.save()).join("|");
+        save += "%%";
+        save += saveSettings();
+
+        // Save it to localStorage, base64-encoded
+        localStorage.setItem("save", btoa(save));
+    }
+
+    load() {
+        // Get save string from localStorage
+        let save = localStorage.getItem("save");
+        if (!save) {
+            // There is no save file, just break out
+            return;
+        }
+        // base-64 decode
+        save = atob(save);
+
+        // Initialize everything from the save string
+        let saveComponents = save.split("%%");
+
+        let resourcesSave = saveComponents[0].split("|");
+        for (let i = 0; i<this.resources.length; ++i) {
+            this.resources[i].load(resourcesSave[i]);
+        }
+
+        let creaturesSave = saveComponents[1].split("|");
+        for (let i = 0; i<this.creatures.length; ++i) {
+            this.creatures[i].load(creaturesSave[i]);
+        }
+
+        let upgradesSave = saveComponents[2].split("|");
+        for (let i = 0; i<this.upgrades.length; ++i) {
+            this.upgrades[i].load(upgradesSave[i]);
+        }
+
+        let settingsSave = saveComponents[3];
+        loadSettings(settingsSave);
     }
 }
 
