@@ -6,6 +6,16 @@ var fix = function (num) {
   return Math.round(num);
 };
 
+var deepFix = function (obj) {
+    let objCopy = Object.assign({}, obj);
+    for (let key in objCopy) {
+        if(typeof(objCopy[key]) === "number") {
+            objCopy[key] = fix(objCopy[key]);
+        }
+    }
+    return objCopy;
+};
+
 var formatDuration = function (seconds) {
     var secNum = parseFloat(seconds);
     var formattedComponents = [];
@@ -64,4 +74,4 @@ var maximumTimeToGet = function (amounts, amountsPerSecond) {
     return formatDuration(maxSecondsSoFar);
 };
 
-export { fix, formatDuration, timeToGet, maximumTimeToGet };
+export { deepFix, fix, formatDuration, timeToGet, maximumTimeToGet };

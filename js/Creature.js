@@ -2,7 +2,7 @@
 
 import { Resource } from "./Resource.js";
 import { settings } from "./Settings.js";
-import { fix, maximumTimeToGet } from "./Utils.js";
+import { deepFix, fix, maximumTimeToGet } from "./Utils.js";
 
 class Creature {
     constructor(
@@ -174,8 +174,8 @@ class Creature {
 
     save () {
         let saveComponents = [];
-        saveComponents.push(JSON.stringify(this.cost));
-        saveComponents.push(JSON.stringify(this.totalProduced));
+        saveComponents.push(JSON.stringify(deepFix(this.cost)));
+        saveComponents.push(JSON.stringify(deepFix(this.totalProduced)));
         saveComponents.push(this.quantity);
 
         return saveComponents.join("$");

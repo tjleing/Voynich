@@ -72,8 +72,8 @@ class Resource {
 
     save () {
         let saveComponents = [];
-        saveComponents.push(this.amount);
-        saveComponents.push(this.active);
+        saveComponents.push(fix(this.amount));
+        saveComponents.push(fix(this.active));
 
         return saveComponents.join("$");
     }
