@@ -79,6 +79,4 @@ class Resource {
     }
 }
 
-Resource.Map = {};
-
 export { Resource };

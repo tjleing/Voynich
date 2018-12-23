@@ -12,9 +12,9 @@ window.onload = function () {
 
   // If there's a save stored in localStorage, load it
   game.load();
-  // Set up autosaving every five seconds
+  // Set up autosaving every minute
   // TODO: make a settings option for how long between saves
-  setInterval(function (game) {game.save();}, 5 * 1000, game);
+  setInterval(function (game) {game.save();}, 10 * 1000, game);
 
   document.
     getElementById("leftCanvas").

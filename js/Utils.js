@@ -8,7 +8,7 @@ var fix = function (num) {
 
 var deepFix = function (obj) {
     let objCopy = Object.assign({}, obj);
-    for (let key in objCopy) {
+    for (const key in objCopy) {
         if(typeof(objCopy[key]) === "number") {
             objCopy[key] = fix(objCopy[key]);
         }

@@ -7,12 +7,8 @@ import { Upgrade } from "./Upgrade.js";
 import { fix } from "./Utils.js";
 
 class Game {
-    constructor() {
-        this.resources = [];
-        this.creatures = [];
-        this.upgrades = [];
-
-        setAllSettings({"fps": 60});
+    constructor () {
+        this.hardReset();
 
         // Create stat div on left panel
         this.statDiv = document.createElement("div");
@@ -21,7 +17,20 @@ class Game {
         leftpanel.appendChild(this.statDiv);
     }
 
-    click() {
+    hardReset () {
+        // TODO: attach to hard reset button (with confirmation dialog or something)
+        Resource.Map = {};
+        this.resources = [];
+
+        Creature._counter = 0;
+        this.creatures = [];
+
+        this.upgrades = [];
+
+        setAllSettings({"fps": 60});
+    }
+
+    click () {
         for (const resource of this.resources) {
             resource.amount += 1;
         }
@@ -29,7 +38,7 @@ class Game {
     }
 
     // TODO rethink naming
-    createCreatures() {
+    createCreatures () {
         this.creatures.push(
             new Creature(
                 "Weaseal",
@@ -103,7 +112,7 @@ class Game {
     }
 
     // TODO rethink naming
-    createUpgrades() {
+    createUpgrades () {
         this.upgrades.push(
             new Upgrade(
                 "Berries???",
@@ -120,7 +129,7 @@ class Game {
     }
 
     // TODO rethink naming
-    createResources() {
+    createResources () {
         this.resources.push(
             new Resource(
                 "berries",
@@ -141,7 +150,7 @@ class Game {
         );
     }
 
-    loop() {
+    loop () {
         for (const resource of this.resources) {
             resource.startTick();
         }
@@ -157,15 +166,19 @@ class Game {
         setTimeout(this.loop.bind(this), 1000 / settings.fps);
     }
 
-    draw() {
+    draw () {
         for (const resource of this.resources) {
             resource.draw();
         }
     }
 
-    save() {
-        // TODO: replace with notification system
-        console.log("Saving");
+    save () {
+        new Noty({
+            theme: 'sunset',
+            type: 'success',
+            layout: 'bottomRight',
+            text: 'Game saved'
+        }).show();
         // Get save string by concatenating all of the game state's save strings
         let save = "";
 
@@ -181,7 +194,7 @@ class Game {
         localStorage.setItem("save", btoa(save));
     }
 
-    load() {
+    load () {
         // Get save string from localStorage
         let save = localStorage.getItem("save");
         if (!save) {
