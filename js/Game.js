@@ -28,6 +28,10 @@ class Game {
         this.upgrades = [];
 
         setAllSettings({"fps": 60});
+
+        this.createResources();
+        this.createCreatures();
+        this.createUpgrades();
     }
 
     click () {
