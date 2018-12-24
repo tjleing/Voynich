@@ -7,7 +7,7 @@
 }
 
 body {
-	background-color: #888888;
+	background-color: #E82B2B;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -58,7 +58,7 @@ button {
 	width: 33%;
 	overflow-x: hidden;
 	overflow-y: scroll;
-	background-color: white;
+	background-color: #E8E82B;
 	padding: 15px 15px;
 	float: left;
 }
