@@ -44,4 +44,8 @@ class Upgrade {
     }
 }
 
-export { Upgrade };
+function clearUpgrades () {
+    // TODO: implement when upgrade functionality exists; clear upgrade div
+}
+
+export { clearUpgrades, Upgrade };

@@ -191,6 +191,11 @@ class Creature {
     }
 }
 
-Creature._counter = 0;
+function clearCreatures () {
+    Creature._counter = 0;
 
-export { Creature };
+    const creatureDiv = document.getElementById("creatures");
+    creatureDiv.innerHTML = "";
+}
+
+export { clearCreatures, Creature };

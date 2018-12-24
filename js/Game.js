@@ -1,9 +1,9 @@
 // @ts-check
 
-import { Creature } from "./Creature.js";
-import { Resource } from "./Resource.js";
+import { clearCreatures, Creature } from "./Creature.js";
+import { clearResources, Resource } from "./Resource.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
-import { Upgrade } from "./Upgrade.js";
+import { clearUpgrades, Upgrade } from "./Upgrade.js";
 import { fix } from "./Utils.js";
 
 class Game {
@@ -21,11 +21,13 @@ class Game {
         // TODO: attach to hard reset button (with confirmation dialog or something)
         Resource.Map = {};
         this.resources = [];
+        clearResources();
 
-        Creature._counter = 0;
         this.creatures = [];
+        clearCreatures();
 
         this.upgrades = [];
+        clearUpgrades();
 
         setAllSettings({"fps": 60});
 

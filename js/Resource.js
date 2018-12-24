@@ -79,4 +79,9 @@ class Resource {
     }
 }
 
-export { Resource };
+function clearResources () {
+    const resourceAmounts = document.getElementById("resourceAmounts");
+    resourceAmounts.innerHTML = "";
+}
+
+export { clearResources, Resource };
