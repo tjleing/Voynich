@@ -98,11 +98,11 @@ button {
 }
 
 .creatureCostAffordable {
-	color: blue;
+	color: #2A4C9B;
 }
 
 .creatureCostUnaffordable {
-	color: red;
+	color: #E82B2B;
 }
 
 .tooltip {

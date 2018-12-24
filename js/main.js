@@ -23,4 +23,8 @@ window.onload = function () {
   game.loop();
 };
 
+window.onblur = function () {
+    Noty.closeAll();
+}
+
 export { game };

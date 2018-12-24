@@ -255,5 +255,8 @@
     opacity: .6; }
 
 .noty_theme__sunset.noty_type__success {
-  background-color: #1F1FFF;
+  background-color: #4461A6;
   color: #fff; }
+.noty_theme__sunset.noty_type__success .noty_progressbar {
+  opacity: .6;
+  background-color: #0B2768; }

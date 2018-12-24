@@ -174,10 +174,12 @@ class Game {
 
     save () {
         new Noty({
-            theme: 'sunset',
-            type: 'success',
             layout: 'bottomRight',
-            text: 'Game saved'
+            progressBar: true,
+            theme: 'sunset',
+            timeout: 5000,
+            type: 'success',
+            text: 'Game saved',
         }).show();
         // Get save string by concatenating all of the game state's save strings
         let save = "";
