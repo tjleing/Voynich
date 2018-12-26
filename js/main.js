@@ -1,4 +1,5 @@
 // @ts-check
+/* global Noty */
 import { Game } from "./Game.js";
 import { notify } from "./Utils.js";
 

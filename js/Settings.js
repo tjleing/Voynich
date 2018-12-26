@@ -1,4 +1,5 @@
 // @ts-check
+/* global Noty */
 
 let settings = {};
 
