@@ -81,8 +81,8 @@ var notify = function (text) {
         theme: "sunset",
         timeout: 5000,
         type: "success",
-        text: text,
+        text,
     }).show();
-}
+};
 
 export { deepFix, fix, formatDuration, notify, timeToGet, maximumTimeToGet };

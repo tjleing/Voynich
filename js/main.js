@@ -1,5 +1,6 @@
 // @ts-check
 import { Game } from "./Game.js";
+import { notify } from "./Utils.js";
 
 var game;
 
@@ -16,7 +17,7 @@ window.onload = function () {
 
 
     // TODO: move to middle panel
-    document.getElementById("hardReset").onclick = game.hardReset.bind(game);
+    document.getElementById("hardReset").onclick = game.hardReset.bind(game, true);
     document.getElementById("export").onclick = game.exportSave.bind(game);
     document.getElementById("import").onclick = game.importSave.bind(game);
 

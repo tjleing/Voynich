@@ -8,7 +8,7 @@ import { fix, notify } from "./Utils.js";
 
 class Game {
     constructor () {
-        this.hardReset();
+        this.hardReset(false);
 
         // Create stat div on left panel
         this.statDiv = document.createElement("div");
@@ -17,8 +17,8 @@ class Game {
         leftpanel.appendChild(this.statDiv);
     }
 
-    hardReset () {
-        if (confirm("Are you sure that you want to erase all your progress?")) {
+    hardReset (prompt) {
+        if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
             Resource.Map = {};
             this.resources = [];
             clearResources();
