@@ -123,7 +123,7 @@ button {
     left: 50%;
     margin-left: -50%; /* Use half of the width to center the tooltip */
 	font-size: 14px;
-	opacity: 0.8;
+	background: rgba(20, 20, 20, 0.8);
 }
 
 .tooltip .tooltipText::after {
