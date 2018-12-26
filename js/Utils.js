@@ -1,4 +1,5 @@
 // @ts-check
+/* global Noty */
 
 import { settings } from "./Settings.js";
 
