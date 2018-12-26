@@ -74,4 +74,15 @@ var maximumTimeToGet = function (amounts, amountsPerSecond) {
     return formatDuration(maxSecondsSoFar);
 };
 
-export { deepFix, fix, formatDuration, timeToGet, maximumTimeToGet };
+var notify = function (text) {
+    new Noty({
+        layout: "bottomRight",
+        progressBar: true,
+        theme: "sunset",
+        timeout: 5000,
+        type: "success",
+        text: text,
+    }).show();
+}
+
+export { deepFix, fix, formatDuration, notify, timeToGet, maximumTimeToGet };

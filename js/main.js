@@ -4,26 +4,35 @@ import { Game } from "./Game.js";
 var game;
 
 window.onload = function () {
-  game = new Game();
+    game = new Game();
 
-  // If there's a save stored in localStorage, load it
-  game.load();
-  // Set up autosaving every minute
-  // TODO: make a settings option for how long between saves
-  setInterval(function (game) {game.save();}, 10 * 1000, game);
+    // If there's a save stored in localStorage, load it
+    game.load();
 
-  // TODO: move to middle panel; make other buttons work too
-  document.getElementById("hardReset").onclick = game.hardReset.bind(game);
+    // Set up autosaving every 10 seconds
+    // notify("Game saved") is in this function so that other calls to game.save() don't notify when not necessary
+    // TODO: make a settings option for how long between saves
+    setInterval(function (game) {game.save(); notify("Game saved"); }, 10 * 1000, game);
 
-  document.
-    getElementById("leftCanvas").
-    addEventListener("click", game.click.bind(game), false);
 
-  game.loop();
+    // TODO: move to middle panel
+    document.getElementById("hardReset").onclick = game.hardReset.bind(game);
+    document.getElementById("export").onclick = game.exportSave.bind(game);
+    document.getElementById("import").onclick = game.importSave.bind(game);
+
+    document.
+        getElementById("leftCanvas").
+        addEventListener("click", game.click.bind(game), false);
+
+    game.loop();
+
+    window.addEventListener("blur", function () {
+        Noty.closeAll();
+    });
+
+    window.addEventListener("focus", function () {
+        Noty.closeAll();
+    });
 };
-
-window.onblur = function () {
-    Noty.closeAll();
-}
 
 export { game };

@@ -4,7 +4,7 @@ import { clearCreatures, Creature } from "./Creature.js";
 import { clearResources, Resource } from "./Resource.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
 import { clearUpgrades, Upgrade } from "./Upgrade.js";
-import { fix } from "./Utils.js";
+import { fix, notify } from "./Utils.js";
 
 class Game {
     constructor () {
@@ -18,22 +18,23 @@ class Game {
     }
 
     hardReset () {
-        // TODO: attach to hard reset button (with confirmation dialog or something)
-        Resource.Map = {};
-        this.resources = [];
-        clearResources();
+        if (confirm("Are you sure that you want to erase all your progress?")) {
+            Resource.Map = {};
+            this.resources = [];
+            clearResources();
 
-        this.creatures = [];
-        clearCreatures();
+            this.creatures = [];
+            clearCreatures();
 
-        this.upgrades = [];
-        clearUpgrades();
+            this.upgrades = [];
+            clearUpgrades();
 
-        setAllSettings({"fps": 60});
+            setAllSettings({"fps": 60});
 
-        this.createResources();
-        this.createCreatures();
-        this.createUpgrades();
+            this.createResources();
+            this.createCreatures();
+            this.createUpgrades();
+        }
     }
 
     click () {
@@ -179,14 +180,6 @@ class Game {
     }
 
     save () {
-        new Noty({
-            layout: 'bottomRight',
-            progressBar: true,
-            theme: 'sunset',
-            timeout: 5000,
-            type: 'success',
-            text: 'Game saved',
-        }).show();
         // Get save string by concatenating all of the game state's save strings
         let save = "";
 
@@ -204,11 +197,55 @@ class Game {
 
     load () {
         // Get save string from localStorage
-        let save = localStorage.getItem("save");
+        const save = localStorage.getItem("save");
         if (!save) {
             // There is no save file, just break out
             return;
         }
+        this.loadSave(save)
+    }
+
+    importSave () {
+        this.save();
+        const oldSave = localStorage.getItem("save"); // To restore back to if the new save is invalid
+        const newSave = prompt("Paste your save (your current save will be overwritten)!");
+
+        try {
+            this.loadSave(newSave);
+            setTimeout(function () { notify("Save loaded"); }, 300);
+        }
+        catch (error) {
+            this.loadSave(oldSave);
+            setTimeout(function () { notify("Invalid save"); }, 300);
+        }
+        // About the strange setTimeouts: prompt() blurs and refocuses the page, which clears the Noty notifications
+        // so that there's not an extra backlog waiting for a user after being off the page for a long time.  Moreover
+        // it seems that the blur and refocus events are called a fair amount after the prompt is closed?  In any case,
+        // 300 ms after the prompt is closed, notifications can be sent.
+    }
+
+    exportSave () {
+        this.save();
+        const save = localStorage.getItem("save");
+
+        const saveTextArea = document.createElement("textarea");
+        saveTextArea.value = save;
+        document.body.appendChild(saveTextArea);
+        saveTextArea.focus();
+        saveTextArea.select();
+
+        try {
+            var successful = document.execCommand("copy");
+            var msg = successful ? "successful" : "unsuccessful";
+            notify("Save exported to clipboard");
+        } catch (err) {
+            notify("Unable to copy save");
+        }
+
+        document.body.removeChild(saveTextArea);
+    }
+
+    loadSave (save) {
         // base-64 decode
         save = atob(save);
 
