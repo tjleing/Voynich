@@ -202,7 +202,7 @@ class Game {
             // There is no save file, just break out
             return;
         }
-        this.loadSave(save)
+        this.loadSave(save);
     }
 
     importSave () {
