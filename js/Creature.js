@@ -148,7 +148,7 @@ class Creature {
         }
     }
 
-    buy() {
+    buy () {
         this.setAffordable();
         if (!this.affordable) {
             return;

@@ -179,6 +179,15 @@ class Game {
         }
     }
 
+    // TODO: modifiers to buy max or multiple, etc.; also visual indicator for such
+    // TODO: figure out what to do if there's 10 or more creature types?
+    handleKey (key) {
+        if (key >= '1' && key <= this.creatures.length.toString()) {
+            this.creatures[parseInt(key)-1].buy();
+        }
+    }
+
+    // SAVING AND LOADING
     save () {
         // Get save string by concatenating all of the game state's save strings
         let save = "";

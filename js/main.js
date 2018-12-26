@@ -21,9 +21,7 @@ window.onload = function () {
     document.getElementById("export").onclick = game.exportSave.bind(game);
     document.getElementById("import").onclick = game.importSave.bind(game);
 
-    document.
-        getElementById("leftCanvas").
-        addEventListener("click", game.click.bind(game), false);
+    document.getElementById("leftCanvas").addEventListener("click", game.click.bind(game), false);
 
     game.loop();
 
@@ -34,6 +32,8 @@ window.onload = function () {
     window.addEventListener("focus", function () {
         Noty.closeAll();
     });
+
+    window.addEventListener("keydown", function (e) { game.handleKey.call(game, e.key.toUpperCase()); });
 };
 
 export { game };
