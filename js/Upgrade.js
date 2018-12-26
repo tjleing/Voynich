@@ -119,7 +119,6 @@ class Upgrade {
 
     buy () {
         this.setAffordable();
-        console.log(this);
         if (this.unlocked && this.affordable && !this.purchased) {
             for (var key in this.cost) {
                 if (this.cost.hasOwnProperty(key)) {
