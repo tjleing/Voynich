@@ -37,7 +37,7 @@ class Creature {
         const br2 = document.createElement("br");
 
         this.button = document.createElement("button");
-        this.button.id = `button${this.id}`;
+        this.button.id = `creatureButton${this.id}`;
         this.button.classList.add("button");
         this.button.classList.add("tooltip");
 
@@ -61,7 +61,7 @@ class Creature {
 
         buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
         buttonDiv.appendChild(this.button);
-        buttonDiv.id = `${this.id}`;
+        buttonDiv.id = `creature${this.id}`;
         const creatureDiv = document.getElementById("creatures");
         creatureDiv.appendChild(buttonDiv);
     }
@@ -80,10 +80,10 @@ class Creature {
             const resource = Resource.Map[resourceName];
             let affordableClass = "";
             if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
-                affordableClass = "creatureCostUnaffordable";
+                affordableClass = "costUnaffordable";
             }
             else {
-                affordableClass = "creatureCostAffordable";
+                affordableClass = "costAffordable";
             }
             newCostSpanHTML += `<span class=${affordableClass}>${resource.displayNamePlural}: ${fix(this.cost[resourceName])}</span><br>`;
         }
@@ -104,7 +104,7 @@ class Creature {
         }
         let timeUntilAffordableString = "";
         if (!this.affordable) {
-            // TODO: two maps? gross
+            // TODO: two maps? gross -- at least maybe hide in Utils
             const timeUntilAffordable = maximumTimeToGet(
                 Object.keys(this.cost).map((resourceName) =>
                     this.cost[resourceName]-Resource.Map[resourceName].amount

@@ -85,6 +85,7 @@ button {
 	cursor: pointer;
 }
 
+
 .creatureName {
 	font-size: 30px;
 }
@@ -97,11 +98,21 @@ button {
 	font-size: 12px;
 }
 
-.creatureCostAffordable {
+
+.upgradeName {
+	font-size: 20px;
+}
+
+.upgradeCost {
+	font-size: 12px;
+}
+
+
+.costAffordable {
 	color: #2A4C9B;
 }
 
-.creatureCostUnaffordable {
+.costUnaffordable {
 	color: #E82B2B;
 }
 

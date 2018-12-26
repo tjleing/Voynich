@@ -122,15 +122,19 @@ class Game {
     createUpgrades () {
         this.upgrades.push(
             new Upgrade(
-                "Berries???",
-                {},
+                "Two for one deal!",
+                {
+                    berries: 100,
+                    wood: 100,
+                },
                 () => {
-                    this.creatures[0].buy();
+                    for (const creature of this.creatures) {
+                        creature.cost["wood"] *= 0.5;
+                        creature.cost["berries"] *= 0.5;
+                    }
                 },
                 () => {return true;},
-                true,
-                true,
-                false,
+                "Everything gets cheaper?",
             )
         );
     }
@@ -166,6 +170,12 @@ class Game {
         }
         for (const creature of this.creatures) {
             creature.updateDOM();
+            // TODO: make sure separating tick() and updateDOM() is the right decision (like to make sure we're not constantly lagging a frame behind or something?)
+            // TODO: actually I'm pretty sure that it's for resource tickAdd() and tickConsume()ing.  Then the todo becomes to make sure that all this is in the right order and comment to remind me of what's going on here
+        }
+        for (const upgrade of this.upgrades) {
+            upgrade.tick();
+            // TODO: as above, make sure that keeping updateDOM() inside tick() is the right course of action (counter to above)
         }
         this.draw();
 
