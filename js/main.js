@@ -27,10 +27,12 @@ window.onload = function () {
 
     window.addEventListener("blur", function () {
         Noty.closeAll();
+        Noty.clearQueue();
     });
 
     window.addEventListener("focus", function () {
         Noty.closeAll();
+        Noty.clearQueue();
     });
 
     window.addEventListener("keydown", function (e) { game.handleKey.call(game, e.key.toUpperCase()); });
