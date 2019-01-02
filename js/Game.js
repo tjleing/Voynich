@@ -29,7 +29,7 @@ class Game {
             this.upgrades = [];
             clearUpgrades();
 
-            setAllSettings({"fps": 60});
+            setAllSettings({"bgColor": "#E82B2B", "fps": 60, "saveTime": 5});
 
             this.createResources();
             this.createCreatures();
@@ -39,9 +39,15 @@ class Game {
 
     click () {
         for (const resource of this.resources) {
-            resource.amount += 1;
+            if (resource.internalName === "flowers") {
+                if (Math.random() <= 0.01) {
+                    resource.amount += 1;
+                }
+            }
+            else {
+                resource.amount += 1;
+            }
         }
-        this.upgrades[0].buy();
     }
 
     // TODO rethink naming
@@ -123,6 +129,7 @@ class Game {
         this.upgrades.push(
             new Upgrade(
                 "Two for one deal!",
+                "Everything gets cheaper?",
                 {
                     berries: 100,
                     wood: 100,
@@ -132,9 +139,110 @@ class Game {
                         creature.cost["wood"] *= 0.5;
                         creature.cost["berries"] *= 0.5;
                     }
+                    for (const upgrade of this.upgrades) {
+                        upgrade.cost["wood"] *= 0.5;
+                        upgrade.cost["berries"] *= 0.5;
+                    }
                 },
-                () => {return true;},
-                "Everything gets cheaper?",
+                () => {
+                    return (this.resources[1].amount >= 10);
+                },
+            )
+        );
+        this.upgrades.push(
+            new Upgrade(
+                "Better dams",
+                "Shucks, none of those ideas are good",
+                {
+                    berries: 1000,
+                    wood: 1000,
+                },
+                () => {
+                    this.creatures[1].production["wood"] *= 3;
+                },
+                () => {
+                    var sum = 0;
+                    for (const creature of this.creatures) {
+                        sum += creature.quantity;
+                    }
+                    return (sum >= 10);
+                },
+            )
+        );
+        this.upgrades.push(
+            new Upgrade(
+                "Why would you do this?",
+                "Makes everything do nothing",
+                {
+                    berries: 10,
+                    wood: 10,
+                },
+                () => {
+                    for (const creature of this.creatures) {
+                        creature.production["wood"] *= 0.001;
+                        creature.production["berries"] *= 0.001;
+                    }
+                },
+                () => {
+                    return (this.creatures[1].quantity > 0);
+                },
+            )
+        );
+        this.upgrades.push(
+            new Upgrade(
+                "You shouldn't have done that",
+                "Fixes your mistakes",
+                {
+                    berries: 100,
+                    wood: 100,
+                },
+                () => {
+                    for (const creature of this.creatures) {
+                        creature.production["wood"] /= 0.001;
+                        creature.production["berries"] /= 0.001;
+                    }
+                },
+                () => {
+                    return (this.upgrades[2].purchased);
+                },
+            )
+        );
+        this.upgrades.push(
+            new Upgrade(
+                "More depressing",
+                "Yum! Makes the game more depressing",
+                {
+                    berries: 0,
+                    wood: 0,
+                    flowers: 0,
+                },
+                () => {
+                    settings.bgColor = "#888888";
+                },
+                () => {
+                    for (const creature of this.creatures) {
+                        if (creature.quantity >= 13) return true;
+                    }
+                    return false;
+                },
+            )
+        );
+        this.upgrades.push(
+            new Upgrade(
+                "Skip the whole game",
+                "This one's on the hill!",
+                {
+                    flowers: 1,
+                },
+                () => {
+                    this.creatures[2].quantity++;
+                },
+                () => {
+                    for (const creature of this.creatures) {
+                        if (creature.quantity > 0) return false;
+                    }
+                    return true;
+                },
             )
         );
     }
@@ -159,6 +267,15 @@ class Game {
                 true
             )
         );
+        this.resources.push(
+            new Resource(
+                "flowers",
+                "Meadow Lily",
+                "Meadow Lilies",
+                0,
+                false
+            )
+        )
     }
 
     loop () {
@@ -178,6 +295,8 @@ class Game {
             // TODO: as above, make sure that keeping updateDOM() inside tick() is the right course of action (counter to above)
         }
         this.draw();
+
+        document.body.style.backgroundColor = settings.bgColor;
 
         // bind() to set the this var correctly.
         setTimeout(this.loop.bind(this), 1000 / settings.fps);
@@ -221,7 +340,12 @@ class Game {
             // There is no save file, just break out
             return;
         }
-        this.loadSave(save);
+        try {
+            this.loadSave(save);
+        }
+        catch (error) {
+            this.hardReset();
+        }
     }
 
     importSave () {

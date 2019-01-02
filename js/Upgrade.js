@@ -5,7 +5,7 @@ import { settings } from "./Settings.js";
 import { fix, maximumTimeToGet } from "./Utils.js";
 
 class Upgrade {
-    constructor (name, cost, effect, unlockCondition, flavorText) {
+    constructor (name, flavorText, cost, effect, unlockCondition) {
         this.name = name;
         this.cost = cost;
         this.effect = effect;
@@ -49,7 +49,12 @@ class Upgrade {
     }
 
     destroyDOM () {
-        document.getElementById("upgrades").removeChild(this.buttonDiv);
+        try {
+            document.getElementById("upgrades").removeChild(this.buttonDiv);
+        }
+        catch (error) {
+            // Already removed
+        }
     }
 
     updateDOM () {
@@ -108,6 +113,20 @@ class Upgrade {
         }
         this.setAffordable();
         if (this.unlocked) {
+            if (!this.unlockCondition()) {
+                this.unlocked = false;
+                console.log("shucks!");
+                this.destroyDOM();
+                return;
+            }
+            if (this.affordable) {
+                this.button.classList.toggle("grayed", false);
+                this.button.classList.toggle("notgrayed", true);
+            }
+            else {
+                this.button.classList.toggle("notgrayed", false);
+                this.button.classList.toggle("grayed", true);
+            }
             this.updateDOM();
             return;
         }
@@ -135,6 +154,12 @@ class Upgrade {
     load (saveString) {
         let saveComponents = saveString.split("$");
         this.purchased = saveComponents[0] === "true";
+        if (this.purchased || !this.unlocked) {
+            this.destroyDOM();
+        }
+        if (this.purchased) {
+            this.effect();
+        }
     }
 
     save () {

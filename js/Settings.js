@@ -21,7 +21,7 @@ function loadSettings (saveString) {
     let saveComponents = saveString.split("$");
 
     for (const component of saveComponents) {
-        const kv = component.split("#");
+        const kv = component.split("/");
         if (!isNaN(kv[1])) {
             kv[1] = +kv[1];
         }
@@ -33,7 +33,7 @@ function saveSettings () {
     // Save the current settings dictionary into a string of key-value pairs,
     // to be loaded by loadSettings at a later time.  Return this save string.
 
-    let saveString = Object.keys(settings).map(key => key + "#" + settings[key].toString()).join("$");
+    let saveString = Object.keys(settings).map(key => key + "/" + settings[key].toString()).join("$");
     return saveString;
 }
 

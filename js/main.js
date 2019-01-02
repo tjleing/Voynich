@@ -1,9 +1,11 @@
 // @ts-check
 /* global Noty */
 import { Game } from "./Game.js";
+import { settings } from "./Settings.js";
 import { notify } from "./Utils.js";
 
 var game;
+var isFocused = true;
 
 window.onload = function () {
     game = new Game();
@@ -14,7 +16,15 @@ window.onload = function () {
     // Set up autosaving every 10 seconds
     // notify("Game saved") is in this function so that other calls to game.save() don't notify when not necessary
     // TODO: make a settings option for how long between saves
-    setInterval(function (game) {game.save(); notify("Game saved"); }, 10 * 1000, game);
+
+    const saveAndNotify = function (game) {
+        game.save();
+        if (isFocused) {
+            notify("Game saved");
+        }
+        setTimeout(saveAndNotify, settings.saveTime * 1000, game);
+    };
+    setTimeout(saveAndNotify, 10 * 1000, game);
 
 
     // TODO: move to middle panel
@@ -27,13 +37,11 @@ window.onload = function () {
     game.loop();
 
     window.addEventListener("blur", function () {
-        Noty.closeAll();
-        Noty.clearQueue();
+        isFocused = false;
     });
 
     window.addEventListener("focus", function () {
-        Noty.closeAll();
-        Noty.clearQueue();
+        isFocused = true;
     });
 
     window.addEventListener("keydown", function (e) { game.handleKey.call(game, e.key.toUpperCase()); });

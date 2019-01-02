@@ -17,7 +17,9 @@ class Resource {
         this.active = active;
         Resource.Map[internalName] = this;
 
-        this.constructHTML();
+        if (this.active) {
+            this.constructHTML();
+        }
     }
 
     constructHTML () {
@@ -29,12 +31,21 @@ class Resource {
     }
 
     draw () {
+        if (!this.active) {
+            if (this.amount > 0) {
+                this.active = true;
+                this.constructHTML();
+            }
+            else {
+                return;
+            }
+        }
+
         const fixedAmount = fix(this.amount);
         const nameToUse = fixedAmount === 1 ? this.displayNameSingular : this.displayNamePlural;
         const amountPerSecond = fix(this.amountPerTick * settings.fps * 10) / 10;
         this.amountDiv.textContent = `${fixedAmount} ${nameToUse} (+${amountPerSecond}/sec)`;
     }
-
 
     // To keep track of the resource gain per tick (and consequently per second),
     // use startTick to zero out the gain, and then for adding or consuming the
@@ -68,12 +79,16 @@ class Resource {
         let saveComponents = saveString.split("$");
         this.amount = parseInt(saveComponents[0]);
         this.active = saveComponents[1] === "true";
+
+        if (this.active) {
+            this.constructHTML();
+        }
     }
 
     save () {
         let saveComponents = [];
         saveComponents.push(fix(this.amount));
-        saveComponents.push(fix(this.active));
+        saveComponents.push(this.active.toString());
 
         return saveComponents.join("$");
     }

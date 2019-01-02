@@ -167,14 +167,15 @@ class Creature {
     // Saving and loading
     load (saveString) {
         let saveComponents = saveString.split("$");
-        this.cost = JSON.parse(saveComponents[0]); // JSON stores types, so need to parse values back to ints
-        this.totalProduced = JSON.parse(saveComponents[1]);
-        this.quantity = parseInt(saveComponents[2]);
+        this.totalProduced = JSON.parse(saveComponents[0]);
+        this.quantity = parseInt(saveComponents[1]);
+        for (var i = 1; i < this.quantity; ++i) {
+            this.costScalingFunction();
+        }
     }
 
     save () {
         let saveComponents = [];
-        saveComponents.push(JSON.stringify(deepFix(this.cost)));
         saveComponents.push(JSON.stringify(deepFix(this.totalProduced)));
         saveComponents.push(this.quantity);
 
