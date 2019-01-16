@@ -100,6 +100,32 @@ class Game {
         );
         this.creatures.push(
             new Creature(
+                "Buckaroo",
+                "Buckaroos",
+                {
+                    berries: 500,
+                    wood: 120,
+                    flowers: 1
+                },
+                {
+                    berries: 100,
+                    wood: 20,
+                    flowers: 0.001
+                },
+                {
+                    berries: 0,
+                    wood: 0,
+                },
+                function () {
+                    this.cost["berries"] *= 1.15;
+                    this.cost["wood"] *= 1.15;
+                },
+                "Jumpy and frantic but great at gathering, oh deer!",
+                0,
+            )
+        );
+        this.creatures.push(
+            new Creature(
                 "Ptrocanfer",
                 "Ptrocanfers",
                 {
@@ -125,32 +151,6 @@ class Game {
                 0,
             )
         );
-            this.creatures.push(
-                new Creature(
-                    "Buckaroo",
-                    "Buckaroos",
-                    {
-                        berries: 500,
-                        wood: 120,
-                        flowers: 1
-                    },
-                    {
-                        berries: 100,
-                        wood: 20,
-                        flowers: 0.001
-                    },
-                    {
-                        berries: 0,
-                        wood: 0,
-                    },
-                    function () {
-                        this.cost["berries"] *= 1.15;
-                        this.cost["wood"] *= 1.15;
-                    },
-                    "Jumpy and frantic but great at gathering, oh dear!",
-                    0,
-                )
-            );
     }
 
     // TODO rethink naming
