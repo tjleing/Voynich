@@ -144,7 +144,6 @@ class Game {
                 },
                 function () {
                     this.cost["wood"] *= 1.15;
-                    this.cost["berries"] *= 1.15;
                     this.cost["flowers"] *= 1.15;
                 },
                 "Ridiculously expensive!  But maybe worth it?",
@@ -264,7 +263,7 @@ class Game {
                     flowers: 1,
                 },
                 () => {
-                    this.creatures[2].quantity++;
+                    this.creatures[3].quantity++;
                 },
                 () => {
                     for (const creature of this.creatures) {
