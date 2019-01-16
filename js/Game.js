@@ -104,23 +104,51 @@ class Game {
         );
         this.creatures.push(
             new Creature(
-                "Ptrocanfer",
-                "Ptrocanfers",
+                "Buckaroo",
+                "Buckaroos",
                 {
-                    berries: 1000000000,
-                    wood: 500000000,
+                    berries: 500,
+                    wood: 120,
+                    flowers: 1
                 },
                 {
-                    berries: 100000000,
-                    wood: 200000000,
+                    berries: 100,
+                    wood: 20,
+                    flowers: 0.001
                 },
                 {
                     berries: 0,
                     wood: 0,
                 },
                 function () {
-                    this.cost["wood"] *= 1.15;
                     this.cost["berries"] *= 1.15;
+                    this.cost["wood"] *= 1.15;
+                },
+                "Jumpy and frantic but great at gathering, oh deer!",
+                0,
+            )
+        );
+        this.creatures.push(
+            new Creature(
+                "Ptrocanfer",
+                "Ptrocanfers",
+                {
+                    wood: 890000,
+                    flowers: 50,
+                },
+                {
+                    berries: 100000,
+                    wood: 100000,
+                    flowers: 10,
+                },
+                {
+                    berries: 0,
+                    wood: 0,
+                    flowers: 0,
+                },
+                function () {
+                    this.cost["wood"] *= 1.15;
+                    this.cost["flowers"] *= 1.15;
                 },
                 "Ridiculously expensive!  But maybe worth it?",
                 0,
@@ -239,7 +267,7 @@ class Game {
                     flowers: 1,
                 },
                 () => {
-                    this.creatures[2].quantity++;
+                    this.creatures[3].quantity++;
                 },
                 () => {
                     for (const creature of this.creatures) {
