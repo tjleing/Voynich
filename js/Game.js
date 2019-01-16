@@ -1,6 +1,7 @@
 // @ts-check
 
 import { clearCreatures, Creature } from "./Creature.js";
+import { clearNews, News } from "./News.js";
 import { clearResources, Resource } from "./Resource.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
 import { clearUpgrades, Upgrade } from "./Upgrade.js";
@@ -34,6 +35,9 @@ class Game {
             this.createResources();
             this.createCreatures();
             this.createUpgrades();
+
+            clearNews();
+            this.news = new News();
         }
     }
 
@@ -294,6 +298,8 @@ class Game {
             upgrade.tick();
             // TODO: as above, make sure that keeping updateDOM() inside tick() is the right course of action (counter to above)
         }
+        this.news.tick();
+
         this.draw();
 
         document.body.style.backgroundColor = settings.bgColor;
