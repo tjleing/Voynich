@@ -125,7 +125,6 @@ class Game {
                 0,
             )
         );
-        createCreatures () {
             this.creatures.push(
                 new Creature(
                     "Buckaroo",
