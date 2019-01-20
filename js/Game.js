@@ -59,7 +59,9 @@ class Game {
         this.creatures.push(
             new Creature(
                 "Weaseal",
+                "Weaseal",
                 "Weaseals",
+                "It's got fur and also... blubber?  You don't want to touch this creature at all.",
                 {
                     berries: 1,
                     wood: 5,
@@ -75,14 +77,15 @@ class Game {
                 function () {
                     this.cost["berries"] *= 1.15;
                 },
-                "It's got fur and also... blubber?  You don't want to touch this creature at all.",
                 0,
             )
         );
         this.creatures.push(
             new Creature(
                 "Beaverine",
+                "Beaverine",
                 "Beaverines",
+                "Sometimes makes dams.  Sometimes tears apart others' dams.  Absolutely terrifying.",
                 {
                     berries: 100,
                     wood: 50,
@@ -98,14 +101,15 @@ class Game {
                 function () {
                     this.cost["wood"] *= 1.15;
                 },
-                "Sometimes makes dams.  Sometimes tears apart others' dams.  Absolutely terrifying.",
                 0,
             )
         );
         this.creatures.push(
             new Creature(
                 "Buckaroo",
+                "Buckaroo",
                 "Buckaroos",
+                "Jumpy and frantic but great at gathering, oh deer!",
                 {
                     berries: 500,
                     wood: 120,
@@ -124,14 +128,16 @@ class Game {
                     this.cost["berries"] *= 1.15;
                     this.cost["wood"] *= 1.15;
                 },
-                "Jumpy and frantic but great at gathering, oh deer!",
                 0,
             )
         );
         this.creatures.push(
             new Creature(
                 "Ptrocanfer",
+                "Ptrocanfer",
                 "Ptrocanfers",
+                "Ridiculously expensive!  But maybe worth it?",
+
                 {
                     wood: 890000,
                     flowers: 50,
@@ -150,7 +156,6 @@ class Game {
                     this.cost["wood"] *= 1.15;
                     this.cost["flowers"] *= 1.15;
                 },
-                "Ridiculously expensive!  But maybe worth it?",
                 0,
             )
         );
@@ -160,6 +165,7 @@ class Game {
     createUpgrades () {
         this.upgrades.push(
             new Upgrade(
+                "twoForOne",
                 "Two for one deal!",
                 "Everything gets cheaper?",
                 {
@@ -183,6 +189,7 @@ class Game {
         );
         this.upgrades.push(
             new Upgrade(
+                "BeaverineUp1",
                 "Better dams",
                 "Shucks, none of those ideas are good",
                 {
@@ -203,6 +210,7 @@ class Game {
         );
         this.upgrades.push(
             new Upgrade(
+                "everythingIsAwful",
                 "Why would you do this?",
                 "Makes everything do nothing",
                 {
@@ -222,6 +230,7 @@ class Game {
         );
         this.upgrades.push(
             new Upgrade(
+                "undoAwful",
                 "You shouldn't have done that",
                 "Fixes your mistakes",
                 {
@@ -241,6 +250,7 @@ class Game {
         );
         this.upgrades.push(
             new Upgrade(
+                "greyBG",
                 "More depressing",
                 "Yum! Makes the game more depressing",
                 {
@@ -261,6 +271,7 @@ class Game {
         );
         this.upgrades.push(
             new Upgrade(
+                "getPtroed",
                 "Skip the whole game",
                 "This one's on the hill!",
                 {

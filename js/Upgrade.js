@@ -5,16 +5,26 @@ import { settings } from "./Settings.js";
 import { fix, maximumTimeToGet } from "./Utils.js";
 
 class Upgrade {
-    constructor (name, flavorText, cost, effect, unlockCondition) {
-        this.name = name;
+    constructor (
+        internalName,
+        displayName,
+        flavorText,
+        cost,
+        effect,
+        unlockCondition
+      ) {
+        this.internalName = internalName;
+        this.displayName = displayName;
+        this.flavorText = flavorText;
         this.cost = cost;
         this.effect = effect;
         this.unlockCondition = unlockCondition;
-        this.flavorText = flavorText;
 
         this.unlocked = false;
         this.purchased = false;
         this.affordable = false;
+
+        //Upgrade.Map[internalName] = this;
     }
 
     constructDOM () {
@@ -59,7 +69,7 @@ class Upgrade {
 
     updateDOM () {
         // TODO: bake name and cost in constructDOM(), since it won't ever change from its original... unless glitch world?
-        const newNameSpan = `${this.name}`;
+        const newNameSpan = `${this.displayName}`;
         if (this.nameSpan.textContent !== newNameSpan) {
             this.nameSpan.textContent = newNameSpan;
         }

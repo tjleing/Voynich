@@ -4,17 +4,20 @@ import { fix } from "./Utils.js";
 import { settings } from "./Settings.js";
 
 class Resource {
-    constructor (internalName,
-                 displayNameSingular,
-                 displayNamePlural,
-                 startingAmount,
-                 active) {
+    constructor (
+        internalName,
+        displayNameSingular,
+        displayNamePlural,
+        startingAmount,
+        active
+    ) {
         this.internalName = internalName;
         this.displayNameSingular = displayNameSingular;
         this.displayNamePlural = displayNamePlural;
         this.amount = startingAmount;
         this.amountPerTick = 0;
         this.active = active;
+
         Resource.Map[internalName] = this;
 
         if (this.active) {

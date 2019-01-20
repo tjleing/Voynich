@@ -6,26 +6,31 @@ import { deepFix, fix, maximumTimeToGet } from "./Utils.js";
 
 class Creature {
     constructor(
-        nameSingular,
-        namePlural,
+        internalName,
+        displayNameSingular,
+        displayNamePlural,
+        flavorText,
         cost,
         production,
         totalProduced,
         costScalingFunction,
-        flavorText,
         initialQuantity
     ) {
         this._id = Creature.counter;
 
-        this.nameSingular = nameSingular;
-        this.namePlural = namePlural;
+        this.internalName = internalName;
+        this.displayNameSingular = displayNameSingular;
+        this.displayNamePlural = displayNamePlural;
+        this.flavorText = flavorText;
         this.cost = cost;
         this.production = production;
         this.totalProduced = totalProduced;
         this.costScalingFunction = costScalingFunction;
-        this.flavorText = flavorText;
         this.quantity = initialQuantity; // TODO: don't put this here; just in save-load?  at the very least don't pass through constructor, just set to 0s based on production (might make it hard for a creature to produce new resources? [can pass in a 0 for that in production, and then special-case it in tooltip??])
+
         this.affordable = false;
+
+        //Creature.Map[internalName] = this;
 
         this.constructDOM();
     }
@@ -67,7 +72,7 @@ class Creature {
     }
 
     updateDOM () {
-        const newNameSpan = `${this.nameSingular}`;
+        const newNameSpan = `${this.displayNameSingular}`;
         if (this.nameSpan.textContent !== newNameSpan) {
             this.nameSpan.textContent = newNameSpan;
         }
