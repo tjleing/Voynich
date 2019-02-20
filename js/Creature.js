@@ -30,7 +30,7 @@ class Creature {
 
         this.affordable = false;
 
-        //Creature.Map[internalName] = this;
+        Creature.Map[internalName] = this;
 
         this.constructDOM();
     }

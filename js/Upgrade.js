@@ -24,7 +24,7 @@ class Upgrade {
         this.purchased = false;
         this.affordable = false;
 
-        //Upgrade.Map[internalName] = this;
+        Upgrade.Map[internalName] = this;
     }
 
     constructDOM () {

@@ -24,9 +24,11 @@ class Game {
             this.resources = [];
             clearResources();
 
+            Creature.Map = {};
             this.creatures = [];
             clearCreatures();
 
+            Upgrade.Map = {};
             this.upgrades = [];
             clearUpgrades();
 
@@ -174,12 +176,14 @@ class Game {
                 },
                 () => {
                     for (const creature of this.creatures) {
-                        creature.cost["wood"] *= 0.5;
-                        creature.cost["berries"] *= 0.5;
+                        for (const resource of creature.cost) {
+                            creature.cost[resource] *= 0.5;
+                        }
                     }
                     for (const upgrade of this.upgrades) {
-                        upgrade.cost["wood"] *= 0.5;
-                        upgrade.cost["berries"] *= 0.5;
+                        for (const resource of upgrade.cost) {
+                            upgrade.cost[resource] *= 0.5;
+                        }
                     }
                 },
                 () => {

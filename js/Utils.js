@@ -58,6 +58,9 @@ var formatDuration = function (seconds) {
 };
 
 var timeToGet = function (totalAmount, amountPerSecond) {
+    if (totalAmount === 0) {
+        return formatDuration(0);
+    }
     if (amountPerSecond === 0) {
         return "Infinity";
     }
@@ -67,6 +70,9 @@ var timeToGet = function (totalAmount, amountPerSecond) {
 var maximumTimeToGet = function (amounts, amountsPerSecond) {
     let maxSecondsSoFar = 0;
     for (var i = 0; i<amounts.length; ++i) {
+        if (amounts[i] === 0) {
+            continue;
+        }
         if (amountsPerSecond[i] === 0) {
             return "Infinity";
         }
