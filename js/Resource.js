@@ -8,12 +8,14 @@ class Resource {
         internalName,
         displayNameSingular,
         displayNamePlural,
+        flavorText,
         startingAmount,
         active
     ) {
         this.internalName = internalName;
         this.displayNameSingular = displayNameSingular;
         this.displayNamePlural = displayNamePlural;
+        this.flavorText = flavorText;
         this.amount = startingAmount;
         this.amountPerTick = 0;
         this.active = active;
@@ -26,8 +28,20 @@ class Resource {
     }
 
     constructHTML () {
+        if (this.amountDiv) {
+            // Already constructed the HTML.
+            return;
+        }
+        console.log(this.displayNamePlural);
         this.amountDiv = document.createElement("div");
-        this.amountDiv.id = `${this.internalName}Amount`;
+        this.amountDiv.classList.add("tooltip");
+        this.amountSpan = document.createElement("span");
+        this.amountDiv.appendChild(this.amountSpan);
+
+        this.tooltipSpan = document.createElement("span");
+        this.tooltipSpan.classList.add("tooltipText");
+
+        this.amountDiv.appendChild(this.tooltipSpan);
 
         const resourceAmounts = document.getElementById("resourceAmounts");
         resourceAmounts.appendChild(this.amountDiv);
@@ -47,7 +61,14 @@ class Resource {
         const fixedAmount = fix(this.amount);
         const nameToUse = fixedAmount === 1 ? this.displayNameSingular : this.displayNamePlural;
         const amountPerSecond = fix(this.amountPerTick * settings.fps * 10) / 10;
-        this.amountDiv.textContent = `${fixedAmount} ${nameToUse} (+${amountPerSecond}/sec)`;
+
+        const plus = amountPerSecond > 0 ? "+" : ""; // + if amountPerSecond positive, - if negative
+        const newTooltipSpanHTML = `${this.flavorText}<br><br>Currently: ${plus}${amountPerSecond} per second<hr>`;
+        if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
+            this.tooltipSpan.innerHTML = newTooltipSpanHTML;
+        }
+
+        this.amountSpan.textContent = `${fixedAmount} ${nameToUse} (${plus}${amountPerSecond}/sec)`;
     }
 
     // To keep track of the resource gain per tick (and consequently per second),

@@ -301,6 +301,7 @@ class Game {
                 "berries",
                 "Liquid Gold Berry",
                 "Liquid Gold Berries",
+                "It's worth its weight in liquid gold berries.",
                 0,
                 true
             )
@@ -310,6 +311,7 @@ class Game {
                 "wood",
                 "Branch of Mahogany",
                 "Branches of Mahogany",
+                "You could carve a nice sculpture out of one of these.",
                 0,
                 true
             )
@@ -319,6 +321,7 @@ class Game {
                 "flowers",
                 "Meadow Lily",
                 "Meadow Lilies",
+                "The rarest flower!",
                 0,
                 false
             )
