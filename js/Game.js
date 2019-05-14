@@ -3,6 +3,7 @@
 import { clearCreatures, Creature } from "./Creature.js";
 import { clearNews, News } from "./News.js";
 import { clearResources, Resource } from "./Resource.js";
+import { clearTabs, Tab } from "./Tab.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
 import { clearUpgrades, Upgrade } from "./Upgrade.js";
 import { fix, notify } from "./Utils.js";
@@ -19,6 +20,11 @@ class Game {
     }
 
     hardReset (prompt) {
+        // Clears out all of the static variables for all of these classes and then refills them
+        // with the values in this.create____.
+        // Counterintuitively, this is called at startup, so we can put "initialization code"
+        // (i.e. ._counter = 0, ._buttons = [], ...) in clearResources(), clearCreatures(), etc.
+        // Now that's good design.
         if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
             Resource.Map = {};
             this.resources = [];
@@ -32,13 +38,18 @@ class Game {
             this.upgrades = [];
             clearUpgrades();
 
+            this.tabs = [];
+            clearTabs();
+
+            clearNews();
+
             setAllSettings({"bgColor": "#E82B2B", "fps": 60, "saveTime": 5});
 
             this.createResources();
             this.createCreatures();
             this.createUpgrades();
+            this.createTabs();
 
-            clearNews();
             this.news = new News();
         }
     }
@@ -326,6 +337,25 @@ class Game {
                 false
             )
         )
+    }
+
+    createTabs () {
+        this.tabs.push(
+            new Tab(
+                "creatureTab",
+                "Creatures",
+                document.getElementById("creatures")
+            )
+        )
+        this.tabs.push(
+            new Tab(
+                "upgradeTab",
+                "Upgrades",
+                document.getElementById("upgrades")
+            )
+        )
+
+        this.tabs[0].setActive();
     }
 
     loop () {
