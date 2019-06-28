@@ -344,14 +344,16 @@ class Game {
             new Tab(
                 "creatureTab",
                 "Creatures",
-                document.getElementById("creatures")
+                document.getElementById("creatures"),
+                function () {return true;}
             )
         )
         this.tabs.push(
             new Tab(
                 "upgradeTab",
                 "Upgrades",
-                document.getElementById("upgrades")
+                document.getElementById("upgrades"),
+                function () {return true;}
             )
         )
 

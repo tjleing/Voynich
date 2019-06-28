@@ -1,10 +1,21 @@
 // @ts-check
 
 class Tab {
-    constructor(id, buttonText, divToShow) {
+    constructor(id, buttonText, divToShow, unlockCondition) {
+        this.unlockCondition = unlockCondition;
+        this.unlocked = this.unlockCondition();
+
         this.button = document.createElement("button");
         this.button.id = id;
-        this.button.innerHTML = buttonText;
+        if (this.unlocked) {
+            // TODO: also have tooltips on upgrade tabs; hints as to unlock conditions when locked, and
+            // description always?
+            // TODO: rethink naming about unlocking vs visibility
+            this.button.innerHTML = buttonText;
+        }
+        else {
+            this.button.innerHTML = "???";
+        }
         this.button.onclick = this.setActive.bind(this);
 
         this.divToShow = divToShow;
@@ -17,6 +28,12 @@ class Tab {
     setActive() {
         // Activate this tab and deactivate all others.
         // OPTIMIZE: use variables for Tab._activeButton and Tab._activeDiv instead of looping
+
+        if (!this.unlocked) {
+            return;
+        }
+
+        // Set all other tabs inactive
         for (const div of Tab._divs) {
             div.style.display = "none";
         }
@@ -24,8 +41,17 @@ class Tab {
             button.classList.remove("active");
         }
 
+        // Set this tab active
         this.divToShow.style.display = "block";
         this.button.classList.add("active");
+    }
+
+    tick() {
+        if (this.unlockCondition()) {
+            // TODO: grey out when locked; no cursor hover
+            // TODO: ungrey button here
+            this.unlocked = true;
+        }
     }
 }
 

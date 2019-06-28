@@ -125,7 +125,6 @@ class Upgrade {
         if (this.unlocked) {
             if (!this.unlockCondition()) {
                 this.unlocked = false;
-                console.log("shucks!");
                 this.destroyDOM();
                 return;
             }
