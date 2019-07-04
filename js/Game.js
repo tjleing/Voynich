@@ -28,6 +28,7 @@ class Game {
         if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
             Resource.Map = {};
             this.resources = [];
+            this.focusedResource = "";
             clearResources();
 
             Creature.Map = {};
@@ -305,6 +306,14 @@ class Game {
         );
     }
 
+    onFocusCallback (newFocusedResource) {
+        if (this.focusedResource !== "") {
+            Resource.Map[this.focusedResource].isFocused = false;
+        }
+        Resource.Map[newFocusedResource].isFocused = true;
+        this.focusedResource = newFocusedResource;
+    }
+
     // TODO rethink naming
     createResources () {
         this.resources.push(
@@ -314,6 +323,8 @@ class Game {
                 "Liquid Gold Berries",
                 "It's worth its weight in liquid gold berries.",
                 0,
+                1,
+                this.onFocusCallback.bind(this),
                 true
             )
         );
@@ -324,6 +335,8 @@ class Game {
                 "Branches of Mahogany",
                 "You could carve a nice sculpture out of one of these.",
                 0,
+                1,
+                this.onFocusCallback.bind(this),
                 true
             )
         );
@@ -334,6 +347,8 @@ class Game {
                 "Meadow Lilies",
                 "The rarest flower!",
                 0,
+                1,
+                this.onFocusCallback.bind(this),
                 false
             )
         )
@@ -360,10 +375,15 @@ class Game {
         this.tabs[0].setActive();
     }
 
-    loop () {
+    tick () {
         for (const resource of this.resources) {
             resource.startTick();
         }
+
+        if (this.focusedResource !== "") {
+            //Resource.Map[this.focusedResource].damage(this.power);
+        }
+
         for (const creature of this.creatures) {
             creature.tick(settings.fps);
         }
@@ -383,7 +403,7 @@ class Game {
         document.body.style.backgroundColor = settings.bgColor;
 
         // bind() to set the this var correctly.
-        setTimeout(this.loop.bind(this), 1000 / settings.fps);
+        setTimeout(this.tick.bind(this), 1000 / settings.fps);
     }
 
     draw () {

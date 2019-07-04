@@ -10,6 +10,8 @@ class Resource {
         displayNamePlural,
         flavorText,
         startingAmount,
+        focusHardness,
+        onFocusCallback,
         active
     ) {
         this.internalName = internalName;
@@ -18,6 +20,9 @@ class Resource {
         this.flavorText = flavorText;
         this.amount = startingAmount;
         this.amountPerTick = 0;
+        this.focusHardness = focusHardness;
+        this.onFocusCallback = onFocusCallback;
+        this.isFocused = false;
         this.active = active;
 
         Resource.Map[internalName] = this;
@@ -32,8 +37,8 @@ class Resource {
             // Already constructed the HTML.
             return;
         }
-        console.log(this.displayNamePlural);
         this.amountDiv = document.createElement("div");
+        this.amountDiv.onclick = function () {this.onFocusCallback(this.internalName)}.bind(this);
         this.amountDiv.classList.add("tooltip");
         this.amountSpan = document.createElement("span");
         this.amountDiv.appendChild(this.amountSpan);
@@ -69,6 +74,14 @@ class Resource {
         }
 
         this.amountSpan.textContent = `${fixedAmount} ${nameToUse} (${plus}${amountPerSecond}/sec)`;
+
+        // UI change if current resource is focused
+        if (this.isFocused) {
+            this.amountSpan.style.fontWeight = 'bold';
+        }
+        else {
+            this.amountSpan.style.fontWeight = '';
+        }
     }
 
     // To keep track of the resource gain per tick (and consequently per second),

@@ -34,7 +34,7 @@ window.onload = function () {
 
     document.getElementById("leftCanvas").addEventListener("click", game.click.bind(game), false);
 
-    game.loop();
+    game.tick();
 
     window.addEventListener("blur", function () {
         isFocused = false;
