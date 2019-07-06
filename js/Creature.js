@@ -5,17 +5,17 @@ import { settings } from "./Settings.js";
 import { deepFix, fix, maximumTimeToGet } from "./Utils.js";
 
 class Creature {
-    constructor(
-        internalName,
-        displayNameSingular,
-        displayNamePlural,
-        flavorText,
-        cost,
-        production,
-        totalProduced,
-        costScalingFunction,
-        initialQuantity
-    ) {
+    constructor({
+            internalName,
+            displayNameSingular,
+            displayNamePlural,
+            flavorText,
+            cost,
+            production,
+            totalProduced,
+            costScalingFunction,
+            initialQuantity,
+    }) {
         this._id = Creature.counter;
 
         this.internalName = internalName;

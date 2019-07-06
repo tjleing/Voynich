@@ -5,14 +5,14 @@ import { settings } from "./Settings.js";
 import { fix, maximumTimeToGet } from "./Utils.js";
 
 class Upgrade {
-    constructor (
+    constructor ({
         internalName,
         displayName,
         flavorText,
         cost,
         effect,
         unlockCondition
-      ) {
+      }) {
         this.internalName = internalName;
         this.displayName = displayName;
         this.flavorText = flavorText;

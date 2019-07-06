@@ -4,7 +4,7 @@ import { fix } from "./Utils.js";
 import { settings } from "./Settings.js";
 
 class Resource {
-    constructor (
+    constructor ({
         internalName,
         displayNameSingular,
         displayNamePlural,
@@ -13,7 +13,7 @@ class Resource {
         focusHardness,
         onFocusCallback,
         active
-    ) {
+    }) {
         this.internalName = internalName;
         this.displayNameSingular = displayNameSingular;
         this.displayNamePlural = displayNamePlural;

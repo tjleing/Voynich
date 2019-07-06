@@ -1,7 +1,7 @@
 // @ts-check
 
 class Tab {
-    constructor(id, buttonText, divToShow, unlockCondition) {
+    constructor({id, buttonText, divToShow, unlockCondition}) {
         this.unlockCondition = unlockCondition;
         this.unlocked = this.unlockCondition();
 
