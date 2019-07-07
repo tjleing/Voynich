@@ -36,7 +36,7 @@ class Resource {
             return;
         }
         this.amountDiv = document.createElement("div");
-        this.amountDiv.onclick = () => {setFocus(this)};
+        this.amountDiv.onclick = () => {setFocusedResource(this)};
         this.amountDiv.classList.add("tooltip");
         this.amountSpan = document.createElement("span");
         this.amountDiv.appendChild(this.amountSpan);
@@ -109,6 +109,10 @@ class Resource {
         this.amount -= amount;
     }
 
+    tickFocus (amount) {
+        this.tickAdd(amount / this.hitpoints);
+    }
+
     // Saving and loading
     load (saveString) {
         let saveComponents = saveString.split("$");
@@ -129,7 +133,7 @@ class Resource {
     }
 }
 
-function setFocus (newFocusedResource) {
+function setFocusedResource (newFocusedResource) {
     // Unfocus previous resource
     if (Resource.focusedResource !== undefined) {
         Resource.focusedResource.isFocused = false;
@@ -150,4 +154,4 @@ function clearResources () {
     resourceAmounts.innerHTML = "";
 }
 
-export { clearResources, Resource };
+export { clearResources, setFocusedResource, Resource };

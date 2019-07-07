@@ -2,7 +2,7 @@
 
 import { clearCreatures, Creature } from "./Creature.js";
 import { clearNews, News } from "./News.js";
-import { clearResources, Resource } from "./Resource.js";
+import { clearResources, setFocusedResource, Resource } from "./Resource.js";
 import { clearTabs, Tab } from "./Tab.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
 import { clearUpgrades, Upgrade } from "./Upgrade.js";
@@ -28,7 +28,7 @@ class Game {
         if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
             Resource.Map = {};
             this.resources = [];
-            this.focusedResource = "";
+            this.focusPower = 1; // TODO: put in Stats or something
             clearResources();
 
             Creature.Map = {};
@@ -52,19 +52,6 @@ class Game {
             this.createTabs();
 
             this.news = new News();
-        }
-    }
-
-    click () {
-        for (const resource of this.resources) {
-            if (resource.internalName === "flowers") {
-                if (Math.random() <= 0.01) {
-                    resource.amount += 1;
-                }
-            }
-            else {
-                resource.amount += 1;
-            }
         }
     }
 
@@ -328,6 +315,25 @@ class Game {
                 }
             )
         );
+        this.upgrades.push(
+            new Upgrade(
+                {
+                    internalName: "doubleFocusPower",
+                    displayName: "Self-immolation",
+                    flavorText: "You're on fire! ... Doubles the rate at which you gain resources yourself.",
+                    cost: {
+                        wood: 10000,
+                        berries: 10000,
+                    },
+                    effect: () => {
+                        this.focusPower *= 2;
+                    },
+                    unlockCondition: () => {
+                        return (Resource.Map['wood'].amount >= 1000);
+                    },
+                }
+            )
+        );
     }
 
     // TODO rethink naming
@@ -340,7 +346,7 @@ class Game {
                     displayNamePlural: "Liquid Gold Berries",
                     flavorText: "It's worth its weight in liquid gold berries.",
                     startingAmount: 0,
-                    hitpoints: 1,
+                    hitpoints: 20,
                     active: true,
                 }
             )
@@ -353,7 +359,7 @@ class Game {
                     displayNamePlural: "Branches of Mahogany",
                     flavorText: "You could carve a nice sculpture out of one of these.",
                     startingAmount: 0,
-                    hitpoints: 1,
+                    hitpoints: 20,
                     active: true,
                 }
             )
@@ -366,8 +372,8 @@ class Game {
                     displayNamePlural: "Meadow Lilies",
                     flavorText: "The rarest flower!",
                     startingAmount: 0,
-                    hitpoints: 1,
-                    active: false,
+                    hitpoints: 500,
+                    active: true,
                 }
             )
         )
@@ -403,8 +409,8 @@ class Game {
             resource.startTick();
         }
 
-        if (this.focusedResource !== "") {
-            //Resource.Map[this.focusedResource].damage(this.power);
+        if (Resource.focusedResource !== undefined) {
+            Resource.focusedResource.tickFocus(this.focusPower);
         }
 
         for (const creature of this.creatures) {
@@ -419,6 +425,7 @@ class Game {
         for (const upgrade of this.upgrades) {
             upgrade.tick();
             // TODO: as above, make sure that keeping updateDOM() inside tick() is the right course of action (counter to above)
+            // TODO: that does not have much parity, to be honest
         }
         this.news.tick();
 
@@ -450,6 +457,7 @@ class Game {
         let save = "";
 
         save += this.resources.map(resource => resource.save()).join("|");
+        save += "||" + Resource.focusedResource.internalName;
         save += "%%";
         save += this.creatures.map(creature => creature.save()).join("|");
         save += "%%";
@@ -523,10 +531,12 @@ class Game {
         // Initialize everything from the save string
         let saveComponents = save.split("%%");
 
-        let resourcesSave = saveComponents[0].split("|");
+        let resourceChunks = saveComponents[0].split("||");
+        let resourcesSave = resourceChunks[0].split("|");
         for (let i = 0; i<this.resources.length; ++i) {
             this.resources[i].load(resourcesSave[i]);
         }
+        setFocusedResource(Resource.Map[resourceChunks[1]]);
 
         let creaturesSave = saveComponents[1].split("|");
         for (let i = 0; i<this.creatures.length; ++i) {

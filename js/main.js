@@ -32,8 +32,6 @@ window.onload = function () {
     document.getElementById("export").onclick = game.exportSave.bind(game);
     document.getElementById("import").onclick = game.importSave.bind(game);
 
-    document.getElementById("leftCanvas").addEventListener("click", game.click.bind(game), false);
-
     game.tick();
 
     window.addEventListener("blur", function () {

@@ -90,7 +90,7 @@ class Creature {
             else {
                 affordableClass = "costAffordable";
             }
-            newCostSpanHTML += `<span class=${affordableClass}>${resource.displayNamePlural}: ${fix(this.cost[resourceName])}</span><br>`;
+            newCostSpanHTML += `<span class=${affordableClass}>${resource.displayNamePlural}: ${fix(10 * this.cost[resourceName]) / 10.}</span><br>`;
         }
         if (this.costSpan.innerHTML !== newCostSpanHTML) {
             this.costSpan.innerHTML = newCostSpanHTML;
@@ -100,7 +100,7 @@ class Creature {
         for (const resourceName of Object.keys(this.production)) {
             const resourcePerSecondPerOneCreature = this.production[resourceName];
             // Round to one decimal point (since we have some creatures that produce 0.2/sec)
-            const resourcePerSecond = fix(resourcePerSecondPerOneCreature * this.quantity * 10) / 10;
+            const resourcePerSecond = fix(resourcePerSecondPerOneCreature * this.quantity * 100) / 100;
             resourcesPerSecondString += `<br/>+${resourcePerSecond} ${resourceName}/sec`;
         }
         let totalResourcesProducedString = "";

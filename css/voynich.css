@@ -46,11 +46,6 @@ button {
 	float: left;
 }
 
-#leftCanvas {
-	cursor: pointer;
-	background-color: black;
-}
-
 #middlepanel {
 	margin-right: 15px;
 	height: 100%;
