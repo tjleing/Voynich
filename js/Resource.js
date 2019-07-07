@@ -10,8 +10,7 @@ class Resource {
         displayNamePlural,
         flavorText,
         startingAmount,
-        focusHardness,
-        onFocusCallback,
+        hitpoints,
         active
     }) {
         this.internalName = internalName;
@@ -20,8 +19,7 @@ class Resource {
         this.flavorText = flavorText;
         this.amount = startingAmount;
         this.amountPerTick = 0;
-        this.focusHardness = focusHardness;
-        this.onFocusCallback = onFocusCallback;
+        this.hitpoints = hitpoints;
         this.isFocused = false;
         this.active = active;
 
@@ -38,7 +36,7 @@ class Resource {
             return;
         }
         this.amountDiv = document.createElement("div");
-        this.amountDiv.onclick = function () {this.onFocusCallback(this.internalName)}.bind(this);
+        this.amountDiv.onclick = () => {setFocus(this)};
         this.amountDiv.classList.add("tooltip");
         this.amountSpan = document.createElement("span");
         this.amountDiv.appendChild(this.amountSpan);
@@ -130,6 +128,22 @@ class Resource {
         return saveComponents.join("$");
     }
 }
+
+function setFocus (newFocusedResource) {
+    // Unfocus previous resource
+    if (Resource.focusedResource !== undefined) {
+        Resource.focusedResource.isFocused = false;
+    }
+    // Focus new resource as long as it wasn't the previous one
+    if (newFocusedResource !== Resource.focusedResource) {
+        newFocusedResource.isFocused = true;
+        Resource.focusedResource = newFocusedResource;
+    }
+    else {
+        Resource.focusedResource = undefined;
+    }
+}
+
 
 function clearResources () {
     const resourceAmounts = document.getElementById("resourceAmounts");

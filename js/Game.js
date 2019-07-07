@@ -330,14 +330,6 @@ class Game {
         );
     }
 
-    onFocusCallback (newFocusedResource) {
-        if (this.focusedResource !== "") {
-            Resource.Map[this.focusedResource].isFocused = false;
-        }
-        Resource.Map[newFocusedResource].isFocused = true;
-        this.focusedResource = newFocusedResource;
-    }
-
     // TODO rethink naming
     createResources () {
         this.resources.push(
@@ -348,8 +340,7 @@ class Game {
                     displayNamePlural: "Liquid Gold Berries",
                     flavorText: "It's worth its weight in liquid gold berries.",
                     startingAmount: 0,
-                    focusHardness: 1,
-                    onFocusCallback: this.onFocusCallback.bind(this),
+                    hitpoints: 1,
                     active: true,
                 }
             )
@@ -362,8 +353,7 @@ class Game {
                     displayNamePlural: "Branches of Mahogany",
                     flavorText: "You could carve a nice sculpture out of one of these.",
                     startingAmount: 0,
-                    focusHardness: 1,
-                    onFocusCallback: this.onFocusCallback.bind(this),
+                    hitpoints: 1,
                     active: true,
                 }
             )
@@ -376,8 +366,7 @@ class Game {
                     displayNamePlural: "Meadow Lilies",
                     flavorText: "The rarest flower!",
                     startingAmount: 0,
-                    focusHardness: 1,
-                    onFocusCallback: this.onFocusCallback.bind(this),
+                    hitpoints: 1,
                     active: false,
                 }
             )
@@ -425,6 +414,7 @@ class Game {
             creature.updateDOM();
             // TODO: make sure separating tick() and updateDOM() is the right decision (like to make sure we're not constantly lagging a frame behind or something?)
             // TODO: actually I'm pretty sure that it's for resource tickAdd() and tickConsume()ing.  Then the todo becomes to make sure that all this is in the right order and comment to remind me of what's going on here
+            // TODO: well then maybe put that in draw() below?
         }
         for (const upgrade of this.upgrades) {
             upgrade.tick();
