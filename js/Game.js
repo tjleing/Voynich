@@ -322,8 +322,8 @@ class Game {
                     displayName: "Self-immolation",
                     flavorText: "You're on fire! ... Doubles the rate at which you gain resources yourself.",
                     cost: {
-                        wood: 10000,
                         berries: 10000,
+                        wood: 10000,
                     },
                     effect: () => {
                         this.focusPower *= 2;
