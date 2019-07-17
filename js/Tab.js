@@ -1,7 +1,7 @@
 // @ts-check
 
 class Tab {
-    constructor({id, buttonText, divToShow, unlockCondition}) {
+    constructor ({id, buttonText, divToShow, unlockCondition}) {
         this.unlockCondition = unlockCondition;
         this.unlocked = this.unlockCondition();
 
@@ -25,7 +25,7 @@ class Tab {
         Tab._tabDiv.appendChild(this.button);
     }
 
-    setActive() {
+    setActive () {
         // Activate this tab and deactivate all others.
         // OPTIMIZE: use variables for Tab._activeButton and Tab._activeDiv instead of looping
 
@@ -46,7 +46,7 @@ class Tab {
         this.button.classList.add("active");
     }
 
-    tick() {
+    tick () {
         if (this.unlockCondition()) {
             // TODO: grey out when locked; no cursor hover
             // TODO: ungrey button here

@@ -17,6 +17,7 @@ class Resource {
         this.displayNameSingular = displayNameSingular;
         this.displayNamePlural = displayNamePlural;
         this.flavorText = flavorText;
+        // TODO: amount vs. quantity
         this.amount = startingAmount;
         this.amountPerTick = 0;
         this.hitpoints = hitpoints;

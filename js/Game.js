@@ -4,6 +4,7 @@ import { clearCreatures, Creature } from "./Creature.js";
 import { clearNews, News } from "./News.js";
 import { clearResources, setFocusedResource, Resource } from "./Resource.js";
 import { clearTabs, Tab } from "./Tab.js";
+import { clearAchievements, Achievement } from "./Achievement.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
 import { clearUpgrades, Upgrade } from "./Upgrade.js";
 import { fix, notify } from "./Utils.js";
@@ -39,6 +40,9 @@ class Game {
             this.upgrades = [];
             clearUpgrades();
 
+            this.achievements = [];
+            clearAchievements();
+
             this.tabs = [];
             clearTabs();
 
@@ -49,6 +53,7 @@ class Game {
             this.createResources();
             this.createCreatures();
             this.createUpgrades();
+            this.createAchievements();
             this.createTabs();
 
             this.news = new News();
@@ -336,6 +341,39 @@ class Game {
         );
     }
 
+    createAchievements () {
+        this.achievements.push(
+            new Achievement(
+                {
+                    id: "seal1",
+                    displayName: "We'll seal you later!",
+                    lockedFlavorText: "Hmm... maybe there's a creature with a name like that",
+                    unlockedFlavorText: "In fact, we'll seal you now!",
+                    unlockCondition: () => {
+                        return (Creature.Map['Weaseal'].quantity >= 1);
+                    },
+                    effect: () => {},
+                }
+            )
+        );
+        this.achievements.push(
+            new Achievement(
+                {
+                    id: "lilies1",
+                    displayName: "The smallest e",
+                    lockedFlavorText: "Is this one a pun too?",
+                    unlockedFlavorText: "Lil' e, sounds like a rapper!  Shucks that was terrible",
+                    unlockCondition: () => {
+                        return (Resource.Map['flowers'].amount >= 1);
+                    },
+                    effect: () => {
+                        Resource.Map['flowers'].amount += 5;
+                    },
+                }
+            )
+        );
+    }
+
     // TODO rethink naming
     createResources () {
         this.resources.push(
@@ -400,6 +438,16 @@ class Game {
                 }
             )
         )
+        this.tabs.push(
+            new Tab(
+                {
+                    id: "achievementTab",
+                    buttonText: "Achievements",
+                    divToShow: document.getElementById("achievements"),
+                    unlockCondition: function () {return true;},
+                }
+            )
+        )
 
         this.tabs[0].setActive();
     }
@@ -427,6 +475,9 @@ class Game {
             // TODO: as above, make sure that keeping updateDOM() inside tick() is the right course of action (counter to above)
             // TODO: that does not have much parity, to be honest
         }
+        for (const achievement of this.achievements) {
+            achievement.tick();
+        }
         this.news.tick();
 
         this.draw();
@@ -440,6 +491,10 @@ class Game {
     draw () {
         for (const resource of this.resources) {
             resource.draw();
+        }
+
+        for (const achievement of this.achievements) {
+            achievement.draw();
         }
     }
 
