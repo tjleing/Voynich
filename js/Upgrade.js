@@ -162,7 +162,7 @@ class Upgrade {
     // Saving and loading
     load (saveString) {
         let saveComponents = saveString.split("$");
-        this.purchased = saveComponents[0] === "true";
+        this.purchased = saveComponents[0] === "1";
         if (this.purchased || !this.unlocked) {
             this.destroyDOM();
         }
@@ -172,8 +172,9 @@ class Upgrade {
     }
 
     save () {
+        // TODO: compress
         let saveComponents = [];
-        saveComponents.push(this.purchased);
+        saveComponents.push(this.purchased ? "1" : "0");
 
         return saveComponents.join("$");
     }

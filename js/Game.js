@@ -518,6 +518,8 @@ class Game {
         save += "%%";
         save += this.upgrades.map(upgrade => upgrade.save()).join("|");
         save += "%%";
+        save += this.achievements.map(achievement => achievement.save()).join("|");
+        save += "%%";
         save += saveSettings();
 
         // Save it to localStorage, base64-encoded
@@ -603,7 +605,13 @@ class Game {
             this.upgrades[i].load(upgradesSave[i]);
         }
 
-        let settingsSave = saveComponents[3];
+        let achievementsSave = saveComponents[3].split("|");
+        console.log(achievementsSave);
+        for (let i = 0; i<this.achievements.length; ++i) {
+            this.achievements[i].load(achievementsSave[i]);
+        }
+
+        let settingsSave = saveComponents[4];
         loadSettings(settingsSave);
     }
 }

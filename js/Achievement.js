@@ -11,7 +11,14 @@ class Achievement {
         this.effect = effect;
 
         this.div = document.createElement("div");
+        this.div.innerHTML = `${this.displayName}`;
+        this.div.classList.add("tooltip");
+        this.div.classList.add("achievement");
         this.div.id = id;
+
+        this.tooltipSpan = document.createElement("span");
+        this.tooltipSpan.classList.add("tooltipText");
+        this.div.appendChild(this.tooltipSpan);
 
         Achievement._divs.push(this.div);
         Achievement._achievementDiv.appendChild(this.div);
@@ -19,11 +26,13 @@ class Achievement {
 
     draw () {
         if (this.unlocked) {
-            this.div.innerHTML = `${this.displayName}: ${this.unlockedFlavorText}`;
+            this.div.classList.add("achievement-unlocked");
+            this.tooltipSpan.innerHTML = `${this.unlockedFlavorText}`;
         }
         else {
             // TODO: Templated to show progress?  Pull a realm grinder and just show % completion?
-            this.div.innerHTML = `${this.displayName}: ${this.lockedFlavorText}`;
+            this.div.classList.remove("achievement-unlocked");
+            this.tooltipSpan.innerHTML = `${this.lockedFlavorText}`;
         }
     }
 
@@ -35,6 +44,23 @@ class Achievement {
             this.effect();
             notify(`Achievement <b>${this.displayName}</b> unlocked!`);
         }
+    }
+
+    // Saving and loading
+    load (saveString) {
+        let saveComponents = saveString.split("$");
+        this.unlocked = saveComponents[0] === "1";
+        if (this.unlocked) {
+            this.effect();
+        }
+    }
+
+    save () {
+        // TODO: compress
+        let saveComponents = [];
+        saveComponents.push(this.unlocked ? "1" : "0");
+
+        return saveComponents.join("$");
     }
 }
 
