@@ -4,6 +4,7 @@ import { clearCreatures, Creature } from "./Creature.js";
 import { clearNews, News } from "./News.js";
 import { clearResources, setFocusedResource, Resource } from "./Resource.js";
 import { clearTabs, Tab } from "./Tab.js";
+import { clearPrestigeResources, PrestigeResource } from "./PrestigeResource.js";
 import { clearAchievements, Achievement } from "./Achievement.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
 import { clearUpgrades, Upgrade } from "./Upgrade.js";
@@ -26,6 +27,8 @@ class Game {
         // Counterintuitively, this is called at startup, so we can put "initialization code"
         // (i.e. ._counter = 0, ._buttons = [], ...) in clearResources(), clearCreatures(), etc.
         // Now that's good design.
+        // TODO: abstract it all out into its own function so that we're not literally hardReset()ing
+        // on every single refresh
         if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
             Resource.Map = {};
             this.resources = [];
@@ -43,6 +46,10 @@ class Game {
             this.achievements = [];
             clearAchievements();
 
+            PrestigeResource.Map = {};
+            this.prestigeResources = [];
+            clearPrestigeResources();
+
             this.tabs = [];
             clearTabs();
 
@@ -54,6 +61,7 @@ class Game {
             this.createCreatures();
             this.createUpgrades();
             this.createAchievements();
+            this.createPrestige();
             this.createTabs();
 
             this.news = new News();
@@ -414,7 +422,23 @@ class Game {
                     active: true,
                 }
             )
-        )
+        );
+    }
+
+    createPrestige () {
+        this.prestigeResources.push(
+            new PrestigeResource(
+                {
+                    internalName: "okra",
+                    displayNameSingular: "Okra",
+                    displayNamePlural: "Okra",
+                    flavorText: "The perfect solution to the world's drought!",
+                    startingAmount: 0,
+                    calculateNewAmount: () => {return Resource.Map['wood'].amount;},
+                    active: true,
+                }
+            )
+        );
     }
 
     createTabs () {
@@ -424,7 +448,7 @@ class Game {
                     id: "creatureTab",
                     buttonText: "Creatures",
                     divToShow: document.getElementById("creatures"),
-                    unlockCondition: function () {return true;},
+                    unlockCondition: () => {return true;},
                 }
             )
         )
@@ -434,7 +458,7 @@ class Game {
                     id: "upgradeTab",
                     buttonText: "Upgrades",
                     divToShow: document.getElementById("upgrades"),
-                    unlockCondition: function () {return true;},
+                    unlockCondition: () => {return true;},
                 }
             )
         )
@@ -444,7 +468,17 @@ class Game {
                     id: "achievementTab",
                     buttonText: "Achievements",
                     divToShow: document.getElementById("achievements"),
-                    unlockCondition: function () {return true;},
+                    unlockCondition: () => {return true;},
+                }
+            )
+        )
+        this.tabs.push(
+            new Tab(
+                {
+                    id: "prestigeTab",
+                    buttonText: "Another one...",
+                    divToShow: document.getElementById("prestige"),
+                    unlockCondition: () => {return Resource.Map["wood"].amount >= 100000;},
                 }
             )
         )
@@ -475,6 +509,9 @@ class Game {
             // TODO: as above, make sure that keeping updateDOM() inside tick() is the right course of action (counter to above)
             // TODO: that does not have much parity, to be honest
         }
+        for (const tab of this.tabs) {
+            tab.tick();
+        }
         for (const achievement of this.achievements) {
             achievement.tick();
         }
@@ -495,6 +532,10 @@ class Game {
 
         for (const achievement of this.achievements) {
             achievement.draw();
+        }
+
+        for (const prestigeResource of this.prestigeResources) {
+            prestigeResource.draw();
         }
     }
 
@@ -606,7 +647,6 @@ class Game {
         }
 
         let achievementsSave = saveComponents[3].split("|");
-        console.log(achievementsSave);
         for (let i = 0; i<this.achievements.length; ++i) {
             this.achievements[i].load(achievementsSave[i]);
         }

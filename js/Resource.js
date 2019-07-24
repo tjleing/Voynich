@@ -118,7 +118,7 @@ class Resource {
     load (saveString) {
         let saveComponents = saveString.split("$");
         this.amount = parseInt(saveComponents[0]);
-        this.active = saveComponents[1] === "true";
+        this.active = saveComponents[1] === "1";
 
         if (this.active) {
             this.constructHTML();
@@ -128,7 +128,7 @@ class Resource {
     save () {
         let saveComponents = [];
         saveComponents.push(fix(this.amount));
-        saveComponents.push(this.active.toString());
+        saveComponents.push(this.active ? "1" : "0");
 
         return saveComponents.join("$");
     }
