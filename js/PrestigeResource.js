@@ -63,7 +63,7 @@ class PrestigeResource {
 
         const fixedAmount = fix(this.amount);
         const nameToUse = fixedAmount === 1 ? this.displayNameSingular : this.displayNamePlural;
-        const amountGainedOnPrestige = fix(this.calculateNewAmount() - this.amount);
+        const amountGainedOnPrestige = fix(this.calculateNewAmount());
 
         const newTooltipSpanHTML = `${this.flavorText}<br><br>Currently: +${amountGainedOnPrestige} upon 'another one'<hr>`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
