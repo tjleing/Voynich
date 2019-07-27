@@ -10,7 +10,7 @@ class PrestigeResource {
         displayNamePlural,
         flavorText,
         startingAmount,
-        calculateNewAmount,
+        calculateAmountGained,
         active
     }) {
         this.internalName = internalName;
@@ -19,7 +19,7 @@ class PrestigeResource {
         this.flavorText = flavorText;
         // TODO: amount vs. quantity
         this.amount = startingAmount;
-        this.calculateNewAmount = calculateNewAmount;
+        this.calculateAmountGained = calculateAmountGained;
         this.amountPerTick = 0;
         this.isFocused = false;
         this.active = active;
@@ -63,7 +63,7 @@ class PrestigeResource {
 
         const fixedAmount = fix(this.amount);
         const nameToUse = fixedAmount === 1 ? this.displayNameSingular : this.displayNamePlural;
-        const amountGainedOnPrestige = fix(this.calculateNewAmount());
+        const amountGainedOnPrestige = fix(this.calculateAmountGained());
 
         const newTooltipSpanHTML = `${this.flavorText}<br><br>Currently: +${amountGainedOnPrestige} upon 'another one'<hr>`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {

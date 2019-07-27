@@ -434,7 +434,7 @@ class Game {
                     displayNamePlural: "Okra",
                     flavorText: "The perfect solution to the world's drought!",
                     startingAmount: 0,
-                    calculateNewAmount: () => {return Resource.Map['wood'].amount;},
+                    calculateAmountGained: () => {return Resource.Map['wood'].amount;},
                     active: true,
                 }
             )
@@ -522,7 +522,7 @@ class Game {
         document.body.style.backgroundColor = settings.bgColor;
 
         // bind() to set the this var correctly.
-        setTimeout(this.tick.bind(this), 1000 / settings.fps);
+        this.tickTimeout = setTimeout(this.tick.bind(this), 1000 / settings.fps);
     }
 
     draw () {
@@ -545,6 +545,36 @@ class Game {
         if (key >= "1" && key <= this.creatures.length.toString()) {
             this.creatures[parseInt(key)-1].buy();
         }
+    }
+
+    // PRESTIGE
+    prestige () {
+        // Confirmation dialog box?
+
+        // Draw the prestige menu
+        // + animations if we ever have any
+        document.getElementById("game").style.visibility = false;
+        document.getElementById("prestige").style.visibility = true;
+
+        // Stop tick cycle and save cycle
+        clearTimeout(this.tickTimeout);
+        //clearTimeout(this.saveTimeout);
+
+        for (const prestigeResource of this.prestigeResources) {
+            prestigeResource.amount += prestigeResource.calculateAmountGained();
+        }
+
+        // this.softReset();
+        // Or maybe just clear this.worlds...
+    }
+
+    prestigeReturn () {
+        // Generate a tab for each world
+        // Generate each world
+
+        // Resume tick and save
+        this.tick();
+        this.save();
     }
 
     // SAVING AND LOADING
