@@ -4,7 +4,6 @@ class World {
     constructor (resourceList, ) {
         this.resources = new WorldResourceSet(resourceList);
         Resource.Map = {};
-        this.resources = [];
         this.focusPower = 1; // TODO: put in Stats or something
         clearResources();
 
@@ -31,6 +30,12 @@ class World {
         this.createTabs();
 
         this.news = new News();
+    }
+
+    tick () {
+        this.resources.tick();
+        this.creatures.tick();
+        this.upgrades.tick();
     }
 }
 
