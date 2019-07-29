@@ -10,6 +10,12 @@ class WorldResourceSet {
         }
     }
 
+    tick () {
+        for (const resource of this.resourceList) {
+            resource.startTick();
+        }
+    }
+
     draw () {
         for (const resource of this.resourceList) {
             resource.draw();

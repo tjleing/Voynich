@@ -10,10 +10,18 @@ class WorldUpgradeSet {
         }
     }
 
+    tick () {
+        for (const upgrade of this.upgradeList) {
+            upgrade.tick();
+        }
+    }
+
     draw () {
+/* doesn't exist...
         for (const upgrade of this.upgradeList) {
             upgrade.draw();
         }
+*/
     }
 
     save () {

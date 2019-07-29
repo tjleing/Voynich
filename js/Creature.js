@@ -126,7 +126,7 @@ class Creature {
         }
     }
 
-    setAffordable() {
+    setAffordable () {
         this.affordable = true;
         for (const resourceName of Object.keys(this.cost)) {
             if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
@@ -135,7 +135,7 @@ class Creature {
         }
     }
 
-    tick() {
+    tick () {
         for (const resourceName of Object.keys(this.production)) {
             const amountProduced = this.production[resourceName] * this.quantity / settings.fps;
             Resource.Map[resourceName].tickAdd(amountProduced);

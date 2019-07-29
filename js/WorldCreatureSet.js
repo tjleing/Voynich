@@ -10,10 +10,18 @@ class WorldCreatureSet {
         }
     }
 
+    tick () {
+        for (const creature of this.creatureList) {
+            creature.tick();
+        }
+    }
+
     draw () {
+/* doesn't exist...
         for (const creature of this.creatureList) {
             creature.draw();
         }
+*/
     }
 
     save () {
