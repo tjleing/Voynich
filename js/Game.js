@@ -498,12 +498,6 @@ class Game {
         for (const creature of this.creatures) {
             creature.tick(settings.fps);
         }
-        for (const creature of this.creatures) {
-            creature.updateDOM();
-            // TODO: make sure separating tick() and updateDOM() is the right decision (like to make sure we're not constantly lagging a frame behind or something?)
-            // TODO: actually I'm pretty sure that it's for resource tickAdd() and tickConsume()ing.  Then the todo becomes to make sure that all this is in the right order and comment to remind me of what's going on here
-            // TODO: well then maybe put that in draw() below?
-        }
         for (const upgrade of this.upgrades) {
             upgrade.tick();
             // TODO: as above, make sure that keeping updateDOM() inside tick() is the right course of action (counter to above)
@@ -519,8 +513,6 @@ class Game {
 
         this.draw();
 
-        document.body.style.backgroundColor = settings.bgColor;
-
         // bind() to set the this var correctly.
         this.tickTimeout = setTimeout(this.tick.bind(this), 1000 / settings.fps);
     }
@@ -530,6 +522,10 @@ class Game {
             resource.draw();
         }
 
+        for (const creature of this.creatures) {
+            creature.draw();
+        }
+
         for (const achievement of this.achievements) {
             achievement.draw();
         }
@@ -537,6 +533,8 @@ class Game {
         for (const prestigeResource of this.prestigeResources) {
             prestigeResource.draw();
         }
+
+        document.body.style.backgroundColor = settings.bgColor;
     }
 
     // TODO: modifiers to buy max or multiple, etc.; also visual indicator for such
