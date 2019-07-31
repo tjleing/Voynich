@@ -71,7 +71,7 @@ class Creature {
         creatureDiv.appendChild(buttonDiv);
     }
 
-    updateDOM () {
+    draw () {
         const newNameSpan = `${this.displayNameSingular}`;
         if (this.nameSpan.textContent !== newNameSpan) {
             this.nameSpan.textContent = newNameSpan;
