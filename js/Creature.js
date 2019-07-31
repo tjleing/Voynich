@@ -204,4 +204,114 @@ function clearCreatures () {
     creatureDiv.innerHTML = "";
 }
 
+const CREATURES = {
+    'weaseal': new Creature(
+        {
+            internalName: "Weaseal",
+            displayNameSingular: "Weaseal",
+            displayNamePlural: "Weaseals",
+            flavorText: "It's got fur and also... blubber?  You don't want to touch this creature at all.",
+            cost: {
+                berries: 1,
+                wood: 5,
+            },
+            production: {
+                berries: 1,
+                wood: 0.2,
+            },
+            totalProduced: {
+                berries: 0,
+                wood: 0,
+            },
+            costScalingFunction:
+                function () {
+                    this.cost["berries"] *= 1.15;
+                },
+            initialQuantity: 0,
+        }
+    ),
+    'beaverine': new Creature(
+        {
+            internalName: "Beaverine",
+            displayNameSingular: "Beaverine",
+            displayNamePlural: "Beaverines",
+            flavorText: "Sometimes makes dams.  Sometimes tears apart others' dams.  Absolutely terrifying.",
+            cost: {
+                berries: 100,
+                wood: 50,
+            },
+            production: {
+                berries: 10,
+                wood: 20,
+            },
+            totalProduced: {
+                berries: 0,
+                wood: 0,
+            },
+            costScalingFunction:
+                function () {
+                    this.cost["wood"] *= 1.15;
+                },
+            initialQuantity: 0,
+        }
+    ),
+    'buckaroo': new Creature(
+        {
+            internalName: "Buckaroo",
+            displayNameSingular: "Buckaroo",
+            displayNamePlural: "Buckaroos",
+            flavorText: "Jumpy and frantic but great at gathering, oh deer!",
+            cost: {
+                berries: 500,
+                wood: 120,
+                flowers: 1
+            },
+            production: {
+                berries: 100,
+                wood: 20,
+                flowers: 0.001
+            },
+            totalProduced: {
+                berries: 0,
+                wood: 0,
+                flowers: 0,
+            },
+            costScalingFunction:
+                function () {
+                    this.cost["berries"] *= 1.15;
+                    this.cost["wood"] *= 1.15;
+                },
+            initialQuantity: 0,
+        }
+    ),
+    'ptrocanfer': new Creature(
+        {
+            internalName: "Ptrocanfer",
+            displayNameSingular: "Ptrocanfer",
+            displayNamePlural: "Ptrocanfers",
+            flavorText: "Ridiculously expensive!  But maybe worth it?",
+            cost: {
+                wood: 890000,
+                flowers: 50,
+            },
+            production: {
+                berries: 100000,
+                wood: 100000,
+                flowers: 10,
+            },
+            totalProduced: {
+                berries: 0,
+                wood: 0,
+                flowers: 0,
+            },
+            costScalingFunction:
+                function () {
+                    this.cost["wood"] *= 1.15;
+                    this.cost["flowers"] *= 1.15;
+                },
+            initialQuantity: 0,
+        }
+    ),
+};
+
 export { clearCreatures, Creature };
