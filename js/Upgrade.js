@@ -67,7 +67,9 @@ class Upgrade {
         }
     }
 
-    updateDOM () {
+    draw () {
+        if (!this.unlocked) return;
+
         // TODO: bake name and cost in constructDOM(), since it won't ever change from its original... unless glitch world?
         const newNameSpan = `${this.displayName}`;
         if (this.nameSpan.textContent !== newNameSpan) {
@@ -136,7 +138,6 @@ class Upgrade {
                 this.button.classList.toggle("notgrayed", false);
                 this.button.classList.toggle("grayed", true);
             }
-            this.updateDOM();
             return;
         }
         if (this.unlockCondition()) {
