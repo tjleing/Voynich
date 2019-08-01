@@ -2,11 +2,11 @@
 
 class WorldCreatureSet {
     constructor (creatureList) {
+        // I'm *pretty* sure that not copying here is a legit thing to do
         this.creatureList = creatureList;
 
-        this.Map = {};
         for (const creature of this.creatureList) {
-            this.Map[creature.name] = creature;
+            this[creature.name] = creature;
         }
     }
 
@@ -17,11 +17,15 @@ class WorldCreatureSet {
     }
 
     draw () {
-/* doesn't exist...
         for (const creature of this.creatureList) {
             creature.draw();
         }
-*/
+    }
+
+    forEach (operation) {
+        for (const creature of this.creatureList) {
+            operation(creature);
+        }
     }
 
     save () {
