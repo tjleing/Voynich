@@ -530,6 +530,10 @@ class Game {
             achievement.draw();
         }
 
+        for (const upgrade of this.upgrades) {
+            upgrade.draw();
+        }
+
         for (const prestigeResource of this.prestigeResources) {
             prestigeResource.draw();
         }
