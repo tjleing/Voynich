@@ -48,7 +48,7 @@ class WorldCreatureSet {
 
     clear () {
         for (const creature of this.creatureList) {
-            this[creature.name] = creature;
+            this[creature.name] = undefined;
         }
         this.creatureList = [];
         this.creatureDiv.innerHTML = "";
