@@ -24,7 +24,7 @@ class News {
     }
 
     tick () {
-        if (game.creatures[1].quantity !== 0) {
+        if (game.creatures.beaverine.quantity !== 0) {
             this.newsChoices.push("We're gonna need a bigger dam!");
         }
     }

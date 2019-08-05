@@ -33,7 +33,6 @@ class Upgrade {
         const br1 = document.createElement("br");
 
         this.button = document.createElement("button");
-        this.button.id = `upgradeButton${this.id}`;
         this.button.classList.add("button");
         this.button.classList.add("tooltip");
 
@@ -53,7 +52,6 @@ class Upgrade {
 
         this.buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
         this.buttonDiv.appendChild(this.button);
-        this.buttonDiv.id = `upgrade${this.id}`;
         const upgradeDiv = document.getElementById("upgrades");
         upgradeDiv.appendChild(this.buttonDiv);
     }
@@ -179,21 +177,11 @@ class Upgrade {
 
         return saveComponents.join("$");
     }
-
-    static get counter () {
-        return Upgrade._counter++;
-    }
-
-    get id () {
-        return this._id;
-    }
 }
 
 // TODO: idk where this should go, but should do something when there are no upgrades to buy -- right now it looks weird if there's nothing to buy (c.f. cookie clicker?)
 
 function clearUpgrades () {
-    Upgrade._counter = 0;
-
     document.getElementById("upgrades").innerHTML = "";
 }
 

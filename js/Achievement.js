@@ -2,7 +2,7 @@
 import { notify } from "./Utils.js";
 
 class Achievement {
-    constructor ({id, displayName, lockedFlavorText, unlockedFlavorText, unlockCondition, effect}) {
+    constructor ({displayName, lockedFlavorText, unlockedFlavorText, unlockCondition, effect}) {
         this.displayName = displayName;
         this.lockedFlavorText = lockedFlavorText;
         this.unlockedFlavorText = unlockedFlavorText;
@@ -14,7 +14,6 @@ class Achievement {
         this.div.innerHTML = `${this.displayName}`;
         this.div.classList.add("tooltip");
         this.div.classList.add("achievement");
-        this.div.id = id;
 
         this.tooltipSpan = document.createElement("span");
         this.tooltipSpan.classList.add("tooltipText");

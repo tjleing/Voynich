@@ -17,11 +17,9 @@ class WorldUpgradeSet {
     }
 
     draw () {
-/* doesn't exist...
         for (const upgrade of this.upgradeList) {
             upgrade.draw();
         }
-*/
     }
 
     save () {

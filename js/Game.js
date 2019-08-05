@@ -1,6 +1,6 @@
 // @ts-check
 
-import { clearCreatures, Creature } from "./Creature.js";
+import { WorldCreatureSet } from "./WorldCreatureSet.js";
 import { clearNews, News } from "./News.js";
 import { clearResources, setFocusedResource, Resource } from "./Resource.js";
 import { clearTabs, Tab } from "./Tab.js";
@@ -35,10 +35,6 @@ class Game {
             this.focusPower = 1; // TODO: put in Stats or something
             clearResources();
 
-            Creature.Map = {};
-            this.creatures = [];
-            clearCreatures();
-
             Upgrade.Map = {};
             this.upgrades = [];
             clearUpgrades();
@@ -70,120 +66,12 @@ class Game {
 
     // TODO rethink naming
     createCreatures () {
-        this.creatures.push(
-            new Creature(
-                {
-                    internalName: "Weaseal",
-                    displayNameSingular: "Weaseal",
-                    displayNamePlural: "Weaseals",
-                    flavorText: "It's got fur and also... blubber?  You don't want to touch this creature at all.",
-                    cost: {
-                        berries: 1,
-                        wood: 5,
-                    },
-                    production: {
-                        berries: 1,
-                        wood: 0.2,
-                    },
-                    totalProduced: {
-                        berries: 0,
-                        wood: 0,
-                    },
-                    costScalingFunction:
-                        function () {
-                            this.cost["berries"] *= 1.15;
-                        },
-                    initialQuantity: 0,
-                }
-            )
-        );
-        this.creatures.push(
-            new Creature(
-                {
-                    internalName: "Beaverine",
-                    displayNameSingular: "Beaverine",
-                    displayNamePlural: "Beaverines",
-                    flavorText: "Sometimes makes dams.  Sometimes tears apart others' dams.  Absolutely terrifying.",
-                    cost: {
-                        berries: 100,
-                        wood: 50,
-                    },
-                    production: {
-                        berries: 10,
-                        wood: 20,
-                    },
-                    totalProduced: {
-                        berries: 0,
-                        wood: 0,
-                    },
-                    costScalingFunction:
-                        function () {
-                            this.cost["wood"] *= 1.15;
-                        },
-                    initialQuantity: 0,
-                }
-            )
-        );
-        this.creatures.push(
-            new Creature(
-                {
-                    internalName: "Buckaroo",
-                    displayNameSingular: "Buckaroo",
-                    displayNamePlural: "Buckaroos",
-                    flavorText: "Jumpy and frantic but great at gathering, oh deer!",
-                    cost: {
-                        berries: 500,
-                        wood: 120,
-                        flowers: 1
-                    },
-                    production: {
-                        berries: 100,
-                        wood: 20,
-                        flowers: 0.001
-                    },
-                    totalProduced: {
-                        berries: 0,
-                        wood: 0,
-                        flowers: 0,
-                    },
-                    costScalingFunction:
-                        function () {
-                            this.cost["berries"] *= 1.15;
-                            this.cost["wood"] *= 1.15;
-                        },
-                    initialQuantity: 0,
-                }
-            )
-        );
-        this.creatures.push(
-            new Creature(
-                {
-                    internalName: "Ptrocanfer",
-                    displayNameSingular: "Ptrocanfer",
-                    displayNamePlural: "Ptrocanfers",
-                    flavorText: "Ridiculously expensive!  But maybe worth it?",
-                    cost: {
-                        wood: 890000,
-                        flowers: 50,
-                    },
-                    production: {
-                        berries: 100000,
-                        wood: 100000,
-                        flowers: 10,
-                    },
-                    totalProduced: {
-                        berries: 0,
-                        wood: 0,
-                        flowers: 0,
-                    },
-                    costScalingFunction:
-                        function () {
-                            this.cost["wood"] *= 1.15;
-                            this.cost["flowers"] *= 1.15;
-                        },
-                    initialQuantity: 0,
-                }
-            )
+        if (this.creatures) {
+            this.creatures.clear();
+        }
+        this.creatures = new WorldCreatureSet(
+            ["weaseal", "beaverine", "buckaroo", "ptrocanfer"],
+            document.getElementById("creatures"),
         );
     }
 
@@ -232,7 +120,7 @@ class Game {
                     },
                     unlockCondition: () => {
                         var sum = 0;
-                        for (const creature of this.creatures) {
+                        for (const creature of this.creatures.creatureList) {
                             sum += creature.quantity;
                         }
                         return (sum >= 10);
@@ -257,7 +145,7 @@ class Game {
                         }
                     },
                     unlockCondition: () => {
-                        return (this.creatures[1].quantity > 0);
+                        return (this.creatures.beaverine.quantity > 0);
                     },
                 }
             )
@@ -299,7 +187,7 @@ class Game {
                         settings.bgColor = "#888888";
                     },
                     unlockCondition: () => {
-                        for (const creature of this.creatures) {
+                        for (const creature of this.creatures.creatureList) {
                             if (creature.quantity >= 13) return true;
                         }
                         return false;
@@ -320,7 +208,7 @@ class Game {
                         this.creatures[3].quantity++;
                     },
                     unlockCondition: () => {
-                        for (const creature of this.creatures) {
+                        for (const creature of this.creatures.creatureList) {
                             if (creature.quantity > 0) return false;
                         }
                         return true;
@@ -353,12 +241,11 @@ class Game {
         this.achievements.push(
             new Achievement(
                 {
-                    id: "seal1",
                     displayName: "We'll seal you later!",
                     lockedFlavorText: "Hmm... maybe there's a creature with a name like that",
                     unlockedFlavorText: "In fact, we'll seal you now!",
                     unlockCondition: () => {
-                        return (Creature.Map['Weaseal'].quantity >= 1);
+                        return (this.creatures.weaseal.quantity >= 1);
                     },
                     effect: () => {},
                 }
@@ -367,7 +254,6 @@ class Game {
         this.achievements.push(
             new Achievement(
                 {
-                    id: "lilies1",
                     displayName: "The smallest e",
                     lockedFlavorText: "Is this one a pun too?",
                     unlockedFlavorText: "Lil' e, sounds like a rapper!  Shucks that was terrible",
@@ -495,9 +381,8 @@ class Game {
             Resource.focusedResource.tickFocus(this.focusPower);
         }
 
-        for (const creature of this.creatures) {
-            creature.tick(settings.fps);
-        }
+        this.creatures.tick();
+
         for (const upgrade of this.upgrades) {
             upgrade.tick();
             // TODO: as above, make sure that keeping updateDOM() inside tick() is the right course of action (counter to above)
@@ -522,9 +407,7 @@ class Game {
             resource.draw();
         }
 
-        for (const creature of this.creatures) {
-            creature.draw();
-        }
+        this.creatures.draw();
 
         for (const achievement of this.achievements) {
             achievement.draw();
@@ -544,8 +427,8 @@ class Game {
     // TODO: modifiers to buy max or multiple, etc.; also visual indicator for such
     // TODO: figure out what to do if there's 10 or more creature types?
     handleKey (key) {
-        if (key >= "1" && key <= this.creatures.length.toString()) {
-            this.creatures[parseInt(key)-1].buy();
+        if (key >= "1" && key <= this.creatures.creatureList.length.toString()) {
+            this.creatures.creatureList[parseInt(key)-1].buy();
         }
     }
 
@@ -585,9 +468,9 @@ class Game {
         let save = "";
 
         save += this.resources.map(resource => resource.save()).join("|");
-        save += "||" + Resource.focusedResource.internalName;
+        save += "||" + (Resource.focusedResource === undefined ? "undefined" : Resource.focusedResource.internalName);
         save += "%%";
-        save += this.creatures.map(creature => creature.save()).join("|");
+        save += JSON.stringify(this.creatures.save());
         save += "%%";
         save += this.upgrades.map(upgrade => upgrade.save()).join("|");
         save += "%%";
@@ -669,9 +552,7 @@ class Game {
         setFocusedResource(Resource.Map[resourceChunks[1]]);
 
         let creaturesSave = saveComponents[1].split("|");
-        for (let i = 0; i<this.creatures.length; ++i) {
-            this.creatures[i].load(creaturesSave[i]);
-        }
+        this.creatures.load(JSON.parse(creaturesSave));
 
         let upgradesSave = saveComponents[2].split("|");
         for (let i = 0; i<this.upgrades.length; ++i) {
