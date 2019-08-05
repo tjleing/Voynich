@@ -1,12 +1,15 @@
 // @ts-check
 
 class WorldResourceSet {
-    constructor (resourceList) {
-        this.resourceList = resourceList;
+    constructor (resourceNames, resourceDiv) {
+        // TODO: maybe just this.list?
+        this.resourceList = [];
+        this.resourceDiv = resourceDiv;
 
-        this.Map = {};
-        for (const resource of this.resourceList) {
-            this.Map[resource.name] = resource;
+        for (const resourceName of resourceNames) {
+            const resource = createResource(resourceName);
+            this[resourceName] = resource;
+            this.resourceList.push(resource);
         }
     }
 
@@ -34,5 +37,13 @@ class WorldResourceSet {
         for (let i = 0; i < this.resourceList.length) {
             resourceList[i].load(saveComponents[i]);
         }
+    }
+
+    clear () {
+        for (const resource of this.resourceList) {
+            this[resource.name] = undefined;
+        }
+        this.resourceList = [];
+        this.resourceDiv.innerHTML = "";
     }
 }
