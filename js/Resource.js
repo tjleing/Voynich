@@ -11,7 +11,9 @@ class Resource {
         flavorText,
         startingAmount,
         hitpoints,
-        active
+        active,
+        resourceDiv,
+        world,
     }) {
         this.internalName = internalName;
         this.displayNameSingular = displayNameSingular;
@@ -23,8 +25,8 @@ class Resource {
         this.hitpoints = hitpoints;
         this.isFocused = false;
         this.active = active;
-
-        Resource.Map[internalName] = this;
+        this.resourceDiv = resourceDiv;
+        this.world = world;
 
         if (this.active) {
             this.constructHTML();
@@ -37,7 +39,7 @@ class Resource {
             return;
         }
         this.amountDiv = document.createElement("div");
-        this.amountDiv.onclick = () => {setFocusedResource(this)};
+        this.amountDiv.onclick = () => {this.world.resources.setFocusedResource(this)};
         this.amountDiv.classList.add("tooltip");
         this.amountSpan = document.createElement("span");
         this.amountDiv.appendChild(this.amountSpan);
@@ -47,8 +49,7 @@ class Resource {
 
         this.amountDiv.appendChild(this.tooltipSpan);
 
-        const resourceAmounts = document.getElementById("resourceAmounts");
-        resourceAmounts.appendChild(this.amountDiv);
+        this.resourceDiv.appendChild(this.amountDiv);
     }
 
     draw () {
@@ -118,7 +119,7 @@ class Resource {
     load (saveString) {
         let saveComponents = saveString.split("$");
         this.amount = parseInt(saveComponents[0]);
-        this.active = saveComponents[1] === "true";
+        this.active = saveComponents[1] === "1";
 
         if (this.active) {
             this.constructHTML();
@@ -128,31 +129,45 @@ class Resource {
     save () {
         let saveComponents = [];
         saveComponents.push(fix(this.amount));
-        saveComponents.push(this.active.toString());
+        saveComponents.push(this.active ? "1" : "0");
 
         return saveComponents.join("$");
     }
 }
 
-function setFocusedResource (newFocusedResource) {
-    // Unfocus previous resource
-    if (Resource.focusedResource !== undefined) {
-        Resource.focusedResource.isFocused = false;
-    }
-    // Focus new resource as long as it wasn't the previous one
-    if (newFocusedResource !== Resource.focusedResource) {
-        newFocusedResource.isFocused = true;
-        Resource.focusedResource = newFocusedResource;
-    }
-    else {
-        Resource.focusedResource = undefined;
-    }
+
+const resourceConfigs = {
+    "berries": {
+        internalName: "berries",
+        displayNameSingular: "Liquid Gold Berry",
+        displayNamePlural: "Liquid Gold Berries",
+        flavorText: "It's worth its weight in liquid gold berries.",
+        startingAmount: 0,
+        hitpoints: 20,
+        active: true,
+    },
+    "wood": {
+        internalName: "wood",
+        displayNameSingular: "Branch of Mahogany",
+        displayNamePlural: "Branches of Mahogany",
+        flavorText: "You could carve a nice sculpture out of one of these.",
+        startingAmount: 0,
+        hitpoints: 20,
+        active: true,
+    },
+    "flowers": {
+        internalName: "flowers",
+        displayNameSingular: "Meadow Lily",
+        displayNamePlural: "Meadow Lilies",
+        flavorText: "The rarest flower!",
+        startingAmount: 0,
+        hitpoints: 500,
+        active: true,
+    },
+};
+
+function createResource (name, resourceDiv, world) {
+    return new Resource({ ...resourceConfigs[name], resourceDiv: resourceDiv, world: world });
 }
 
-
-function clearResources () {
-    const resourceAmounts = document.getElementById("resourceAmounts");
-    resourceAmounts.innerHTML = "";
-}
-
-export { clearResources, setFocusedResource, Resource };
+export { createResource,  };

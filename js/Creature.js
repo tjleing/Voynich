@@ -1,6 +1,5 @@
 // @ts-check
 
-import { Resource } from "./Resource.js";
 import { settings } from "./Settings.js";
 import { deepFix, fix, maximumTimeToGet } from "./Utils.js";
 
@@ -15,9 +14,9 @@ class Creature {
             totalProduced,
             costScalingFunction,
             initialQuantity,
+            creatureDiv,
+            world,
     }) {
-        this._id = Creature.counter;
-
         this.internalName = internalName;
         this.displayNameSingular = displayNameSingular;
         this.displayNamePlural = displayNamePlural;
@@ -27,10 +26,10 @@ class Creature {
         this.totalProduced = totalProduced;
         this.costScalingFunction = costScalingFunction;
         this.quantity = initialQuantity; // TODO: don't put this here; just in save-load?  at the very least don't pass through constructor, just set to 0s based on production (might make it hard for a creature to produce new resources? [can pass in a 0 for that in production, and then special-case it in tooltip??])
+        this.creatureDiv = creatureDiv;
+        this.world = world;
 
         this.affordable = false;
-
-        Creature.Map[internalName] = this;
 
         this.constructDOM();
     }
@@ -42,7 +41,6 @@ class Creature {
         const br2 = document.createElement("br");
 
         this.button = document.createElement("button");
-        this.button.id = `creatureButton${this.id}`;
         this.button.classList.add("button");
         this.button.classList.add("tooltip");
 
@@ -66,12 +64,10 @@ class Creature {
 
         buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
         buttonDiv.appendChild(this.button);
-        buttonDiv.id = `creature${this.id}`;
-        const creatureDiv = document.getElementById("creatures");
-        creatureDiv.appendChild(buttonDiv);
+        this.creatureDiv.appendChild(buttonDiv);
     }
 
-    updateDOM () {
+    draw () {
         const newNameSpan = `${this.displayNameSingular}`;
         if (this.nameSpan.textContent !== newNameSpan) {
             this.nameSpan.textContent = newNameSpan;
@@ -82,9 +78,9 @@ class Creature {
         }
         let newCostSpanHTML = "";
         for (const resourceName of Object.keys(this.cost)) {
-            const resource = Resource.Map[resourceName];
+            const resource = this.world.resources[resourceName];
             let affordableClass = "";
-            if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
+            if (this.cost[resourceName] > this.world.resources[resourceName].amount) {
                 affordableClass = "costUnaffordable";
             }
             else {
@@ -112,10 +108,10 @@ class Creature {
             // TODO: two maps? gross -- at least maybe hide in Utils
             const timeUntilAffordable = maximumTimeToGet(
                 Object.keys(this.cost).map((resourceName) =>
-                    this.cost[resourceName]-Resource.Map[resourceName].amount
+                    this.cost[resourceName]-this.world.resources[resourceName].amount
                 ),
                 Object.keys(this.cost).map((resourceName) =>
-                    Resource.Map[resourceName].amountPerTick * settings.fps
+                    this.world.resources[resourceName].amountPerTick * settings.fps
                 )
             );
             timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`;
@@ -126,19 +122,19 @@ class Creature {
         }
     }
 
-    setAffordable() {
+    setAffordable () {
         this.affordable = true;
         for (const resourceName of Object.keys(this.cost)) {
-            if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
+            if (this.cost[resourceName] > this.world.resources[resourceName].amount) {
                 this.affordable = false;
             }
         }
     }
 
-    tick() {
+    tick () {
         for (const resourceName of Object.keys(this.production)) {
             const amountProduced = this.production[resourceName] * this.quantity / settings.fps;
-            Resource.Map[resourceName].tickAdd(amountProduced);
+            this.world.resources[resourceName].tickAdd(amountProduced);
             this.totalProduced[resourceName] += amountProduced;
         }
 
@@ -161,7 +157,7 @@ class Creature {
 
         for (var key in this.cost) {
             if (this.cost.hasOwnProperty(key)) {
-                Resource.Map[key].noTickConsume(this.cost[key]);
+                this.world.resources[key].noTickConsume(this.cost[key]);
             }
         }
 
@@ -186,22 +182,113 @@ class Creature {
 
         return saveComponents.join("$");
     }
-
-
-    static get counter () {
-        return Creature._counter++;
-    }
-
-    get id () {
-        return this._id;
-    }
 }
 
-function clearCreatures () {
-    Creature._counter = 0;
 
-    const creatureDiv = document.getElementById("creatures");
-    creatureDiv.innerHTML = "";
+const creatureConfigs = {
+    "weaseal": {
+        internalName: "Weaseal",
+        displayNameSingular: "Weaseal",
+        displayNamePlural: "Weaseals",
+        flavorText: "It's got fur and also... blubber?  You don't want to touch this creature at all.",
+        cost: {
+            berries: 1,
+            wood: 5,
+        },
+        production: {
+            berries: 1,
+            wood: 0.2,
+        },
+        totalProduced: {
+            berries: 0,
+            wood: 0,
+        },
+        costScalingFunction:
+            function () {
+                this.cost["berries"] *= 1.15;
+            },
+        initialQuantity: 0,
+    },
+    "beaverine": {
+        internalName: "Beaverine",
+        displayNameSingular: "Beaverine",
+        displayNamePlural: "Beaverines",
+        flavorText: "Sometimes makes dams.  Sometimes tears apart others' dams.  Absolutely terrifying.",
+        cost: {
+            berries: 100,
+            wood: 50,
+        },
+        production: {
+            berries: 10,
+            wood: 20,
+        },
+        totalProduced: {
+            berries: 0,
+            wood: 0,
+        },
+        costScalingFunction:
+            function () {
+                this.cost["wood"] *= 1.15;
+            },
+        initialQuantity: 0,
+    },
+    "buckaroo": {
+        internalName: "Buckaroo",
+        displayNameSingular: "Buckaroo",
+        displayNamePlural: "Buckaroos",
+        flavorText: "Jumpy and frantic but great at gathering, oh deer!",
+        cost: {
+            berries: 500,
+            wood: 120,
+            flowers: 1
+        },
+        production: {
+            berries: 100,
+            wood: 20,
+            flowers: 0.001
+        },
+        totalProduced: {
+            berries: 0,
+            wood: 0,
+            flowers: 0,
+        },
+        costScalingFunction:
+            function () {
+                this.cost["berries"] *= 1.15;
+                this.cost["wood"] *= 1.15;
+            },
+        initialQuantity: 0,
+    },
+    "ptrocanfer": {
+        internalName: "Ptrocanfer",
+        displayNameSingular: "Ptrocanfer",
+        displayNamePlural: "Ptrocanfers",
+        flavorText: "Ridiculously expensive!  But maybe worth it?",
+        cost: {
+            wood: 890000,
+            flowers: 50,
+        },
+        production: {
+            berries: 100000,
+            wood: 100000,
+            flowers: 10,
+        },
+        totalProduced: {
+            berries: 0,
+            wood: 0,
+            flowers: 0,
+        },
+        costScalingFunction:
+            function () {
+                this.cost["wood"] *= 1.15;
+                this.cost["flowers"] *= 1.15;
+            },
+        initialQuantity: 0,
+    },
+};
+
+function createCreature (name, creatureDiv, world) {
+    return new Creature({ ...creatureConfigs[name], creatureDiv: creatureDiv, world: world });
 }
 
-export { clearCreatures, Creature };
+export { createCreature };
