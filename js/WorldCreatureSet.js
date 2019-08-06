@@ -1,14 +1,15 @@
 // @ts-check
+
 import { createCreature } from "./Creature.js";
 
 class WorldCreatureSet {
-    constructor (creatureNames, creatureDiv) {
+    constructor (creatureNames, creatureDiv, world) {
         this.creatureList = [];
         this.creatureDiv = creatureDiv;
 
         for (const creatureName of creatureNames) {
             // TODO: consider whether it's a good idea to have both a list and a map of the same thing
-            let creature = createCreature(creatureName, creatureDiv);
+            const creature = createCreature(creatureName, creatureDiv, world);
             this[creatureName] = creature;
             this.creatureList.push(creature);
         }

@@ -1,6 +1,5 @@
 // @ts-check
 
-import { Resource } from "./Resource.js";
 import { settings } from "./Settings.js";
 import { deepFix, fix, maximumTimeToGet } from "./Utils.js";
 
@@ -16,6 +15,7 @@ class Creature {
             costScalingFunction,
             initialQuantity,
             creatureDiv,
+            world,
     }) {
         this.internalName = internalName;
         this.displayNameSingular = displayNameSingular;
@@ -27,6 +27,7 @@ class Creature {
         this.costScalingFunction = costScalingFunction;
         this.quantity = initialQuantity; // TODO: don't put this here; just in save-load?  at the very least don't pass through constructor, just set to 0s based on production (might make it hard for a creature to produce new resources? [can pass in a 0 for that in production, and then special-case it in tooltip??])
         this.creatureDiv = creatureDiv;
+        this.world = world;
 
         this.affordable = false;
 
@@ -77,9 +78,9 @@ class Creature {
         }
         let newCostSpanHTML = "";
         for (const resourceName of Object.keys(this.cost)) {
-            const resource = Resource.Map[resourceName];
+            const resource = this.world.resources[resourceName];
             let affordableClass = "";
-            if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
+            if (this.cost[resourceName] > this.world.resources[resourceName].amount) {
                 affordableClass = "costUnaffordable";
             }
             else {
@@ -107,10 +108,10 @@ class Creature {
             // TODO: two maps? gross -- at least maybe hide in Utils
             const timeUntilAffordable = maximumTimeToGet(
                 Object.keys(this.cost).map((resourceName) =>
-                    this.cost[resourceName]-Resource.Map[resourceName].amount
+                    this.cost[resourceName]-this.world.resources[resourceName].amount
                 ),
                 Object.keys(this.cost).map((resourceName) =>
-                    Resource.Map[resourceName].amountPerTick * settings.fps
+                    this.world.resources[resourceName].amountPerTick * settings.fps
                 )
             );
             timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`;
@@ -124,7 +125,7 @@ class Creature {
     setAffordable () {
         this.affordable = true;
         for (const resourceName of Object.keys(this.cost)) {
-            if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
+            if (this.cost[resourceName] > this.world.resources[resourceName].amount) {
                 this.affordable = false;
             }
         }
@@ -133,7 +134,7 @@ class Creature {
     tick () {
         for (const resourceName of Object.keys(this.production)) {
             const amountProduced = this.production[resourceName] * this.quantity / settings.fps;
-            Resource.Map[resourceName].tickAdd(amountProduced);
+            this.world.resources[resourceName].tickAdd(amountProduced);
             this.totalProduced[resourceName] += amountProduced;
         }
 
@@ -156,7 +157,7 @@ class Creature {
 
         for (var key in this.cost) {
             if (this.cost.hasOwnProperty(key)) {
-                Resource.Map[key].noTickConsume(this.cost[key]);
+                this.world.resources[key].noTickConsume(this.cost[key]);
             }
         }
 
@@ -183,8 +184,9 @@ class Creature {
     }
 }
 
+
 const creatureConfigs = {
-    'weaseal': {
+    "weaseal": {
         internalName: "Weaseal",
         displayNameSingular: "Weaseal",
         displayNamePlural: "Weaseals",
@@ -207,7 +209,7 @@ const creatureConfigs = {
             },
         initialQuantity: 0,
     },
-    'beaverine': {
+    "beaverine": {
         internalName: "Beaverine",
         displayNameSingular: "Beaverine",
         displayNamePlural: "Beaverines",
@@ -230,7 +232,7 @@ const creatureConfigs = {
             },
         initialQuantity: 0,
     },
-    'buckaroo': {
+    "buckaroo": {
         internalName: "Buckaroo",
         displayNameSingular: "Buckaroo",
         displayNamePlural: "Buckaroos",
@@ -257,7 +259,7 @@ const creatureConfigs = {
             },
         initialQuantity: 0,
     },
-    'ptrocanfer': {
+    "ptrocanfer": {
         internalName: "Ptrocanfer",
         displayNameSingular: "Ptrocanfer",
         displayNamePlural: "Ptrocanfers",
@@ -285,8 +287,8 @@ const creatureConfigs = {
     },
 };
 
-function createCreature (name, creatureDiv) {
-    return new Creature({ ...creatureConfigs[name], creatureDiv: creatureDiv });
+function createCreature (name, creatureDiv, world) {
+    return new Creature({ ...creatureConfigs[name], creatureDiv: creatureDiv, world: world });
 }
 
 export { createCreature };

@@ -9,9 +9,8 @@ class World {
         this.creatures = new WorldCreatureSet(creatureList);
         this.creatures.clear();
 
-        Upgrade.Map = {};
-        this.upgrades = [];
-        clearUpgrades();
+        this.upgrades = new WorldUpgradeSet(upgradeList);
+        this.upgrades.clear();
 
         this.tabs = [];
         clearTabs();

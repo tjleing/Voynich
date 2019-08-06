@@ -1,6 +1,5 @@
 // @ts-check
 
-import { Resource } from "./Resource.js";
 import { settings } from "./Settings.js";
 import { fix, maximumTimeToGet } from "./Utils.js";
 
@@ -11,20 +10,20 @@ class Upgrade {
         flavorText,
         cost,
         effect,
-        unlockCondition
+        unlockCondition,
+        world,
       }) {
         this.internalName = internalName;
         this.displayName = displayName;
         this.flavorText = flavorText;
         this.cost = cost;
-        this.effect = effect;
-        this.unlockCondition = unlockCondition;
+        this.effect = effect.bind(this);
+        this.unlockCondition = unlockCondition.bind(this);
+        this.world = world;
 
         this.unlocked = false;
         this.purchased = false;
         this.affordable = false;
-
-        Upgrade.Map[internalName] = this;
     }
 
     constructDOM () {
@@ -75,9 +74,9 @@ class Upgrade {
         }
         let newCostSpanHTML = "";
         for (const resourceName of Object.keys(this.cost)) {
-            const resource = Resource.Map[resourceName];
+            const resource = this.world.resources[resourceName];
             let affordableClass = "";
-            if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
+            if (this.cost[resourceName] > this.world.resources[resourceName].amount) {
                 affordableClass = "costUnaffordable";
             }
             else {
@@ -94,10 +93,10 @@ class Upgrade {
             // TODO: two maps? gross -- at least maybe hide in Utils
             const timeUntilAffordable = maximumTimeToGet(
                 Object.keys(this.cost).map((resourceName) =>
-                    this.cost[resourceName]-Resource.Map[resourceName].amount
+                    this.cost[resourceName]-this.world.resources[resourceName].amount
                 ),
                 Object.keys(this.cost).map((resourceName) =>
-                    Resource.Map[resourceName].amountPerTick * settings.fps
+                    this.world.resources[resourceName].amountPerTick * settings.fps
                 )
             );
             timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`;
@@ -111,7 +110,7 @@ class Upgrade {
     setAffordable() {
         this.affordable = true;
         for (const resourceName of Object.keys(this.cost)) {
-            if (this.cost[resourceName] > Resource.Map[resourceName].amount) {
+            if (this.cost[resourceName] > this.world.resources[resourceName].amount) {
                 this.affordable = false;
             }
         }
@@ -149,7 +148,7 @@ class Upgrade {
         if (this.unlocked && this.affordable && !this.purchased) {
             for (var key in this.cost) {
                 if (this.cost.hasOwnProperty(key)) {
-                    Resource.Map[key].noTickConsume(this.cost[key]);
+                    this.world.resources[key].noTickConsume(this.cost[key]);
                 }
             }
             this.effect();
@@ -179,10 +178,142 @@ class Upgrade {
     }
 }
 
-// TODO: idk where this should go, but should do something when there are no upgrades to buy -- right now it looks weird if there's nothing to buy (c.f. cookie clicker?)
 
-function clearUpgrades () {
-    document.getElementById("upgrades").innerHTML = "";
+const upgradeConfigs = {
+    "twoForOne": {
+        internalName: "twoForOne",
+        displayName: "Two for one deal!",
+        flavorText: "Everything gets cheaper?",
+        cost: {
+            berries: 100,
+            wood: 100,
+        },
+        effect: function () {
+            for (const creature of this.world.creatures.creatureList) {
+                for (const resource in creature.cost) {
+                    creature.cost[resource] *= 0.5;
+                }
+            }
+            for (const upgrade of this.world.upgrades.upgradeList) {
+                for (const resource in upgrade.cost) {
+                    upgrade.cost[resource] *= 0.5;
+                }
+            }
+        },
+        unlockCondition: function () {
+            return (this.world.resources.wood.amount >= 10);
+        },
+    },
+    "BeaverineUp1": {
+        internalName: "BeaverineUp1",
+        displayName: "Better dams",
+        flavorText: "Shucks, none of those ideas are good",
+        cost: {
+            berries: 1000,
+            wood: 1000,
+        },
+        effect: function () {
+            this.world.creatures.beaverine.production["wood"] *= 3;
+        },
+        unlockCondition: function () {
+            var sum = 0;
+            for (const creature of this.world.creatures.creatureList) {
+                sum += creature.quantity;
+            }
+            return (sum >= 10);
+        },
+    },
+    "everythingIsAwful": {
+        internalName: "everythingIsAwful",
+        displayName: "Why would you do this?",
+        flavorText: "Makes everything do nothing",
+        cost: {
+            berries: 10,
+            wood: 10,
+        },
+        effect: function () {
+            for (const creature of this.world.creatures.creatureList) {
+                creature.production["wood"] *= 0.001;
+                creature.production["berries"] *= 0.001;
+            }
+        },
+        unlockCondition: function () {
+            return (this.world.creatures.beaverine.quantity > 0);
+        },
+    },
+    "undoAwful": {
+        internalName: "undoAwful",
+        displayName: "You shouldn't have done that",
+        flavorText: "Fixes your mistakes",
+        cost: {
+            berries: 100,
+            wood: 100,
+        },
+        effect: function () {
+            for (const creature of this.world.creatures.creatureList) {
+                creature.production["wood"] /= 0.001;
+                creature.production["berries"] /= 0.001;
+            }
+        },
+        unlockCondition: function () {
+            return (this.world.upgrades["everythingIsAwful"].purchased);
+        },
+    },
+    "greyBG": {
+        internalName: "greyBG",
+        displayName: "More depressing",
+        flavorText: "Yum! Makes the game more depressing",
+        cost: {
+            berries: 0,
+            wood: 0,
+            flowers: 0,
+        },
+        effect: function () {
+            settings.bgColor = "#888888";
+        },
+        unlockCondition: function () {
+            for (const creature of this.world.creatures.creatureList) {
+                if (creature.quantity >= 13) return true;
+            }
+            return false;
+        },
+    },
+    "getPtroed": {
+        internalName: "getPtroed",
+        displayName: "Skip the whole game",
+        flavorText: "This one's on the hill!",
+        cost: {
+            flowers: 1,
+        },
+        effect: function () {
+            this.world.creatures.ptrocanfer.quantity++;
+        },
+        unlockCondition: function () {
+            for (const creature of this.world.creatures.creatureList) {
+                if (creature.quantity > 0) return false;
+            }
+            return true;
+        },
+    },
+    "doubleFocusPower": {
+        internalName: "doubleFocusPower",
+        displayName: "Self-immolation",
+        flavorText: "You're on fire! ... Doubles the rate at which you gain resources yourself.",
+        cost: {
+            berries: 10000,
+            wood: 10000,
+        },
+        effect: function () {
+            this.focusPower *= 2;
+        },
+        unlockCondition: function () {
+            return (this.world.resources.wood.amount >= 1000);
+        },
+    },
+};
+
+function createUpgrade (name, upgradeDiv, world) {
+    return new Upgrade({ ...upgradeConfigs[name], upgradeDiv: upgradeDiv, world: world });
 }
 
-export { clearUpgrades, Upgrade };
+export { createUpgrade };

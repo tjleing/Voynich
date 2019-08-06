@@ -2,12 +2,12 @@
 
 import { WorldCreatureSet } from "./WorldCreatureSet.js";
 import { clearNews, News } from "./News.js";
-import { clearResources, setFocusedResource, Resource } from "./Resource.js";
+import { WorldResourceSet } from "./WorldResourceSet.js";
 import { clearTabs, Tab } from "./Tab.js";
 import { clearPrestigeResources, PrestigeResource } from "./PrestigeResource.js";
 import { clearAchievements, Achievement } from "./Achievement.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
-import { clearUpgrades, Upgrade } from "./Upgrade.js";
+import { WorldUpgradeSet } from "./WorldUpgradeSet.js";
 import { fix, notify } from "./Utils.js";
 
 class Game {
@@ -30,14 +30,7 @@ class Game {
         // TODO: abstract it all out into its own function so that we're not literally hardReset()ing
         // on every single refresh
         if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
-            Resource.Map = {};
-            this.resources = [];
             this.focusPower = 1; // TODO: put in Stats or something
-            clearResources();
-
-            Upgrade.Map = {};
-            this.upgrades = [];
-            clearUpgrades();
 
             this.achievements = [];
             clearAchievements();
@@ -72,168 +65,19 @@ class Game {
         this.creatures = new WorldCreatureSet(
             ["weaseal", "beaverine", "buckaroo", "ptrocanfer"],
             document.getElementById("creatures"),
+            this,
         );
     }
 
     // TODO rethink naming
     createUpgrades () {
-        this.upgrades.push(
-            new Upgrade(
-                {
-                    internalName: "twoForOne",
-                    displayName: "Two for one deal!",
-                    flavorText: "Everything gets cheaper?",
-                    cost: {
-                        berries: 100,
-                        wood: 100,
-                    },
-                    effect: () => {
-                        for (const creature of this.creatures) {
-                            for (const resource in creature.cost) {
-                                creature.cost[resource] *= 0.5;
-                            }
-                        }
-                        for (const upgrade of this.upgrades) {
-                            for (const resource in upgrade.cost) {
-                                upgrade.cost[resource] *= 0.5;
-                            }
-                        }
-                    },
-                    unlockCondition: () => {
-                        return (Resource.Map["wood"].amount >= 10);
-                    },
-                }
-            )
-        );
-        this.upgrades.push(
-            new Upgrade(
-                {
-                    internalName: "BeaverineUp1",
-                    displayName: "Better dams",
-                    flavorText: "Shucks, none of those ideas are good",
-                    cost: {
-                        berries: 1000,
-                        wood: 1000,
-                    },
-                    effect: () => {
-                        this.creatures[1].production["wood"] *= 3;
-                    },
-                    unlockCondition: () => {
-                        var sum = 0;
-                        for (const creature of this.creatures.creatureList) {
-                            sum += creature.quantity;
-                        }
-                        return (sum >= 10);
-                    },
-                }
-            )
-        );
-        this.upgrades.push(
-            new Upgrade(
-                {
-                    internalName: "everythingIsAwful",
-                    displayName: "Why would you do this?",
-                    flavorText: "Makes everything do nothing",
-                    cost: {
-                        berries: 10,
-                        wood: 10,
-                    },
-                    effect: () => {
-                        for (const creature of this.creatures) {
-                            creature.production["wood"] *= 0.001;
-                            creature.production["berries"] *= 0.001;
-                        }
-                    },
-                    unlockCondition: () => {
-                        return (this.creatures.beaverine.quantity > 0);
-                    },
-                }
-            )
-        );
-        this.upgrades.push(
-            new Upgrade(
-                {
-                    internalName: "undoAwful",
-                    displayName: "You shouldn't have done that",
-                    flavorText: "Fixes your mistakes",
-                    cost: {
-                        berries: 100,
-                        wood: 100,
-                    },
-                    effect: () => {
-                        for (const creature of this.creatures) {
-                            creature.production["wood"] /= 0.001;
-                            creature.production["berries"] /= 0.001;
-                        }
-                    },
-                    unlockCondition: () => {
-                        return (this.upgrades[2].purchased);
-                    },
-                }
-            )
-        );
-        this.upgrades.push(
-            new Upgrade(
-                {
-                    internalName: "greyBG",
-                    displayName: "More depressing",
-                    flavorText: "Yum! Makes the game more depressing",
-                    cost: {
-                        berries: 0,
-                        wood: 0,
-                        flowers: 0,
-                    },
-                    effect: () => {
-                        settings.bgColor = "#888888";
-                    },
-                    unlockCondition: () => {
-                        for (const creature of this.creatures.creatureList) {
-                            if (creature.quantity >= 13) return true;
-                        }
-                        return false;
-                    },
-                }
-            )
-        );
-        this.upgrades.push(
-            new Upgrade(
-                {
-                    internalName: "getPtroed",
-                    displayName: "Skip the whole game",
-                    flavorText: "This one's on the hill!",
-                    cost: {
-                        flowers: 1,
-                    },
-                    effect: () => {
-                        this.creatures[3].quantity++;
-                    },
-                    unlockCondition: () => {
-                        for (const creature of this.creatures.creatureList) {
-                            if (creature.quantity > 0) return false;
-                        }
-                        return true;
-                    },
-                }
-            )
-        );
-        this.upgrades.push(
-            new Upgrade(
-                {
-                    internalName: "doubleFocusPower",
-                    displayName: "Self-immolation",
-                    flavorText: "You're on fire! ... Doubles the rate at which you gain resources yourself.",
-                    cost: {
-                        berries: 10000,
-                        wood: 10000,
-                    },
-                    effect: () => {
-                        this.focusPower *= 2;
-                    },
-                    unlockCondition: () => {
-                        return (Resource.Map['wood'].amount >= 1000);
-                    },
-                }
-            )
+        if (this.upgrades) {
+            this.upgrades.clear();
+        }
+        this.upgrades = new WorldUpgradeSet(
+            ["twoForOne", "BeaverineUp1", "everythingIsAwful", "undoAwful", "greyBG", "getPtroed", "doubleFocusPower"],
+            document.getElementById("upgrades"),
+            this,
         );
     }
 
@@ -258,10 +102,10 @@ class Game {
                     lockedFlavorText: "Is this one a pun too?",
                     unlockedFlavorText: "Lil' e, sounds like a rapper!  Shucks that was terrible",
                     unlockCondition: () => {
-                        return (Resource.Map['flowers'].amount >= 1);
+                        return (this.resources.flowers.amount >= 1);
                     },
                     effect: () => {
-                        Resource.Map['flowers'].amount += 5;
+                        this.resources.flowers.amount += 5;
                     },
                 }
             )
@@ -270,44 +114,13 @@ class Game {
 
     // TODO rethink naming
     createResources () {
-        this.resources.push(
-            new Resource(
-                {
-                    internalName: "berries",
-                    displayNameSingular: "Liquid Gold Berry",
-                    displayNamePlural: "Liquid Gold Berries",
-                    flavorText: "It's worth its weight in liquid gold berries.",
-                    startingAmount: 0,
-                    hitpoints: 20,
-                    active: true,
-                }
-            )
-        );
-        this.resources.push(
-            new Resource(
-                {
-                    internalName: "wood",
-                    displayNameSingular: "Branch of Mahogany",
-                    displayNamePlural: "Branches of Mahogany",
-                    flavorText: "You could carve a nice sculpture out of one of these.",
-                    startingAmount: 0,
-                    hitpoints: 20,
-                    active: true,
-                }
-            )
-        );
-        this.resources.push(
-            new Resource(
-                {
-                    internalName: "flowers",
-                    displayNameSingular: "Meadow Lily",
-                    displayNamePlural: "Meadow Lilies",
-                    flavorText: "The rarest flower!",
-                    startingAmount: 0,
-                    hitpoints: 500,
-                    active: true,
-                }
-            )
+        if (this.resources) {
+            this.resources.clear();
+        }
+        this.resources = new WorldResourceSet(
+            ["berries", "wood", "flowers"],
+            document.getElementById("resources"),
+            this,
         );
     }
 
@@ -320,7 +133,7 @@ class Game {
                     displayNamePlural: "Okra",
                     flavorText: "The perfect solution to the world's drought!",
                     startingAmount: 0,
-                    calculateAmountGained: () => {return Resource.Map['wood'].amount;},
+                    calculateAmountGained: () => {return this.resources.wood.amount;},
                     active: true,
                 }
             )
@@ -364,7 +177,7 @@ class Game {
                     id: "prestigeTab",
                     buttonText: "Another one...",
                     divToShow: document.getElementById("prestige"),
-                    unlockCondition: () => {return Resource.Map["wood"].amount >= 100000;},
+                    unlockCondition: () => {return this.resources.wood.amount >= 100000;},
                 }
             )
         )
@@ -373,21 +186,16 @@ class Game {
     }
 
     tick () {
-        for (const resource of this.resources) {
-            resource.startTick();
-        }
+        this.resources.tick();
 
-        if (Resource.focusedResource !== undefined) {
-            Resource.focusedResource.tickFocus(this.focusPower);
+        if (this.resources.focusedResource !== undefined) {
+            this.resources.focusedResource.tickFocus(this.focusPower);
         }
 
         this.creatures.tick();
 
-        for (const upgrade of this.upgrades) {
-            upgrade.tick();
-            // TODO: as above, make sure that keeping updateDOM() inside tick() is the right course of action (counter to above)
-            // TODO: that does not have much parity, to be honest
-        }
+        this.upgrades.tick();
+
         for (const tab of this.tabs) {
             tab.tick();
         }
@@ -403,9 +211,7 @@ class Game {
     }
 
     draw () {
-        for (const resource of this.resources) {
-            resource.draw();
-        }
+        this.resources.draw();
 
         this.creatures.draw();
 
@@ -413,9 +219,7 @@ class Game {
             achievement.draw();
         }
 
-        for (const upgrade of this.upgrades) {
-            upgrade.draw();
-        }
+        this.upgrades.draw();
 
         for (const prestigeResource of this.prestigeResources) {
             prestigeResource.draw();
@@ -467,12 +271,12 @@ class Game {
         // Get save string by concatenating all of the game state's save strings
         let save = "";
 
-        save += this.resources.map(resource => resource.save()).join("|");
-        save += "||" + (Resource.focusedResource === undefined ? "undefined" : Resource.focusedResource.internalName);
+        save += this.resources.resourceList.map(resource => resource.save()).join("|");
+        save += "||" + (this.resources.focusedResource === undefined ? "undefined" : this.resources.focusedResource.internalName);
         save += "%%";
         save += JSON.stringify(this.creatures.save());
         save += "%%";
-        save += this.upgrades.map(upgrade => upgrade.save()).join("|");
+        save += this.upgrades.upgradeList.map(upgrade => upgrade.save()).join("|");
         save += "%%";
         save += this.achievements.map(achievement => achievement.save()).join("|");
         save += "%%";
@@ -546,18 +350,14 @@ class Game {
 
         let resourceChunks = saveComponents[0].split("||");
         let resourcesSave = resourceChunks[0].split("|");
-        for (let i = 0; i<this.resources.length; ++i) {
-            this.resources[i].load(resourcesSave[i]);
-        }
-        setFocusedResource(Resource.Map[resourceChunks[1]]);
+        this.resources.load(resourcesSave);
+        this.resources.setFocusedResource(this.resources[resourceChunks[1]]);
 
         let creaturesSave = saveComponents[1].split("|");
         this.creatures.load(JSON.parse(creaturesSave));
 
         let upgradesSave = saveComponents[2].split("|");
-        for (let i = 0; i<this.upgrades.length; ++i) {
-            this.upgrades[i].load(upgradesSave[i]);
-        }
+        this.upgrades.load(upgradesSave);
 
         let achievementsSave = saveComponents[3].split("|");
         for (let i = 0; i<this.achievements.length; ++i) {

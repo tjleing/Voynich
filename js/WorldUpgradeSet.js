@@ -1,12 +1,15 @@
 // @ts-check
+import { createUpgrade } from "./Upgrade.js";
 
 class WorldUpgradeSet {
-    constructor (upgradeList) {
-        this.upgradeList = upgradeList;
+    constructor (upgradeNames, upgradeDiv, world) {
+        this.upgradeList = [];
+        this.upgradeDiv = upgradeDiv;
 
-        this.Map = {};
-        for (const upgrade of this.upgradeList) {
-            this.Map[upgrade.name] = upgrade;
+        for (const upgradeName of upgradeNames) {
+            const upgrade = createUpgrade(upgradeName, upgradeDiv, world);
+            this[upgradeName] = upgrade;
+            this.upgradeList.push(upgrade);
         }
     }
 
@@ -22,6 +25,12 @@ class WorldUpgradeSet {
         }
     }
 
+    forEach (operation) {
+        for (const upgrade of this.upgradeList) {
+            operation(upgrade);
+        }
+    }
+
     save () {
         let saveComponents = [];
         for (const upgrade of this.upgradeList) {
@@ -31,8 +40,18 @@ class WorldUpgradeSet {
     }
 
     load (saveComponents) {
-        for (let i = 0; i < this.upgradeList.length) {
-            upgradeList[i].load(saveComponents[i]);
+        for (let i = 0; i < this.upgradeList.length; ++i) {
+            this.upgradeList[i].load(saveComponents[i]);
         }
     }
+
+    clear () {
+        for (const upgrade of this.upgradeList) {
+            this[upgrade.name] = undefined;
+        }
+        this.upgradeList = [];
+        this.upgradeDiv.innerHTML = "";
+    }
 }
+
+export { WorldUpgradeSet };
