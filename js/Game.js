@@ -213,7 +213,10 @@ class Game {
         }
         this.news.tick();
         */
-        this.worlds[0].tick();
+
+        for (const world of this.worlds) {
+            world.tick();
+        }
 
         this.draw();
 
@@ -237,7 +240,9 @@ class Game {
             prestigeResource.draw();
         }
         */
-        this.worlds[0].draw();
+        for (const world of this.worlds) {
+            world.draw();
+        }
 
         document.body.style.backgroundColor = settings.bgColor;
     }
