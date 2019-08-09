@@ -148,7 +148,7 @@ class Game {
         );
     }
 
-    createTabs () {
+    /*createTabs () {
         this.tabs.push(
             new Tab(
                 {
@@ -191,7 +191,7 @@ class Game {
         )
 
         this.tabs[0].setActive();
-    }
+    }*/
 
     tick () {
         /*
