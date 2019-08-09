@@ -1,92 +1,93 @@
 // @ts-check
 
-class World {
-    constructor ({resourceNames, }) {
-        this.constructDOM();
+import { WorldCreatureSet } from "./WorldCreatureSet.js";
+import { WorldResourceSet } from "./WorldResourceSet.js";
+import { WorldUpgradeSet } from "./WorldUpgradeSet.js";
+import { TabSet } from "./TabSet.js";
+import { setAllSettings } from "./Settings.js";
 
-        this.resources = new WorldResourceSet(resourceList);
+class World {
+    constructor ({resourceNames, creatureNames, upgradeNames}) {
+        this.constructHTML();
+
         this.focusPower = 1; // TODO: put in Stats or something
 
-        this.resources = new WorldResourceSet(resourceNames, resourceDiv, this);
-        this.creatures = new WorldCreatureSet(creatureNames);
-        this.upgrades = new WorldUpgradeSet(upgradeNames);
+        this.resources = new WorldResourceSet(resourceNames, this.resourceDiv, this);
+        this.creatures = new WorldCreatureSet(creatureNames, this.creatureDiv, this);
+        this.upgrades = new WorldUpgradeSet(upgradeNames, this.upgradeDiv, this);
 
-        this.tabs = new TabSet();
-
-        clearNews();
+        //clearNews();
 
         setAllSettings({"bgColor": "#E82B2B", "fps": 60, "saveTime": 5});
 
-        this.createResources();
-        this.createCreatures();
-        this.createUpgrades();
-        this.createAchievements();
-        this.createPrestige();
-        this.createTabs();
+        // TODO: move up probably
+        //this.createPrestige();
 
-        this.news = new News();
+        this.createTabs();
     }
 
     createTabs () {
-        this.tabs.push(
-            new Tab(
-                {
-                    id: "creatureTab",
-                    buttonText: "Creatures",
-                    divToShow: document.getElementById("creatures"),
-                    unlockCondition: () => {return true;},
-                }
-            )
-        )
-        this.tabs.push(
-            new Tab(
-                {
-                    id: "upgradeTab",
-                    buttonText: "Upgrades",
-                    divToShow: document.getElementById("upgrades"),
-                    unlockCondition: () => {return true;},
-                }
-            )
-        )
-        this.tabs.push(
-            new Tab(
-                {
-                    id: "achievementTab",
-                    buttonText: "Achievements",
-                    divToShow: document.getElementById("achievements"),
-                    unlockCondition: () => {return true;},
-                }
-            )
-        )
-        this.tabs.push(
-            new Tab(
-                {
-                    id: "prestigeTab",
-                    buttonText: "Another one...",
-                    divToShow: document.getElementById("prestige"),
-                    unlockCondition: () => {return this.resources.wood.amount >= 100000;},
-                }
-            )
-        )
+        const tabInfo = [];
+        tabInfo.push({
+            id: "creatureTab",
+            buttonText: "Creatures",
+            divToShow: this.creatureDiv,
+            unlockCondition: () => {return true;},
+        });
+        tabInfo.push({
+            id: "upgradeTab",
+            buttonText: "Upgrades",
+            divToShow: this.upgradeDiv,
+            unlockCondition: () => {return true;},
+        });
+        tabInfo.push({
+            id: "achievementTab",
+            buttonText: "Achievements",
+            divToShow: this.achievementDiv,
+            unlockCondition: () => {return true;},
+        });
+        tabInfo.push({
+            id: "prestigeTab",
+            buttonText: "Another one...",
+            divToShow: this.prestigeDiv,
+            unlockCondition: () => {return this.resources.wood.amount >= 100000;},
+        });
 
-        this.tabs[0].setActive();
+        console.log(this.tabDiv);
+        this.tabs = new TabSet(tabInfo, this.tabDiv, 0, this);
+        console.log(this.tabs);
     }
 
     tick () {
+        if (this.resources.focusedResource !== undefined) {
+            this.resources.focusedResource.tickFocus(1);
+        }
         this.resources.tick();
         this.creatures.tick();
         this.upgrades.tick();
     }
 
-    constructDOM () {
+    draw () {
+        this.resources.draw();
+        this.creatures.draw();
+        this.upgrades.draw();
+    }
+
+    constructHTML () {
         this.worldDiv = document.createElement("div");
         document.getElementById("game").appendChild(this.worldDiv);
 
+        this.worldDiv.className = "world";
         this.worldDiv.innerHTML = `
             <div id="leftpanel" class="game">
-            <div id="resources"></div>
+                <div id="resources"></div>
             </div>
-            <div id="middlepanel" class="game"><div id="middiv"></div><div id="middiv2"></div><div id="mousediv"></div><span id="save"></span></div>
+            <div id="middlepanel" class="game">
+                <div id="middiv"></div>
+                <div id="middiv2"></div>
+                <div id="mousediv"></div>
+                <span id="save"></span>
+            </div>
             <div id="rightpanel" class="game">
                 <button>"Mute"</button>
                 <button id="import">Load save!</button>
@@ -103,13 +104,13 @@ class World {
                 </div>
             </div>
         `;
-        const leftPanel = this.div.children[0];
-        this.resourcesDiv = leftPanel.firstChild;
+        const leftPanel = this.worldDiv.children[0];
+        this.resourceDiv = leftPanel.children[0];
 
-        const middlePanel = this.div.children[1];
+        const middlePanel = this.worldDiv.children[1];
         // TODO: news div?
 
-        const rightPanel = this.div.children[2];
+        const rightPanel = this.worldDiv.children[2];
         this.tabDiv = rightPanel.children[5];
         this.upgradeDiv = rightPanel.children[6];
         this.creatureDiv = rightPanel.children[7];

@@ -170,4 +170,4 @@ function createResource (name, resourceDiv, world) {
     return new Resource({ ...resourceConfigs[name], resourceDiv: resourceDiv, world: world });
 }
 
-export { createResource,  };
+export { createResource };
