@@ -8,13 +8,10 @@ class TabSet {
         this.tabDiv = tabDiv;
         this.activeIndex = activeIndex;
 
-        for (let i = 0; i<tabInfo.length; ++i) {
-            const info = tabInfo[i];
-            const tab = createTab(info, tabDiv, world);
-            tab.button.onclick = this.setActive.bind(this, i);
+        for (const info of tabInfo) {
+            const tab = createTab(info, world);
             this.tabList.push(tab);
         }
-        this.setActive(activeIndex);
     }
 
     tick () {
@@ -33,26 +30,6 @@ class TabSet {
         for (const tab of this.tabList) {
             operation(tab);
         }
-    }
-
-    setActive (newTabIndex) {
-        // Activate this tab and deactivate the others.
-
-        const newTab = this.tabList[newTabIndex];
-
-        if (!newTab.unlocked) {
-            return;
-        }
-
-        // Set previous tab inactive
-        this.tabList[this.activeIndex].divToShow.style.display = "none";
-        this.tabList[this.activeIndex].button.classList.remove("active");
-
-        // Set this tab active
-        newTab.divToShow.style.display = "block";
-        newTab.button.classList.add("active");
-
-        this.activeIndex = newTabIndex;
     }
 
     save () {

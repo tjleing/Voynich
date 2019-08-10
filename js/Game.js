@@ -3,7 +3,7 @@
 import { WorldCreatureSet } from "./WorldCreatureSet.js";
 import { clearNews, News } from "./News.js";
 import { WorldResourceSet } from "./WorldResourceSet.js";
-import { World } from "./World.js";
+import { clearTabs, Tab } from "./Tab.js";
 import { clearPrestigeResources, PrestigeResource } from "./PrestigeResource.js";
 import { clearAchievements, Achievement } from "./Achievement.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
@@ -32,15 +32,6 @@ class Game {
         if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
             this.focusPower = 1; // TODO: put in Stats or something
 
-            //clearWorlds();
-            document.getElementById("game").innerHTML = "";
-            this.worlds = [];
-            this.worlds.push(new World({
-                resourceNames: ["berries", "wood", "flowers"],
-                creatureNames: ["weaseal", "beaverine", "buckaroo", "ptrocanfer"],
-                upgradeNames: ["twoForOne", "BeaverineUp1", "everythingIsAwful", "undoAwful", "greyBG", "getPtroed", "doubleFocusPower"],
-            }));
-
             this.achievements = [];
             clearAchievements();
 
@@ -48,17 +39,19 @@ class Game {
             this.prestigeResources = [];
             clearPrestigeResources();
 
+            this.tabs = [];
+            clearTabs();
+
             clearNews();
 
-            setAllSettings({"bgColor": "#E82B2B", "fps": 20, "saveTime": 20});
+            setAllSettings({"bgColor": "#E82B2B", "fps": 60, "saveTime": 5});
 
-            //this.createResources();
-            //this.createCreatures();
-            //this.createUpgrades();
+            this.createResources();
+            this.createCreatures();
+            this.createUpgrades();
             this.createAchievements();
             this.createPrestige();
-            //this.createTabs();
-
+            this.createTabs();
 
             this.news = new News();
         }
@@ -96,8 +89,7 @@ class Game {
                     lockedFlavorText: "Hmm... maybe there's a creature with a name like that",
                     unlockedFlavorText: "In fact, we'll seal you now!",
                     unlockCondition: () => {
-                        console.log(this);
-                        return (this.worlds[0].creatures.weaseal.quantity >= 1);
+                        return (this.creatures.weaseal.quantity >= 1);
                     },
                     effect: () => {},
                 }
@@ -110,10 +102,10 @@ class Game {
                     lockedFlavorText: "Is this one a pun too?",
                     unlockedFlavorText: "Lil' e, sounds like a rapper!  Shucks that was terrible",
                     unlockCondition: () => {
-                        return (this.worlds[0].resources.flowers.amount >= 1);
+                        return (this.resources.flowers.amount >= 1);
                     },
                     effect: () => {
-                        this.worlds[0].resources.flowers.amount += 5;
+                        this.resources.flowers.amount += 5;
                     },
                 }
             )
@@ -148,7 +140,7 @@ class Game {
         );
     }
 
-    /*createTabs () {
+    createTabs () {
         this.tabs.push(
             new Tab(
                 {
@@ -191,10 +183,9 @@ class Game {
         )
 
         this.tabs[0].setActive();
-    }*/
+    }
 
     tick () {
-        /*
         this.resources.tick();
 
         if (this.resources.focusedResource !== undefined) {
@@ -212,11 +203,6 @@ class Game {
             achievement.tick();
         }
         this.news.tick();
-        */
-
-        for (const world of this.worlds) {
-            world.tick();
-        }
 
         this.draw();
 
@@ -225,7 +211,6 @@ class Game {
     }
 
     draw () {
-        /*
         this.resources.draw();
 
         this.creatures.draw();
@@ -238,10 +223,6 @@ class Game {
 
         for (const prestigeResource of this.prestigeResources) {
             prestigeResource.draw();
-        }
-        */
-        for (const world of this.worlds) {
-            world.draw();
         }
 
         document.body.style.backgroundColor = settings.bgColor;

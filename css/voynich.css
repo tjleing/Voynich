@@ -38,11 +38,6 @@ button {
 	overflow: hidden;
 }
 
-.world {
-	width: 100%;
-	display: flex;
-}
-
 #leftpanel {
 	height: 100%;
 	width: 33%;
@@ -52,6 +47,7 @@ button {
 }
 
 #middlepanel {
+	margin-right: 15px;
 	height: 100%;
 	width: 33%;
 	overflow-x: hidden;
