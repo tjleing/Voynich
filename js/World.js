@@ -10,6 +10,10 @@ class World {
     constructor ({resourceNames, creatureNames, upgradeNames}) {
         this.constructHTML();
 
+        this.resourceNames = resourceNames;
+        this.creatureNames = creatureNames;
+        this.upgradeNames = upgradeNames;
+
         this.focusPower = 1; // TODO: put in Stats or something
 
         this.resources = new WorldResourceSet(resourceNames, this.resourceDiv, this);
@@ -53,9 +57,7 @@ class World {
             unlockCondition: () => {return this.resources.wood.amount >= 100000;},
         });
 
-        console.log(this.tabDiv);
         this.tabs = new TabSet(tabInfo, this.tabDiv, 0, this);
-        console.log(this.tabs);
     }
 
     tick () {
@@ -116,9 +118,38 @@ class World {
         this.creatureDiv = rightPanel.children[7];
         this.achievementDiv = rightPanel.children[8];
         this.prestigeDiv = rightPanel.children[9];
+    }
 
-        console.log(this);
+    save () {
+        const save = {};
+        save["resources"] = this.resources.save();
+        save["focusedResource"] = this.resources.focusedResource === undefined ? "undefined" : this.resources.focusedResource.internalName;
+        save["creatures"] = this.creatures.save();
+        save["upgrades"] = this.upgrades.save();
+        return save;
+    }
+
+    load (save) {
+        // TODO: hecking constructor vs. load..... fml
+        this.resources.load(save["resources"]);
+        if (this.resources.setFocusedResource !== "undefined") {
+            this.resources.setFocusedResource(save["focusedResource"]);
+        }
+        this.creatures.load(save["creatures"]);
+        this.upgrades.load(save["upgrades"]);
     }
 }
 
-export { World };
+const worldConfigs = {
+    lush: {
+        resourceNames: ["berries", "wood", "flowers"],
+        creatureNames: ["weaseal", "beaverine", "buckaroo", "ptrocanfer"],
+        upgradeNames: ["twoForOne", "BeaverineUp1", "everythingIsAwful", "undoAwful", "greyBG", "getPtroed", "doubleFocusPower"],
+    },
+};
+
+function createWorld (name) {
+    return new World(worldConfigs[name]);
+}
+
+export { createWorld };

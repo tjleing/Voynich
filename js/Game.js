@@ -3,7 +3,7 @@
 import { WorldCreatureSet } from "./WorldCreatureSet.js";
 import { clearNews, News } from "./News.js";
 import { WorldResourceSet } from "./WorldResourceSet.js";
-import { World } from "./World.js";
+import { createWorld } from "./World.js";
 import { clearPrestigeResources, PrestigeResource } from "./PrestigeResource.js";
 import { clearAchievements, Achievement } from "./Achievement.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
@@ -35,11 +35,7 @@ class Game {
             //clearWorlds();
             document.getElementById("game").innerHTML = "";
             this.worlds = [];
-            this.worlds.push(new World({
-                resourceNames: ["berries", "wood", "flowers"],
-                creatureNames: ["weaseal", "beaverine", "buckaroo", "ptrocanfer"],
-                upgradeNames: ["twoForOne", "BeaverineUp1", "everythingIsAwful", "undoAwful", "greyBG", "getPtroed", "doubleFocusPower"],
-            }));
+            this.worlds.push(createWorld("lush"));
 
             this.achievements = [];
             clearAchievements();
@@ -96,7 +92,6 @@ class Game {
                     lockedFlavorText: "Hmm... maybe there's a creature with a name like that",
                     unlockedFlavorText: "In fact, we'll seal you now!",
                     unlockCondition: () => {
-                        console.log(this);
                         return (this.worlds[0].creatures.weaseal.quantity >= 1);
                     },
                     effect: () => {},
@@ -287,22 +282,20 @@ class Game {
 
     // SAVING AND LOADING
     save () {
-        // Get save string by concatenating all of the game state's save strings
-        let save = "";
+        // Combine save objects from each world + global saves
+        let save = {};
 
-        save += this.resources.resourceList.map(resource => resource.save()).join("|");
-        save += "||" + (this.resources.focusedResource === undefined ? "undefined" : this.resources.focusedResource.internalName);
-        save += "%%";
-        save += JSON.stringify(this.creatures.save());
-        save += "%%";
-        save += this.upgrades.upgradeList.map(upgrade => upgrade.save()).join("|");
-        save += "%%";
-        save += this.achievements.map(achievement => achievement.save()).join("|");
-        save += "%%";
-        save += saveSettings();
+        let worldSaves = [];
+        for (const world of this.worlds) {
+            worldSaves.push(world.save());
+        }
+        save["worlds"] = worldSaves;
+
+        save["achievements"] = this.achievements.map(achievement => achievement.save()).join("|");
+        save["settings"] = saveSettings();
 
         // Save it to localStorage, base64-encoded
-        localStorage.setItem("save", btoa(save));
+        localStorage.setItem("save", btoa(JSON.stringify(save)));
     }
 
     load () {
@@ -362,9 +355,17 @@ class Game {
 
     loadSave (save) {
         // base-64 decode
-        save = atob(save);
+        save = atob(JSON.parse(save));
 
         // Initialize everything from the save string
+
+        const worldSaves = save["worlds"];
+        for (const worldSave of worldSaves) {
+            const world = new World();
+            world.load(worldSave);
+            this.worlds.push(world);
+        }
+
         let saveComponents = save.split("%%");
 
         let resourceChunks = saveComponents[0].split("||");
