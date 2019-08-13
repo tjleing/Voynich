@@ -176,11 +176,12 @@ class Creature {
     }
 
     save () {
-        let saveComponents = [];
-        saveComponents.push(JSON.stringify(deepFix(this.totalProduced)));
-        saveComponents.push(this.quantity);
+        let save = {};
+        save.n = this.internalName;
+        save.tp = this.totalProduced;
+        save.q = this.quantity;
 
-        return saveComponents.join("$");
+        return save;
     }
 }
 
@@ -289,6 +290,22 @@ const creatureConfigs = {
 
 function createCreature (name, creatureDiv, world) {
     return new Creature({ ...creatureConfigs[name], creatureDiv: creatureDiv, world: world });
+}
+
+function loadCreature (save, creatureDiv, world) {
+    const config = creatureConfigs[save.n];
+    config.totalProduced = save.tp;
+    config.quantity = save.q;
+    config.creatureDiv = creatureDiv;
+    config.world = world;
+
+    const creature = new Creature(config);
+
+    for (var i = 1; i < config.quantity; ++i) {
+        creature.costScalingFunction();
+    }
+
+    return creature;
 }
 
 export { createCreature };
