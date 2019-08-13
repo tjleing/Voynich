@@ -165,16 +165,7 @@ class Creature {
         this.costScalingFunction();
     }
 
-    // Saving and loading
-    load (saveString) {
-        let saveComponents = saveString.split("$");
-        this.totalProduced = JSON.parse(saveComponents[0]);
-        this.quantity = parseInt(saveComponents[1]);
-        for (var i = 1; i < this.quantity; ++i) {
-            this.costScalingFunction();
-        }
-    }
-
+    // Saving (loading is at the bottom with create)
     save () {
         let save = {};
         save.n = this.internalName;
