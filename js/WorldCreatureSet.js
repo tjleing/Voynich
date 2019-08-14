@@ -41,18 +41,19 @@ class WorldCreatureSet {
         return saveComponents;
     }
 
-    load (saveComponents) {
-        for (let i = 0; i < this.creatureList.length; ++i) {
-            this.creatureList[i].load(saveComponents[i]);
-        }
-    }
-
     clear () {
         for (const creature of this.creatureList) {
             this[creature.name] = undefined;
         }
         this.creatureList = [];
         this.creatureDiv.innerHTML = "";
+    }
+}
+
+function loadWorldCreatureSet (save, creatureDiv, world) {
+    const set = new WorldCreatureSet([], creatureDiv, world);
+    for (const creatureSave of save) {
+        set.creatureList.push(loadCreature(creatureSave, creatureDiv, world));
     }
 }
 
