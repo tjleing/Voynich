@@ -299,4 +299,4 @@ function loadCreature (save, creatureDiv, world) {
     return creature;
 }
 
-export { createCreature };
+export { createCreature, loadCreature };

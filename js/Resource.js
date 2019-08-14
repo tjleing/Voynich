@@ -117,11 +117,12 @@ class Resource {
 
     // Saving (loading is at the bottom with createResource)
     save () {
-        let saveComponents = [];
-        saveComponents.push(fix(this.amount));
-        saveComponents.push(this.active ? "1" : "0");
+        const save = {};
+        save.n = this.internalName;
+        save.am = this.amount;
+        save.ac = this.active ? 1 : 0;
 
-        return saveComponents.join("$");
+        return save;
     }
 }
 
@@ -170,4 +171,4 @@ function loadResource (save, resourceDiv, world) {
     return new Resource(config);
 }
 
-export { createResource };
+export { createResource, loadResource };
