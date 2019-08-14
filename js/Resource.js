@@ -29,11 +29,11 @@ class Resource {
         this.world = world;
 
         if (this.active) {
-            this.constructHTML();
+            this.constructDOM();
         }
     }
 
-    constructHTML () {
+    constructDOM () {
         if (this.amountDiv) {
             // Already constructed the HTML.
             return;
@@ -56,7 +56,7 @@ class Resource {
         if (!this.active) {
             if (this.amount > 0) {
                 this.active = true;
-                this.constructHTML();
+                this.constructDOM();
             }
             else {
                 return;
@@ -115,17 +115,7 @@ class Resource {
         this.tickAdd(amount / this.hitpoints);
     }
 
-    // Saving and loading
-    load (saveString) {
-        let saveComponents = saveString.split("$");
-        this.amount = parseInt(saveComponents[0]);
-        this.active = saveComponents[1] === "1";
-
-        if (this.active) {
-            this.constructHTML();
-        }
-    }
-
+    // Saving (loading is at the bottom with createResource)
     save () {
         let saveComponents = [];
         saveComponents.push(fix(this.amount));
@@ -168,6 +158,16 @@ const resourceConfigs = {
 
 function createResource (name, resourceDiv, world) {
     return new Resource({ ...resourceConfigs[name], resourceDiv: resourceDiv, world: world });
+}
+
+function loadResource (save, resourceDiv, world) {
+    const config = resourceConfigs[save.n];
+    config.amount = save.am;
+    config.active = save.ac === 1 ? true : false;
+    config.resourceDiv = resourceDiv;
+    config.world = world;
+
+    return new Resource(config);
 }
 
 export { createResource };
