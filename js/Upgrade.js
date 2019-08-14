@@ -157,24 +157,13 @@ class Upgrade {
         }
     }
 
-    // Saving and loading
-    load (saveString) {
-        let saveComponents = saveString.split("$");
-        this.purchased = saveComponents[0] === "1";
-        if (this.purchased || !this.unlocked) {
-            this.destroyDOM();
-        }
-        if (this.purchased) {
-            this.effect();
-        }
-    }
-
+    // Saving (loading is at the bottom with createUpgrade)
     save () {
-        // TODO: compress
-        let saveComponents = [];
-        saveComponents.push(this.purchased ? "1" : "0");
+        const save = {};
+        save.n = this.internalName;
+        save.p = this.purchased ? 1 : 0;
 
-        return saveComponents.join("$");
+        return save;
     }
 }
 
@@ -316,4 +305,13 @@ function createUpgrade (name, upgradeDiv, world) {
     return new Upgrade({ ...upgradeConfigs[name], upgradeDiv: upgradeDiv, world: world });
 }
 
-export { createUpgrade };
+function loadUpgrade (save, upgradeDiv, world) {
+    const config = upgradeConfigs[save.n];
+    config.purchased = save.p === 1 ? true : false;
+    config.resourceDiv = upgradeDiv;
+    config.world = world;
+
+    return new Upgrade(config);
+}
+
+export { createUpgrade, loadUpgrade };
