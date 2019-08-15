@@ -36,10 +36,11 @@ class WorldResourceSet {
     save () {
         let save = {};
         save.f = this.focusedResource ? this.focusedResource.internalName : undefined;
+        save.r = [];
         for (const resource of this.resourceList) {
-            saveComponents.push(resource.save());
+            save.r.push(resource.save());
         }
-        return saveComponents;
+        return save;
     }
 
     clear () {
