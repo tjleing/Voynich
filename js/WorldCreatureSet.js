@@ -1,17 +1,15 @@
 // @ts-check
 
-import { createCreature } from "./Creature.js";
+import { createCreature, loadCreature } from "./Creature.js";
 
 class WorldCreatureSet {
-    constructor (creatureNames, creatureDiv, world) {
-        this.creatureList = [];
+    constructor (creatureList, creatureDiv, world) {
+        this.creatureList = creatureList;
         this.creatureDiv = creatureDiv;
 
-        for (const creatureName of creatureNames) {
+        for (const creature of creatureList) {
             // TODO: consider whether it's a good idea to have both a list and a map of the same thing
-            const creature = createCreature(creatureName, creatureDiv, world);
-            this[creatureName] = creature;
-            this.creatureList.push(creature);
+            this[creature.internalName] = creature;
         }
     }
 
@@ -50,11 +48,24 @@ class WorldCreatureSet {
     }
 }
 
-function loadWorldCreatureSet (save, creatureDiv, world) {
-    const set = new WorldCreatureSet([], creatureDiv, world);
-    for (const creatureSave of save) {
-        set.creatureList.push(loadCreature(creatureSave, creatureDiv, world));
+function createWorldCreatureSet (creatureNames, creatureDiv, world) {
+    const creatureList = [];
+
+    for (const creatureName of creatureNames) {
+        // TODO: consider whether it's a good idea to have both a list and a map of the same thing
+        creatureList.push(createCreature(creatureName, creatureDiv, world));
     }
+
+    return new WorldCreatureSet(creatureList, creatureDiv, world);
+}
+
+function loadWorldCreatureSet (save, creatureDiv, world) {
+    const creatureList = [];
+    for (const creatureSave of save) {
+        creatureList.push(loadCreature(creatureSave, creatureDiv, world));
+    }
+
+    return new WorldCreatureSet(creatureList, creatureDiv, world);
 }
 
 export { WorldCreatureSet };

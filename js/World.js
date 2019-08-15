@@ -132,7 +132,7 @@ class World {
     load (save) {
         // TODO: hecking constructor vs. load..... fml
         this.resources.load(save["resources"]);
-        if (this.resources.setFocusedResource !== "undefined") {
+        if (this.resources.focusedResource !== "undefined") {
             this.resources.setFocusedResource(save["focusedResource"]);
         }
         this.creatures.load(save["creatures"]);
@@ -152,4 +152,10 @@ function createWorld (name) {
     return new World(worldConfigs[name]);
 }
 
-export { createWorld };
+function loadWorld (save) {
+    this.resources = loadResourceSet(save.r);
+    this.creatures = loadCreatureSet(save.c);
+    this.upgrades = loadUpgradeSet(save.u);
+}
+
+export { createWorld, loadWorld };
