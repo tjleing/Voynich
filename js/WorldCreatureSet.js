@@ -68,4 +68,4 @@ function loadWorldCreatureSet (save, creatureDiv, world) {
     return new WorldCreatureSet(creatureList, creatureDiv, world);
 }
 
-export { WorldCreatureSet };
+export { createWorldCreatureSet, loadWorldCreatureSet };
