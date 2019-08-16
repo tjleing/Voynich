@@ -2,14 +2,12 @@
 import { createUpgrade, loadUpgrade } from "./Upgrade.js";
 
 class WorldUpgradeSet {
-    constructor (upgradeNames, upgradeDiv, world) {
-        this.upgradeList = [];
+    constructor (upgradeList, upgradeDiv, world) {
+        this.upgradeList = upgradeList;
         this.upgradeDiv = upgradeDiv;
 
-        for (const upgradeName of upgradeNames) {
-            const upgrade = createUpgrade(upgradeName, upgradeDiv, world);
-            this[upgradeName] = upgrade;
-            this.upgradeList.push(upgrade);
+        for (const upgrade of upgradeList) {
+            this[upgrade.internalName] = upgrade;
         }
     }
 
@@ -37,12 +35,6 @@ class WorldUpgradeSet {
             saveComponents.push(upgrade.save());
         }
         return saveComponents;
-    }
-
-    load (saveComponents) {
-        for (let i = 0; i < this.upgradeList.length; ++i) {
-            this.upgradeList[i].load(saveComponents[i]);
-        }
     }
 
     clear () {
