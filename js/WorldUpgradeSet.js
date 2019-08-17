@@ -67,4 +67,4 @@ function loadWorldUpgradeSet (save, upgradeDiv, world) {
 }
 
 
-export { WorldUpgradeSet };
+export { createWorldUpgradeSet, loadWorldUpgradeSet };
