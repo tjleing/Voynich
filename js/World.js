@@ -1,24 +1,16 @@
 // @ts-check
 
-import { WorldCreatureSet } from "./WorldCreatureSet.js";
-import { WorldResourceSet } from "./WorldResourceSet.js";
-import { WorldUpgradeSet } from "./WorldUpgradeSet.js";
+import { createWorldCreatureSet, loadWorldCreatureSet } from "./WorldCreatureSet.js";
+import { createWorldResourceSet, loadWorldResourceSet } from "./WorldResourceSet.js";
+import { createWorldUpgradeSet, loadWorldUpgradeSet } from "./WorldUpgradeSet.js";
 import { TabSet } from "./TabSet.js";
 import { setAllSettings } from "./Settings.js";
 
 class World {
-    constructor ({resourceNames, creatureNames, upgradeNames}) {
+    constructor () {
         this.constructHTML();
 
-        this.resourceNames = resourceNames;
-        this.creatureNames = creatureNames;
-        this.upgradeNames = upgradeNames;
-
         this.focusPower = 1; // TODO: put in Stats or something
-
-        this.resources = new WorldResourceSet(resourceNames, this.resourceDiv, this);
-        this.creatures = new WorldCreatureSet(creatureNames, this.creatureDiv, this);
-        this.upgrades = new WorldUpgradeSet(upgradeNames, this.upgradeDiv, this);
 
         //clearNews();
 
@@ -26,6 +18,13 @@ class World {
 
         // TODO: move up probably
         //this.createPrestige();
+
+    }
+
+    initialize ({resources, creatures, upgrades}) {
+        this.resources = resources;
+        this.creatures = creatures;
+        this.upgrades = upgrades;
 
         this.createTabs();
     }
@@ -122,21 +121,16 @@ class World {
 
     save () {
         const save = {};
-        save["resources"] = this.resources.save();
-        save["focusedResource"] = this.resources.focusedResource === undefined ? "undefined" : this.resources.focusedResource.internalName;
-        save["creatures"] = this.creatures.save();
-        save["upgrades"] = this.upgrades.save();
+        save.r = this.resources.save();
+        save.c = this.creatures.save();
+        save.u = this.upgrades.save();
         return save;
     }
 
     load (save) {
-        // TODO: hecking constructor vs. load..... fml
-        this.resources.load(save["resources"]);
-        if (this.resources.focusedResource !== "undefined") {
-            this.resources.setFocusedResource(save["focusedResource"]);
-        }
-        this.creatures.load(save["creatures"]);
-        this.upgrades.load(save["upgrades"]);
+        this.resources = loadWorldResourceSet(save.r, this.resourceDiv, this);
+        this.creatures = loadWorldCreatureSet(save.c, this.resourceDiv, this);
+        this.upgrades = loadWorldUpgradeSet(save.u, this.resourceDiv, this);
     }
 }
 
@@ -149,13 +143,26 @@ const worldConfigs = {
 };
 
 function createWorld (name) {
-    return new World(worldConfigs[name]);
+    const world = new World();
+
+    const config = worldConfigs[name];
+    const resources = createWorldResourceSet(config.resourceNames, world.resourceDiv, world);
+    const creatures = createWorldCreatureSet(config.creatureNames, world.creatureDiv, world);
+    const upgrades = createWorldUpgradeSet(config.upgradeNames, world.upgradeDiv, world);
+
+    world.initialize({resources, creatures, upgrades});
+    return world;
 }
 
 function loadWorld (save) {
-    this.resources = loadResourceSet(save.r);
-    this.creatures = loadCreatureSet(save.c);
-    this.upgrades = loadUpgradeSet(save.u);
+    const world = new World();
+
+    const resources = loadWorldResourceSet(save.r, world.resourceDiv, world);
+    const creatures = loadWorldCreatureSet(save.c, world.resourceDiv, world);
+    const upgrades = loadWorldUpgradeSet(save.u, world.resourceDiv, world);
+
+    world.initialize({resources, creatures, upgrades});
+    return world;
 }
 
 export { createWorld, loadWorld };

@@ -179,7 +179,7 @@ class Creature {
 
 const creatureConfigs = {
     "weaseal": {
-        internalName: "Weaseal",
+        internalName: "weaseal",
         displayNameSingular: "Weaseal",
         displayNamePlural: "Weaseals",
         flavorText: "It's got fur and also... blubber?  You don't want to touch this creature at all.",
@@ -202,7 +202,7 @@ const creatureConfigs = {
         initialQuantity: 0,
     },
     "beaverine": {
-        internalName: "Beaverine",
+        internalName: "beaverine",
         displayNameSingular: "Beaverine",
         displayNamePlural: "Beaverines",
         flavorText: "Sometimes makes dams.  Sometimes tears apart others' dams.  Absolutely terrifying.",
@@ -225,7 +225,7 @@ const creatureConfigs = {
         initialQuantity: 0,
     },
     "buckaroo": {
-        internalName: "Buckaroo",
+        internalName: "buckaroo",
         displayNameSingular: "Buckaroo",
         displayNamePlural: "Buckaroos",
         flavorText: "Jumpy and frantic but great at gathering, oh deer!",
@@ -252,7 +252,7 @@ const creatureConfigs = {
         initialQuantity: 0,
     },
     "ptrocanfer": {
-        internalName: "Ptrocanfer",
+        internalName: "ptrocanfer",
         displayNameSingular: "Ptrocanfer",
         displayNamePlural: "Ptrocanfers",
         flavorText: "Ridiculously expensive!  But maybe worth it?",

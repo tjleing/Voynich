@@ -3,15 +3,13 @@
 import { createResource, loadResource } from "./Resource.js";
 
 class WorldResourceSet {
-    constructor (resourceNames, resourceDiv, world) {
+    constructor (resourceList, resourceDiv, world) {
         // TODO: maybe just this.list and this.div?
-        this.resourceList = [];
+        this.resourceList = resourceList;
         this.resourceDiv = resourceDiv;
 
-        for (const resourceName of resourceNames) {
-            const resource = createResource(resourceName, resourceDiv, world);
-            this[resourceName] = resource;
-            this.resourceList.push(resource);
+        for (const resource of resourceList) {
+            this[resource.internalName] = resource;
         }
     }
 

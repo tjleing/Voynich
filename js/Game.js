@@ -1,13 +1,10 @@
 // @ts-check
 
-import { WorldCreatureSet } from "./WorldCreatureSet.js";
 import { clearNews, News } from "./News.js";
-import { WorldResourceSet } from "./WorldResourceSet.js";
-import { createWorld } from "./World.js";
+import { createWorld, loadWorld } from "./World.js";
 import { clearPrestigeResources, PrestigeResource } from "./PrestigeResource.js";
 import { clearAchievements, Achievement } from "./Achievement.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
-import { WorldUpgradeSet } from "./WorldUpgradeSet.js";
 import { fix, notify } from "./Utils.js";
 
 class Game {
@@ -61,6 +58,7 @@ class Game {
     }
 
     // TODO rethink naming
+    /*
     createCreatures () {
         if (this.creatures) {
             this.creatures.clear();
@@ -71,8 +69,10 @@ class Game {
             this,
         );
     }
+    */
 
     // TODO rethink naming
+    /*
     createUpgrades () {
         if (this.upgrades) {
             this.upgrades.clear();
@@ -83,6 +83,7 @@ class Game {
             this,
         );
     }
+    */
 
     createAchievements () {
         this.achievements.push(
@@ -116,6 +117,7 @@ class Game {
     }
 
     // TODO rethink naming
+    /*
     createResources () {
         if (this.resources) {
             this.resources.clear();
@@ -126,6 +128,7 @@ class Game {
             this,
         );
     }
+    */
 
     createPrestige () {
         this.prestigeResources.push(
@@ -224,11 +227,13 @@ class Game {
         this.resources.draw();
 
         this.creatures.draw();
+        */
 
         for (const achievement of this.achievements) {
             achievement.draw();
         }
-
+        
+        /*
         this.upgrades.draw();
 
         for (const prestigeResource of this.prestigeResources) {
@@ -245,8 +250,8 @@ class Game {
     // TODO: modifiers to buy max or multiple, etc.; also visual indicator for such
     // TODO: figure out what to do if there's 10 or more creature types?
     handleKey (key) {
-        if (key >= "1" && key <= this.creatures.creatureList.length.toString()) {
-            this.creatures.creatureList[parseInt(key)-1].buy();
+        if (key >= "1" && key <= this.worlds[0].creatures.creatureList.length.toString()) {
+            this.worlds[0].creatures.creatureList[parseInt(key)-1].buy();
         }
     }
 
@@ -289,10 +294,10 @@ class Game {
         for (const world of this.worlds) {
             worldSaves.push(world.save());
         }
-        save["worlds"] = worldSaves;
+        save["w"] = worldSaves;
 
-        save["achievements"] = this.achievements.map(achievement => achievement.save()).join("|");
-        save["settings"] = saveSettings();
+        save["a"] = this.achievements.map(achievement => achievement.save()).join("|");
+        save["s"] = saveSettings();
 
         // Save it to localStorage, base64-encoded
         localStorage.setItem("save", btoa(JSON.stringify(save)));
@@ -309,6 +314,7 @@ class Game {
             this.loadSave(save);
         }
         catch (error) {
+            console.log(error);
             this.hardReset();
         }
     }
@@ -355,17 +361,17 @@ class Game {
 
     loadSave (save) {
         // base-64 decode
-        save = atob(JSON.parse(save));
+        save = JSON.parse(atob(save));
 
         // Initialize everything from the save string
 
-        const worldSaves = save["worlds"];
+        const worldSaves = save.w;
         for (const worldSave of worldSaves) {
-            const world = new World();
-            world.load(worldSave);
+            const world = loadWorld(worldSave);
             this.worlds.push(world);
         }
 
+        /*
         let saveComponents = save.split("%%");
 
         let resourceChunks = saveComponents[0].split("||");
@@ -378,13 +384,14 @@ class Game {
 
         let upgradesSave = saveComponents[2].split("|");
         this.upgrades.load(upgradesSave);
+        */
 
-        let achievementsSave = saveComponents[3].split("|");
+        let achievementsSave = save.a.split("|");
         for (let i = 0; i<this.achievements.length; ++i) {
             this.achievements[i].load(achievementsSave[i]);
         }
 
-        let settingsSave = saveComponents[4];
+        let settingsSave = save.s;
         loadSettings(settingsSave);
     }
 }
