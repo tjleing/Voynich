@@ -1,7 +1,7 @@
 // @ts-check
 
 import { settings } from "./Settings.js";
-import { fix, maximumTimeToGet } from "./Utils.js";
+import { deepCopy, fix, maximumTimeToGet } from "./Utils.js";
 
 class Upgrade {
     constructor ({
@@ -302,11 +302,11 @@ const upgradeConfigs = {
 };
 
 function createUpgrade (name, upgradeDiv, world) {
-    return new Upgrade({ ...upgradeConfigs[name], upgradeDiv: upgradeDiv, world: world });
+    return new Upgrade({ ...deepCopy(upgradeConfigs[name]), upgradeDiv: upgradeDiv, world: world });
 }
 
 function loadUpgrade (save, upgradeDiv, world) {
-    const config = upgradeConfigs[save.n];
+    const config = deepCopy(upgradeConfigs[save.n]);
     config.purchased = save.p === 1 ? true : false;
     config.resourceDiv = upgradeDiv;
     config.world = world;

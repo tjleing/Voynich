@@ -1,6 +1,6 @@
 // @ts-check
 
-import { fix } from "./Utils.js";
+import { deepCopy, fix } from "./Utils.js";
 import { settings } from "./Settings.js";
 
 class Resource {
@@ -9,7 +9,7 @@ class Resource {
         displayNameSingular,
         displayNamePlural,
         flavorText,
-        startingAmount,
+        amount,
         hitpoints,
         active,
         resourceDiv,
@@ -20,7 +20,7 @@ class Resource {
         this.displayNamePlural = displayNamePlural;
         this.flavorText = flavorText;
         // TODO: amount vs. quantity
-        this.amount = startingAmount;
+        this.amount = amount;
         this.amountPerTick = 0;
         this.hitpoints = hitpoints;
         this.isFocused = false;
@@ -67,7 +67,7 @@ class Resource {
         const nameToUse = fixedAmount === 1 ? this.displayNameSingular : this.displayNamePlural;
         const amountPerSecond = fix(this.amountPerTick * settings.fps * 10) / 10;
 
-        const plus = amountPerSecond > 0 ? "+" : ""; // + if amountPerSecond positive, - if negative
+        const plus = amountPerSecond > 0 ? "+" : "-"; // + if amountPerSecond positive, - if negative
         const newTooltipSpanHTML = `${this.flavorText}<br><br>Currently: ${plus}${amountPerSecond} per second<hr>`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
             this.tooltipSpan.innerHTML = newTooltipSpanHTML;
@@ -133,7 +133,7 @@ const resourceConfigs = {
         displayNameSingular: "Liquid Gold Berry",
         displayNamePlural: "Liquid Gold Berries",
         flavorText: "It's worth its weight in liquid gold berries.",
-        startingAmount: 0,
+        amount: 0,
         hitpoints: 20,
         active: true,
     },
@@ -142,7 +142,7 @@ const resourceConfigs = {
         displayNameSingular: "Branch of Mahogany",
         displayNamePlural: "Branches of Mahogany",
         flavorText: "You could carve a nice sculpture out of one of these.",
-        startingAmount: 0,
+        amount: 0,
         hitpoints: 20,
         active: true,
     },
@@ -151,18 +151,18 @@ const resourceConfigs = {
         displayNameSingular: "Meadow Lily",
         displayNamePlural: "Meadow Lilies",
         flavorText: "The rarest flower!",
-        startingAmount: 0,
+        amount: 0,
         hitpoints: 500,
         active: true,
     },
 };
 
 function createResource (name, resourceDiv, world) {
-    return new Resource({ ...resourceConfigs[name], resourceDiv: resourceDiv, world: world });
+    return new Resource({ ...deepCopy(resourceConfigs[name]), resourceDiv: resourceDiv, world: world });
 }
 
 function loadResource (save, resourceDiv, world) {
-    const config = resourceConfigs[save.n];
+    const config = deepCopy(resourceConfigs[save.n]);
     config.amount = save.am;
     config.active = save.ac === 1 ? true : false;
     config.resourceDiv = resourceDiv;

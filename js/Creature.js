@@ -1,7 +1,7 @@
 // @ts-check
 
 import { settings } from "./Settings.js";
-import { deepFix, fix, maximumTimeToGet } from "./Utils.js";
+import { deepCopy, fix, maximumTimeToGet } from "./Utils.js";
 
 class Creature {
     constructor({
@@ -13,7 +13,7 @@ class Creature {
             production,
             totalProduced,
             costScalingFunction,
-            initialQuantity,
+            quantity,
             creatureDiv,
             world,
     }) {
@@ -25,7 +25,7 @@ class Creature {
         this.production = production;
         this.totalProduced = totalProduced;
         this.costScalingFunction = costScalingFunction;
-        this.quantity = initialQuantity; // TODO: don't put this here; just in save-load?  at the very least don't pass through constructor, just set to 0s based on production (might make it hard for a creature to produce new resources? [can pass in a 0 for that in production, and then special-case it in tooltip??])
+        this.quantity = quantity;
         this.creatureDiv = creatureDiv;
         this.world = world;
 
@@ -199,7 +199,7 @@ const creatureConfigs = {
             function () {
                 this.cost["berries"] *= 1.15;
             },
-        initialQuantity: 0,
+        quantity: 0,
     },
     "beaverine": {
         internalName: "beaverine",
@@ -222,7 +222,7 @@ const creatureConfigs = {
             function () {
                 this.cost["wood"] *= 1.15;
             },
-        initialQuantity: 0,
+        quantity: 0,
     },
     "buckaroo": {
         internalName: "buckaroo",
@@ -249,7 +249,7 @@ const creatureConfigs = {
                 this.cost["berries"] *= 1.15;
                 this.cost["wood"] *= 1.15;
             },
-        initialQuantity: 0,
+        quantity: 0,
     },
     "ptrocanfer": {
         internalName: "ptrocanfer",
@@ -275,16 +275,16 @@ const creatureConfigs = {
                 this.cost["wood"] *= 1.15;
                 this.cost["flowers"] *= 1.15;
             },
-        initialQuantity: 0,
+        quantity: 0,
     },
 };
 
 function createCreature (name, creatureDiv, world) {
-    return new Creature({ ...creatureConfigs[name], creatureDiv: creatureDiv, world: world });
+    return new Creature({ ...deepCopy(creatureConfigs[name]), creatureDiv: creatureDiv, world: world });
 }
 
 function loadCreature (save, creatureDiv, world) {
-    const config = creatureConfigs[save.n];
+    const config = deepCopy(creatureConfigs[save.n]);
     config.totalProduced = save.tp;
     config.quantity = save.q;
     config.creatureDiv = creatureDiv;

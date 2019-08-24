@@ -1,6 +1,5 @@
 // @ts-check
 
-import { clearNews, News } from "./News.js";
 import { createWorld, loadWorld } from "./World.js";
 import { clearPrestigeResources, PrestigeResource } from "./PrestigeResource.js";
 import { clearAchievements, Achievement } from "./Achievement.js";
@@ -9,13 +8,25 @@ import { fix, notify } from "./Utils.js";
 
 class Game {
     constructor () {
-        this.hardReset(false);
+        //this.hardReset(false);
+        this.prep();
 
+        /*
         // Create stat div on left panel
         this.statDiv = document.createElement("div");
         this.statDiv.id = this.id + "stats";
         var leftpanel = document.getElementById("leftpanel");
         leftpanel.appendChild(this.statDiv);
+        */
+    }
+
+    prep () {
+        this.worlds = [];
+        document.getElementById("game").innerHTML = "";
+
+        this.achievements = [];
+        clearAchievements();
+        this.createAchievements();
     }
 
     hardReset (prompt) {
@@ -41,8 +52,6 @@ class Game {
             this.prestigeResources = [];
             clearPrestigeResources();
 
-            clearNews();
-
             setAllSettings({"bgColor": "#E82B2B", "fps": 20, "saveTime": 20});
 
             //this.createResources();
@@ -51,9 +60,6 @@ class Game {
             this.createAchievements();
             this.createPrestige();
             //this.createTabs();
-
-
-            this.news = new News();
         }
     }
 
@@ -93,7 +99,11 @@ class Game {
                     lockedFlavorText: "Hmm... maybe there's a creature with a name like that",
                     unlockedFlavorText: "In fact, we'll seal you now!",
                     unlockCondition: () => {
-                        return (this.worlds[0].creatures.weaseal.quantity >= 1);
+                        for (const world of this.worlds) {
+                            if (world.creatures.weaseal.quantity >= 1)
+                                return true;
+                        }
+                        return false;
                     },
                     effect: () => {},
                 }
@@ -106,7 +116,11 @@ class Game {
                     lockedFlavorText: "Is this one a pun too?",
                     unlockedFlavorText: "Lil' e, sounds like a rapper!  Shucks that was terrible",
                     unlockCondition: () => {
-                        return (this.worlds[0].resources.flowers.amount >= 1);
+                        for (const world of this.worlds) {
+                            if (world.resources.flowers.amount >= 1)
+                                return true;
+                        }
+                        return false;
                     },
                     effect: () => {
                         this.worlds[0].resources.flowers.amount += 5;
@@ -209,7 +223,6 @@ class Game {
         for (const achievement of this.achievements) {
             achievement.tick();
         }
-        this.news.tick();
         */
 
         for (const world of this.worlds) {
@@ -261,8 +274,8 @@ class Game {
 
         // Draw the prestige menu
         // + animations if we ever have any
-        document.getElementById("game").style.visibility = false;
-        document.getElementById("prestige").style.visibility = true;
+        document.getElementById("game").style.visibility = "false";
+        document.getElementById("prestige").style.visibility = "true";
 
         // Stop tick cycle and save cycle
         clearTimeout(this.tickTimeout);

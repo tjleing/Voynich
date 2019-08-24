@@ -17,6 +17,17 @@ var deepFix = function (obj) {
     return objCopy;
 };
 
+var deepCopy = function (obj) {
+    if (typeof(obj) !== "object") {
+        return obj;
+    }
+    const copy = {};
+    for (const key in obj) {
+        copy[key] = deepCopy(obj[key]);
+    }
+    return copy;
+}
+
 var formatDuration = function (seconds) {
     var secNum = parseFloat(seconds);
     var formattedComponents = [];
@@ -92,4 +103,4 @@ var notify = function (text) {
     }).show();
 };
 
-export { deepFix, fix, formatDuration, notify, timeToGet, maximumTimeToGet };
+export { deepCopy, deepFix, fix, formatDuration, notify, timeToGet, maximumTimeToGet };

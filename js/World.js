@@ -12,8 +12,6 @@ class World {
 
         this.focusPower = 1; // TODO: put in Stats or something
 
-        //clearNews();
-
         setAllSettings({"bgColor": "#E82B2B", "fps": 60, "saveTime": 5});
 
         // TODO: move up probably
@@ -60,10 +58,10 @@ class World {
     }
 
     tick () {
+        this.resources.tick();
         if (this.resources.focusedResource !== undefined) {
             this.resources.focusedResource.tickFocus(1);
         }
-        this.resources.tick();
         this.creatures.tick();
         this.upgrades.tick();
     }
@@ -109,7 +107,6 @@ class World {
         this.resourceDiv = leftPanel.children[0];
 
         const middlePanel = this.worldDiv.children[1];
-        // TODO: news div?
 
         const rightPanel = this.worldDiv.children[2];
         this.tabDiv = rightPanel.children[5];
@@ -129,8 +126,8 @@ class World {
 
     load (save) {
         this.resources = loadWorldResourceSet(save.r, this.resourceDiv, this);
-        this.creatures = loadWorldCreatureSet(save.c, this.resourceDiv, this);
-        this.upgrades = loadWorldUpgradeSet(save.u, this.resourceDiv, this);
+        this.creatures = loadWorldCreatureSet(save.c, this.creatureDiv, this);
+        this.upgrades = loadWorldUpgradeSet(save.u, this.upgradeDiv, this);
     }
 }
 
@@ -158,8 +155,8 @@ function loadWorld (save) {
     const world = new World();
 
     const resources = loadWorldResourceSet(save.r, world.resourceDiv, world);
-    const creatures = loadWorldCreatureSet(save.c, world.resourceDiv, world);
-    const upgrades = loadWorldUpgradeSet(save.u, world.resourceDiv, world);
+    const creatures = loadWorldCreatureSet(save.c, world.creatureDiv, world);
+    const upgrades = loadWorldUpgradeSet(save.u, world.upgradeDiv, world);
 
     world.initialize({resources, creatures, upgrades});
     return world;
