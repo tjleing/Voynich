@@ -19,8 +19,10 @@ class Achievement {
         this.tooltipSpan.classList.add("tooltipText");
         this.div.appendChild(this.tooltipSpan);
 
+        /*
         Achievement._divs.push(this.div);
         Achievement._achievementDiv.appendChild(this.div);
+        */
     }
 
     draw () {

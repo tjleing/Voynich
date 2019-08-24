@@ -25,7 +25,6 @@ class Game {
         document.getElementById("game").innerHTML = "";
 
         this.achievements = [];
-        clearAchievements();
         this.createAchievements();
     }
 
