@@ -51,7 +51,7 @@ class Upgrade {
 
         this.buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
         this.buttonDiv.appendChild(this.button);
-        const upgradeDiv = document.getElementById("upgrades");
+        const upgradeDiv = this.world.upgradeDiv;
         upgradeDiv.appendChild(this.buttonDiv);
     }
 
