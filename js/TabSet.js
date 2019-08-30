@@ -5,6 +5,7 @@ import { createTab } from "./Tab.js";
 class TabSet {
     constructor (tabInfo, tabDiv, activeIndex, world) {
         this.tabList = [];
+        tabDiv.innerHTML = "";
         this.tabDiv = tabDiv;
         this.activeIndex = activeIndex;
 
