@@ -57,7 +57,7 @@ class Upgrade {
 
     destroyDOM () {
         try {
-            document.getElementById("upgrades").removeChild(this.buttonDiv);
+            this.world.upgradeDiv.removeChild(this.buttonDiv);
         }
         catch (error) {
             // Already removed
