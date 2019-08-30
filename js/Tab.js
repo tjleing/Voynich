@@ -1,13 +1,12 @@
 // @ts-check
 
 class Tab {
-    constructor ({id, buttonText, divToShow, unlockCondition, tabDiv, world}) {
+    constructor ({buttonText, divToShow, unlockCondition, tabDiv, world}) {
         this.unlockCondition = unlockCondition;
         this.unlocked = this.unlockCondition();
         this.buttonText = buttonText;
 
         this.button = document.createElement("button");
-        this.button.id = id;
         if (this.unlocked) {
             // TODO: also have tooltips on upgrade tabs; hints as to unlock conditions when locked, and
             // description always?

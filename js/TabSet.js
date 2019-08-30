@@ -23,12 +23,6 @@ class TabSet {
         }
     }
 
-    draw () {
-        for (const tab of this.tabList) {
-            tab.draw();
-        }
-    }
-
     forEach (operation) {
         for (const tab of this.tabList) {
             operation(tab);
@@ -49,7 +43,7 @@ class TabSet {
         this.tabList[this.activeIndex].button.classList.remove("active");
 
         // Set this tab active
-        newTab.divToShow.style.display = "block";
+        newTab.divToShow.style.display = "inherit";
         newTab.button.classList.add("active");
 
         this.activeIndex = newTabIndex;

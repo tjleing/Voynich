@@ -4,6 +4,7 @@ import { createWorld, loadWorld } from "./World.js";
 import { clearPrestigeResources, PrestigeResource } from "./PrestigeResource.js";
 import { clearAchievements, Achievement } from "./Achievement.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
+import { TabSet } from "./TabSet.js";
 import { fix, notify } from "./Utils.js";
 
 class Game {
@@ -43,6 +44,9 @@ class Game {
             document.getElementById("game").innerHTML = "";
             this.worlds = [];
             this.worlds.push(createWorld("lush"));
+            this.worlds.push(createWorld("lush"));
+
+            this.createWorldTabBar();
 
             this.achievements = [];
             clearAchievements();
@@ -157,6 +161,19 @@ class Game {
                 }
             )
         );
+    }
+
+    createWorldTabBar () {
+        const tabInfo = [];
+        for (let i = 0; i<this.worlds.length; ++i) {
+            const world = this.worlds[i];
+            tabInfo.push({
+                buttonText: `World ${i}`,
+                divToShow: world.worldDiv,
+                unlockCondition: () => true,
+            });
+        }
+        this.tabs = new TabSet(tabInfo, document.getElementById("topBar"), 0, undefined);
     }
 
     /*createTabs () {
@@ -382,6 +399,7 @@ class Game {
             const world = loadWorld(worldSave);
             this.worlds.push(world);
         }
+        this.createWorldTabBar();
 
         /*
         let saveComponents = save.split("%%");

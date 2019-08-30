@@ -30,25 +30,21 @@ class World {
     createTabs () {
         const tabInfo = [];
         tabInfo.push({
-            id: "creatureTab",
             buttonText: "Creatures",
             divToShow: this.creatureDiv,
             unlockCondition: () => {return true;},
         });
         tabInfo.push({
-            id: "upgradeTab",
             buttonText: "Upgrades",
             divToShow: this.upgradeDiv,
             unlockCondition: () => {return true;},
         });
         tabInfo.push({
-            id: "achievementTab",
             buttonText: "Achievements",
             divToShow: this.achievementDiv,
             unlockCondition: () => {return true;},
         });
         tabInfo.push({
-            id: "prestigeTab",
             buttonText: "Another one...",
             divToShow: this.prestigeDiv,
             unlockCondition: () => {return this.resources.wood.amount >= 100000;},
@@ -64,6 +60,7 @@ class World {
         }
         this.creatures.tick();
         this.upgrades.tick();
+        this.tabs.tick();
     }
 
     draw () {
