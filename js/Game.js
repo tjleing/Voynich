@@ -395,6 +395,7 @@ class Game {
         // Initialize everything from the save string
 
         const worldSaves = save.w;
+        this.worlds = [];
         for (const worldSave of worldSaves) {
             const world = loadWorld(worldSave);
             this.worlds.push(world);
