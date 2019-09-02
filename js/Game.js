@@ -353,6 +353,8 @@ class Game {
         const oldSave = localStorage.getItem("save"); // To restore back to if the new save is invalid
         const newSave = prompt("Paste your save (your current save will be overwritten)!");
 
+        document.getElementById("game").innerHTML = "";
+
         try {
             this.loadSave(newSave);
             setTimeout(function () { notify("Save loaded"); }, 300);
