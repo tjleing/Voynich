@@ -66,10 +66,12 @@ class Achievement {
 }
 
 function clearAchievements () {
+    /*
     Achievement._divs = [];
     Achievement._achievementDiv = document.getElementById("achievements");
 
     Achievement._achievementDiv.innerHTML = "";
+    */
 }
 
 export { clearAchievements, Achievement };

@@ -40,11 +40,6 @@ class World {
             unlockCondition: () => {return true;},
         });
         tabInfo.push({
-            buttonText: "Achievements",
-            divToShow: this.achievementDiv,
-            unlockCondition: () => {return true;},
-        });
-        tabInfo.push({
             buttonText: "Another one...",
             divToShow: this.prestigeDiv,
             unlockCondition: () => {return this.resources.wood.amount >= 100000;},
@@ -93,7 +88,6 @@ class World {
                 <div class="tabs" id="tabs"></div>
                 <div id="upgrades"></div>
                 <div id="creatures"></div>
-                <div id="achievements"></div>
                 <div id="prestige">
                       <div id="prestigeResourceAmounts"></div>
                       <div id="prestigeInfo"></div>
@@ -109,8 +103,7 @@ class World {
         this.tabDiv = rightPanel.children[5];
         this.upgradeDiv = rightPanel.children[6];
         this.creatureDiv = rightPanel.children[7];
-        this.achievementDiv = rightPanel.children[8];
-        this.prestigeDiv = rightPanel.children[9];
+        this.prestigeDiv = rightPanel.children[8];
     }
 
     save () {
