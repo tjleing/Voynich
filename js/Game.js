@@ -46,7 +46,7 @@ class Game {
             this.worlds.push(createWorld("lush"));
             this.worlds.push(createWorld("lush"));
 
-            this.createWorldTabBar();
+            this.createTopTabBar();
 
             this.achievements = [];
             clearAchievements();
@@ -163,7 +163,7 @@ class Game {
         );
     }
 
-    createWorldTabBar () {
+    createTopTabBar () {
         const tabInfo = [];
         for (let i = 0; i<this.worlds.length; ++i) {
             const world = this.worlds[i];
@@ -173,6 +173,16 @@ class Game {
                 unlockCondition: () => true,
             });
         }
+        tabInfo.push({
+            buttonText: `Achievements`,
+            divToShow: document.getElementById('achievements'),
+            unlockCondition: () => true,
+        })
+        tabInfo.push({
+            buttonText: `Settings`,
+            divToShow: document.getElementById('settings'),
+            unlockCondition: () => true,
+        })
         this.tabs = new TabSet(tabInfo, document.getElementById("topBar"), 0, undefined);
     }
 
@@ -328,6 +338,8 @@ class Game {
         save["a"] = this.achievements.map(achievement => achievement.save()).join("|");
         save["s"] = saveSettings();
 
+        save["t"] = this.tabs.save();
+
         // Save it to localStorage, base64-encoded
         localStorage.setItem("save", btoa(JSON.stringify(save)));
     }
@@ -335,14 +347,12 @@ class Game {
     load () {
         // Get save string from localStorage
         const save = localStorage.getItem("save");
-        if (!save) {
-            // There is no save file, just break out
-            return;
-        }
+
         try {
             this.loadSave(save);
         }
         catch (error) {
+            // Invalid or missing save
             console.log(error);
             this.hardReset();
         }
@@ -402,7 +412,9 @@ class Game {
             const world = loadWorld(worldSave);
             this.worlds.push(world);
         }
-        this.createWorldTabBar();
+        this.createTopTabBar();
+
+        this.tabs.load(save.t);
 
         /*
         let saveComponents = save.split("%%");

@@ -80,11 +80,6 @@ class World {
                 <span id="save"></span>
             </div>
             <div id="rightpanel" class="game">
-                <button>"Mute"</button>
-                <button id="import">Load save!</button>
-                <button id="export">Export save!</button>
-                <button id="hardReset">HARD RESET</button>
-                <hr />
                 <div class="tabs" id="tabs"></div>
                 <div id="upgrades"></div>
                 <div id="creatures"></div>
@@ -100,10 +95,10 @@ class World {
         const middlePanel = this.worldDiv.children[1];
 
         const rightPanel = this.worldDiv.children[2];
-        this.tabDiv = rightPanel.children[5];
-        this.upgradeDiv = rightPanel.children[6];
-        this.creatureDiv = rightPanel.children[7];
-        this.prestigeDiv = rightPanel.children[8];
+        this.tabDiv = rightPanel.children[0];
+        this.upgradeDiv = rightPanel.children[1];
+        this.creatureDiv = rightPanel.children[2];
+        this.prestigeDiv = rightPanel.children[3];
     }
 
     save () {

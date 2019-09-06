@@ -15,7 +15,12 @@ class TabSet {
             tab.button.onclick = this.setActive.bind(this, i);
             this.tabList.push(tab);
         }
-        this.setActive(activeIndex);
+        if (activeIndex) {
+            this.setActive(activeIndex);
+        }
+        else {
+            this.setActive(0);
+        }
     }
 
     tick () {
@@ -55,7 +60,9 @@ class TabSet {
     }
 
     load (saveComponents) {
+        console.log(saveComponents);
         this.activeIndex = parseInt(saveComponents, 10);
+        console.log(this.activeIndex);
     }
 
     clear () {
