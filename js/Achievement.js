@@ -19,21 +19,25 @@ class Achievement {
         this.tooltipSpan.classList.add("tooltipText");
         this.div.appendChild(this.tooltipSpan);
 
-        /*
-        Achievement._divs.push(this.div);
-        Achievement._achievementDiv.appendChild(this.div);
-        */
+        document.getElementById("achievements").append(this.div);
     }
 
     draw () {
+        // TODO: only overwrite innerHTML if it changes (i.e., set it and spaghett it)
+        // for real i.e. change it on effect()
+        let innerSpanHTML;
         if (this.unlocked) {
             this.div.classList.add("achievement-unlocked");
-            this.tooltipSpan.innerHTML = `${this.unlockedFlavorText}`;
+            innerSpanHTML = `<span class="tooltipTextInner">${this.unlockedFlavorText}</span>`;
         }
         else {
             // TODO: Templated to show progress?  Pull a realm grinder and just show % completion?
             this.div.classList.remove("achievement-unlocked");
-            this.tooltipSpan.innerHTML = `${this.lockedFlavorText}`;
+            innerSpanHTML = `<span class="tooltipTextInner">${this.lockedFlavorText}</span>`;
+        }
+
+        if (this.tooltipSpan.innerHTML !== innerSpanHTML) {
+            this.tooltipSpan.innerHTML = innerSpanHTML;
         }
     }
 
@@ -66,12 +70,7 @@ class Achievement {
 }
 
 function clearAchievements () {
-    /*
-    Achievement._divs = [];
-    Achievement._achievementDiv = document.getElementById("achievements");
-
-    Achievement._achievementDiv.innerHTML = "";
-    */
+    document.getElementById("achievements").innerHTML = "";
 }
 
 export { clearAchievements, Achievement };

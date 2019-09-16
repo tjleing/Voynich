@@ -46,10 +46,12 @@ class TabSet {
 
         // Set previous tab inactive
         this.tabList[this.activeIndex].divToShow.style.display = "none";
+        this.tabList[this.activeIndex].divToShow.style.zIndex = "initial";
         this.tabList[this.activeIndex].button.classList.remove("active");
 
         // Set this tab active
         newTab.divToShow.style.display = "inherit";
+        newTab.divToShow.style.zIndex = "5"; // Bring to front so that hovering always targets active tab
         newTab.button.classList.add("active");
 
         this.activeIndex = newTabIndex;
@@ -60,9 +62,13 @@ class TabSet {
     }
 
     load (saveComponents) {
-        console.log(saveComponents);
-        this.activeIndex = parseInt(saveComponents, 10);
-        console.log(this.activeIndex);
+        const loadIndex = parseInt(saveComponents, 10);
+        if (loadIndex !== NaN) {
+            this.setActive(loadIndex);
+        }
+        else {
+            this.setActive(0);
+        }
     }
 
     clear () {

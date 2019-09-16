@@ -131,6 +131,24 @@ class Game {
                 }
             )
         );
+        this.achievements.push(
+            new Achievement(
+                {
+                    displayName: "Mmmm, steak sauce",
+                    lockedFlavorText: "Smells prestigous... you could say it's known for its excellence",
+                    unlockedFlavorText: "Yes our naming scheme is terrible, who even came up with 'A1,' seriously",
+                    unlockCondition: () => {
+                        for (const world of this.worlds) {
+                            // TODO: fix, this isn't the right unlock
+                            if (world.resources.flowers.amount >= 1)
+                                return true;
+                        }
+                        return false;
+                    },
+                    effect: () => {},
+                }
+            )
+        );
     }
 
     // TODO rethink naming
@@ -246,13 +264,14 @@ class Game {
         for (const tab of this.tabs) {
             tab.tick();
         }
-        for (const achievement of this.achievements) {
-            achievement.tick();
-        }
         */
 
         for (const world of this.worlds) {
             world.tick();
+        }
+        
+        for (const achievement of this.achievements) {
+            achievement.tick();
         }
 
         this.draw();

@@ -101,7 +101,7 @@ class Upgrade {
             );
             timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`;
         }
-        const newTooltipSpanHTML = `${this.flavorText}${timeUntilAffordableString}`;
+        const newTooltipSpanHTML = `<span class="tooltipTextInner">${this.flavorText}${timeUntilAffordableString}</span>`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
             this.tooltipSpan.innerHTML = newTooltipSpanHTML;
         }

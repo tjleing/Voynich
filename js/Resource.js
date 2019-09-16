@@ -68,7 +68,7 @@ class Resource {
         const amountPerSecond = fix(this.amountPerTick * settings.fps * 10) / 10;
 
         const plus = amountPerSecond >= 0 ? "+" : "-"; // + if amountPerSecond positive, - if negative
-        const newTooltipSpanHTML = `${this.flavorText}<br><br>Currently: ${plus}${amountPerSecond} per second<hr>`;
+        const newTooltipSpanHTML = `<span class="tooltipTextInner">${this.flavorText}<br><br>Currently: ${plus}${amountPerSecond} per second<hr></span>`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
             this.tooltipSpan.innerHTML = newTooltipSpanHTML;
         }
