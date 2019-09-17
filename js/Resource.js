@@ -65,7 +65,7 @@ class Resource {
 
         const fixedAmount = fix(this.amount);
         const nameToUse = fixedAmount === 1 ? this.displayNameSingular : this.displayNamePlural;
-        const amountPerSecond = fix(this.amountPerTick * settings.fps * 10) / 10;
+        const amountPerSecond = fix(this.amountPerTick * settings.fps * 100) / 100;
 
         const plus = amountPerSecond >= 0 ? "+" : "-"; // + if amountPerSecond positive, - if negative
         const newTooltipSpanHTML = `<span class="tooltipTextInner">${this.flavorText}<br><br>Currently: ${plus}${amountPerSecond} per second<hr></span>`;
@@ -128,6 +128,7 @@ class Resource {
 
 
 const resourceConfigs = {
+    // 1. Lush
     "berries": {
         internalName: "berries",
         displayNameSingular: "Liquid Gold Berry",
@@ -154,6 +155,35 @@ const resourceConfigs = {
         amount: 0,
         hitpoints: 500,
         active: true,
+    },
+
+    // 2. Wooded
+    "amber": {
+        internalName: "amber",
+        displayNameSingular: "Chunk of Amber",
+        displayNamePlural: "Chunks of Amber",
+        flavorText: "That liquid gold!  Maybe there's a bug in this one...",
+        amount: 0,
+        hitpoints: 20,
+        active: true,
+    },
+    "maplesyrup": {
+        internalName: "maplesyrup",
+        displayNameSingular: "Drop of Maple Syrup",
+        displayNamePlural: "Drops of Maple Syrup",
+        flavorText: "Tap that tree and wait!  Exhilirating.",
+        amount: 0,
+        hitpoints: 40,
+        active: true,
+    },
+    "spamber": {
+        internalName: "spamber",
+        displayNameSingular: "Chunk of Spamber",
+        displayNamePlural: "Chunks of Spamber",
+        flavorText: "Spiced amber! ... it's disgusting.",
+        amount: 0,
+        hitpoints: 80,
+        active: false,
     },
 };
 

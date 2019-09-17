@@ -44,7 +44,7 @@ class Game {
             document.getElementById("game").innerHTML = "";
             this.worlds = [];
             this.worlds.push(createWorld("lush"));
-            this.worlds.push(createWorld("lush"));
+            this.worlds.push(createWorld("wooded"));
 
             this.createTopTabBar();
 
@@ -103,7 +103,7 @@ class Game {
                     unlockedFlavorText: "In fact, we'll seal you now!",
                     unlockCondition: () => {
                         for (const world of this.worlds) {
-                            if (world.creatures.weaseal.quantity >= 1)
+                            if ("weasel" in world.creatures && world.creatures.weaseal.quantity >= 1)
                                 return true;
                         }
                         return false;
@@ -120,7 +120,7 @@ class Game {
                     unlockedFlavorText: "Lil' e, sounds like a rapper!  Shucks that was terrible",
                     unlockCondition: () => {
                         for (const world of this.worlds) {
-                            if (world.resources.flowers.amount >= 1)
+                            if ("flowers" in world.resources && world.resources.flowers.amount >= 1)
                                 return true;
                         }
                         return false;
@@ -140,7 +140,7 @@ class Game {
                     unlockCondition: () => {
                         for (const world of this.worlds) {
                             // TODO: fix, this isn't the right unlock
-                            if (world.resources.flowers.amount >= 1)
+                            if ("flowers" in world.resources && world.resources.flowers.amount >= 1)
                                 return true;
                         }
                         return false;
@@ -186,7 +186,7 @@ class Game {
         for (let i = 0; i<this.worlds.length; ++i) {
             const world = this.worlds[i];
             tabInfo.push({
-                buttonText: `World ${i}`,
+                buttonText: `World ${i+1}: ${this.worlds[i].name}`,
                 divToShow: world.worldDiv,
                 unlockCondition: () => true,
             });

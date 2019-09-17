@@ -178,6 +178,7 @@ class Creature {
 
 
 const creatureConfigs = {
+    // 1. Lush
     "weaseal": {
         internalName: "weaseal",
         displayNameSingular: "Weaseal",
@@ -237,7 +238,7 @@ const creatureConfigs = {
         production: {
             berries: 100,
             wood: 20,
-            flowers: 0.001
+            flowers: 0.01
         },
         totalProduced: {
             berries: 0,
@@ -274,6 +275,106 @@ const creatureConfigs = {
             function () {
                 this.cost["wood"] *= 1.15;
                 this.cost["flowers"] *= 1.15;
+            },
+        quantity: 0,
+    },
+
+    // 2. Wooded
+    "ambear": {
+        internalName: "ambear",
+        displayNameSingular: "Ambear",
+        displayNamePlural: "Ambears",
+        flavorText: "They sniff out amber-filled trees from miles away.  Some bears like honey, but these ones just take a cut of what they find.",
+        cost: {
+            amber: 20,
+        },
+        production: {
+            amber: 2,
+            maplesyrup: 0.5,
+        },
+        totalProduced: {
+            amber: 0,
+            maplesyrup: 0,
+        },
+        costScalingFunction:
+            function () {
+                this.cost["amber"] *= 1.3;
+            },
+        quantity: 0,
+    },
+    "spicewolf": {
+        internalName: "spicewolf",
+        displayNameSingular: "Spice Wolf",
+        displayNamePlural: "Spice Wolf",
+        flavorText: "These doggos moonlight as chefs, but only during the full moon.  Also, they love anime.",
+        cost: {
+            amber: 100,
+            maplesyrup: 20,
+        },
+        production: {
+            amber: -10,
+            spamber: 7,
+        },
+        totalProduced: {
+            amber: 0,
+            spamber: 0,
+        },
+        costScalingFunction:
+            function () {
+                this.cost["amber"] *= 1.3;
+                this.cost["maplesyrup"] *= 1.15;
+            },
+        quantity: 0,
+    },
+    "chuckpecker": {
+        internalName: "chuckpecker",
+        displayNameSingular: "Chuckpecker",
+        displayNamePlural: "Chuckpeckers",
+        flavorText: "Not only can they harvest nutrients from tree trunks, but they can also toss the logs back home!  But how many?",
+        cost: {
+            maplesyrup: 500,
+            spamber: 1000,
+        },
+        production: {
+            maplesyrup: 10,
+            wood: 8,
+        },
+        totalProduced: {
+            maplesyrup: 0,
+            wood: 0,
+        },
+        costScalingFunction:
+            function () {
+                this.cost["amber"] *= 1.3;
+                this.cost["maplesyrup"] *= 1.15;
+            },
+        quantity: 0,
+    },
+    "tasdevil": {
+        internalName: "tasdevil",
+        displayNameSingular: "Tastymanian Devil",
+        displayNamePlural: "Tastymanian Devils",
+        flavorText: "Rarely seen even in fiction.  Has a major sweet tooth, no, 42 of them!",
+        cost: {
+            maplesyrup: 5000,
+            spamber: 10000,
+            wood: 700,
+        },
+        production: {
+            amber: 10,
+            spamber: 100,
+            maplesyrup: 50,
+        },
+        totalProduced: {
+            amber: 0,
+            spamber: 0,
+            maplesyrup: 0,
+        },
+        costScalingFunction:
+            function () {
+                this.cost["amber"] *= 1.3;
+                this.cost["spamber"] *= 1.3;
+                this.cost["maplesyrup"] *= 1.3;
             },
         quantity: 0,
     },
