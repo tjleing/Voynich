@@ -7,9 +7,10 @@ import { TabSet } from "./TabSet.js";
 import { setAllSettings } from "./Settings.js";
 
 class World {
-    constructor () {
+    constructor (name) {
         this.constructHTML();
 
+        this.name = name;
         this.focusPower = 1; // TODO: put in Stats or something
 
         setAllSettings({"bgColor": "#E82B2B", "fps": 60, "saveTime": 5});
@@ -106,13 +107,8 @@ class World {
         save.r = this.resources.save();
         save.c = this.creatures.save();
         save.u = this.upgrades.save();
+        save.n = this.name;
         return save;
-    }
-
-    load (save) {
-        this.resources = loadWorldResourceSet(save.r, this.resourceDiv, this);
-        this.creatures = loadWorldCreatureSet(save.c, this.creatureDiv, this);
-        this.upgrades = loadWorldUpgradeSet(save.u, this.upgradeDiv, this);
     }
 }
 
@@ -130,7 +126,7 @@ const worldConfigs = {
 };
 
 function createWorld (name) {
-    const world = new World();
+    const world = new World(name);
 
     const config = worldConfigs[name];
     const resources = createWorldResourceSet(config.resourceNames, world.resourceDiv, world);
@@ -142,7 +138,8 @@ function createWorld (name) {
 }
 
 function loadWorld (save) {
-    const world = new World();
+    const name = save.n;
+    const world = new World(name);
 
     const resources = loadWorldResourceSet(save.r, world.resourceDiv, world);
     const creatures = loadWorldCreatureSet(save.c, world.creatureDiv, world);
