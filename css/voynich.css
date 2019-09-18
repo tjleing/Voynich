@@ -6,6 +6,10 @@
 	unicode-range: U+30-39;
 }
 
+html {
+	height: 100%;
+}
+
 body {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -18,7 +22,11 @@ body {
 	font-family: MonospaceNumbers, -apple-system, BlinkMacSystemFont,
     “Segoe UI”, “Roboto”, “Oxygen”,
     “Ubuntu”, “Cantarell”, “Fira Sans”,
-    “Droid Sans”, “Helvetica Neue”, sans-serif;
+	“Droid Sans”, “Helvetica Neue”, sans-serif;
+	
+	margin:0;
+	padding:0;
+	height:100%;
 }
 
 button {
@@ -29,13 +37,13 @@ button {
 }
 
 #game {
-	position: absolute;
 	display: flex;
-	left: 0;
-	top: 10%;
-	right: 0;
-	bottom: 0;
+	height: 100%;
 	overflow: hidden;
+}
+
+#settings {
+	margin: 10px;
 }
 
 .world {
@@ -177,6 +185,7 @@ button:focus {outline:0;}
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-evenly;
+	margin-top: 10px;
 	width: 100%;
 }
 
