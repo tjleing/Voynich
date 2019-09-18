@@ -9,16 +9,7 @@ import { fix, notify } from "./Utils.js";
 
 class Game {
     constructor () {
-        //this.hardReset(false);
         this.prep();
-
-        /*
-        // Create stat div on left panel
-        this.statDiv = document.createElement("div");
-        this.statDiv.id = this.id + "stats";
-        var leftpanel = document.getElementById("leftpanel");
-        leftpanel.appendChild(this.statDiv);
-        */
     }
 
     prep () {
@@ -27,20 +18,18 @@ class Game {
 
         this.achievements = [];
         this.createAchievements();
+
+        // TODO: move to own function
+        document.getElementById("hardReset").onclick = this.hardReset.bind(this, true);
+        document.getElementById("export").onclick = this.exportSave.bind(this);
+        document.getElementById("import").onclick = this.importSave.bind(this);
+
     }
 
     hardReset (prompt) {
-        // Clears out all of the static variables for all of these classes and then refills them
-        // with the values in this.create____.
-        // Counterintuitively, this is called at startup, so we can put "initialization code"
-        // (i.e. ._counter = 0, ._buttons = [], ...) in clearResources(), clearCreatures(), etc.
-        // Now that's good design.
-        // TODO: abstract it all out into its own function so that we're not literally hardReset()ing
-        // on every single refresh
         if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
-            this.focusPower = 1; // TODO: put in Stats or something
+            this.focusPower = 1; // TODO: put in World constructor or something
 
-            //clearWorlds();
             document.getElementById("game").innerHTML = "";
             this.worlds = [];
             this.worlds.push(createWorld("lush"));
@@ -57,43 +46,12 @@ class Game {
 
             setAllSettings({"bgColor": "#E82B2B", "fps": 20, "saveTime": 20});
 
-            //this.createResources();
-            //this.createCreatures();
-            //this.createUpgrades();
             this.createAchievements();
             this.createPrestige();
-            //this.createTabs();
         }
     }
 
-    // TODO rethink naming
-    /*
-    createCreatures () {
-        if (this.creatures) {
-            this.creatures.clear();
-        }
-        this.creatures = new WorldCreatureSet(
-            ["weaseal", "beaverine", "buckaroo", "ptrocanfer"],
-            document.getElementById("creatures"),
-            this,
-        );
-    }
-    */
-
-    // TODO rethink naming
-    /*
-    createUpgrades () {
-        if (this.upgrades) {
-            this.upgrades.clear();
-        }
-        this.upgrades = new WorldUpgradeSet(
-            ["twoForOne", "BeaverineUp1", "everythingIsAwful", "undoAwful", "greyBG", "getPtroed", "doubleFocusPower"],
-            document.getElementById("upgrades"),
-            this,
-        );
-    }
-    */
-
+    // TODO: probably this function should just live in Achievement.js and return the list
     createAchievements () {
         this.achievements.push(
             new Achievement(
@@ -103,7 +61,7 @@ class Game {
                     unlockedFlavorText: "In fact, we'll seal you now!",
                     unlockCondition: () => {
                         for (const world of this.worlds) {
-                            if ("weasel" in world.creatures && world.creatures.weaseal.quantity >= 1)
+                            if ("weaseal" in world.creatures && world.creatures.weaseal.quantity >= 1)
                                 return true;
                         }
                         return false;
@@ -151,20 +109,7 @@ class Game {
         );
     }
 
-    // TODO rethink naming
-    /*
-    createResources () {
-        if (this.resources) {
-            this.resources.clear();
-        }
-        this.resources = new WorldResourceSet(
-            ["berries", "wood", "flowers"],
-            document.getElementById("resources"),
-            this,
-        );
-    }
-    */
-
+    // TODO: decide wtf is going on with prestige
     createPrestige () {
         this.prestigeResources.push(
             new PrestigeResource(
@@ -174,7 +119,7 @@ class Game {
                     displayNamePlural: "Okra",
                     flavorText: "The perfect solution to the world's drought!",
                     startingAmount: 0,
-                    calculateAmountGained: () => {return this.resources.wood.amount;},
+                    calculateAmountGained: () => {return this.worlds[0].resources.wood.amount;},
                     active: true,
                 }
             )
@@ -204,68 +149,7 @@ class Game {
         this.tabs = new TabSet(tabInfo, document.getElementById("topBar"), 0, undefined);
     }
 
-    /*createTabs () {
-        this.tabs.push(
-            new Tab(
-                {
-                    id: "creatureTab",
-                    buttonText: "Creatures",
-                    divToShow: document.getElementById("creatures"),
-                    unlockCondition: () => {return true;},
-                }
-            )
-        )
-        this.tabs.push(
-            new Tab(
-                {
-                    id: "upgradeTab",
-                    buttonText: "Upgrades",
-                    divToShow: document.getElementById("upgrades"),
-                    unlockCondition: () => {return true;},
-                }
-            )
-        )
-        this.tabs.push(
-            new Tab(
-                {
-                    id: "achievementTab",
-                    buttonText: "Achievements",
-                    divToShow: document.getElementById("achievements"),
-                    unlockCondition: () => {return true;},
-                }
-            )
-        )
-        this.tabs.push(
-            new Tab(
-                {
-                    id: "prestigeTab",
-                    buttonText: "Another one...",
-                    divToShow: document.getElementById("prestige"),
-                    unlockCondition: () => {return this.resources.wood.amount >= 100000;},
-                }
-            )
-        )
-
-        this.tabs[0].setActive();
-    }*/
-
     tick () {
-        /*
-        this.resources.tick();
-
-        if (this.resources.focusedResource !== undefined) {
-            this.resources.focusedResource.tickFocus(this.focusPower);
-        }
-
-        this.creatures.tick();
-
-        this.upgrades.tick();
-
-        for (const tab of this.tabs) {
-            tab.tick();
-        }
-        */
-
         for (const world of this.worlds) {
             world.tick();
         }
@@ -281,23 +165,16 @@ class Game {
     }
 
     draw () {
-        /*
-        this.resources.draw();
-
-        this.creatures.draw();
-        */
-
         for (const achievement of this.achievements) {
             achievement.draw();
         }
         
         /*
-        this.upgrades.draw();
-
         for (const prestigeResource of this.prestigeResources) {
             prestigeResource.draw();
         }
         */
+
         for (const world of this.worlds) {
             world.draw();
         }
@@ -384,6 +261,12 @@ class Game {
 
         document.getElementById("game").innerHTML = "";
 
+        // Common exit case: user didn't mean to open the import box, don't flash at them
+        if (newSave === null) {
+            this.loadSave(oldSave);
+            return;
+        }
+
         try {
             this.loadSave(newSave);
             setTimeout(function () { notify("Save loaded"); }, 300);
@@ -434,21 +317,6 @@ class Game {
         this.createTopTabBar();
 
         this.tabs.load(save.t);
-
-        /*
-        let saveComponents = save.split("%%");
-
-        let resourceChunks = saveComponents[0].split("||");
-        let resourcesSave = resourceChunks[0].split("|");
-        this.resources.load(resourcesSave);
-        this.resources.setFocusedResource(this.resources[resourceChunks[1]]);
-
-        let creaturesSave = saveComponents[1].split("|");
-        this.creatures.load(JSON.parse(creaturesSave));
-
-        let upgradesSave = saveComponents[2].split("|");
-        this.upgrades.load(upgradesSave);
-        */
 
         let achievementsSave = save.a.split("|");
         for (let i = 0; i<this.achievements.length; ++i) {

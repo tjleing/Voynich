@@ -97,11 +97,14 @@ class Creature {
             const resourcePerSecondPerOneCreature = this.production[resourceName];
             // Round to one decimal point (since we have some creatures that produce 0.2/sec)
             const resourcePerSecond = fix(resourcePerSecondPerOneCreature * this.quantity * 100) / 100;
-            resourcesPerSecondString += `<br/>+${resourcePerSecond} ${resourceName}/sec`;
+            const plus = resourcePerSecond >= 0 ? "+" : ""; // + if amountPerSecond positive, nothing if negative (it'll have its own negative)
+            resourcesPerSecondString += `<br/>${plus}${resourcePerSecond} ${resourceName}/sec`;
         }
         let totalResourcesProducedString = "";
+        // TODO: use external names instead of internal names??  what the heck is going on in this code base srsly
         for (const resourceName of Object.keys(this.totalProduced)) {
-            totalResourcesProducedString += `<br/>+${fix(this.totalProduced[resourceName])} ${resourceName} all time`;
+            const plus = this.totalProduced[resourceName] >= 0 ? "+" : ""; // + if amountPerSecond positive, nothing if negative (it'll have its own negative)
+            totalResourcesProducedString += `<br/>${plus}${fix(this.totalProduced[resourceName])} ${resourceName} all time`;
         }
         let timeUntilAffordableString = "";
         if (!this.affordable) {
@@ -132,8 +135,20 @@ class Creature {
     }
 
     tick () {
+        // Determine limiting factor in production, if any (dry run)
+        // TODO: either make sure that no two creatures consume same resource or do fancy logic or just settle for "first creature gets dibs"
+        let productionFactor = 1; // Full production
         for (const resourceName of Object.keys(this.production)) {
             const amountProduced = this.production[resourceName] * this.quantity / settings.fps;
+            if (amountProduced < 0) {
+                // Consuming this resource
+                productionFactor = Math.min(productionFactor, -1.0 * this.world.resources[resourceName].amount / amountProduced);
+            }
+        }
+
+        // Actually produce and consume
+        for (const resourceName of Object.keys(this.production)) {
+            const amountProduced = this.production[resourceName] * this.quantity / settings.fps * productionFactor;
             this.world.resources[resourceName].tickAdd(amountProduced);
             this.totalProduced[resourceName] += amountProduced;
         }
@@ -332,8 +347,8 @@ const creatureConfigs = {
         displayNamePlural: "Chuckpeckers",
         flavorText: "Not only can they harvest nutrients from tree trunks, but they can also toss the logs back home!  But how many?",
         cost: {
-            maplesyrup: 500,
-            spamber: 1000,
+            maplesyrup: 400,
+            spamber: 800,
         },
         production: {
             maplesyrup: 10,
@@ -345,7 +360,7 @@ const creatureConfigs = {
         },
         costScalingFunction:
             function () {
-                this.cost["amber"] *= 1.3;
+                this.cost["spamber"] *= 1.3;
                 this.cost["maplesyrup"] *= 1.15;
             },
         quantity: 0,
@@ -357,8 +372,8 @@ const creatureConfigs = {
         flavorText: "Rarely seen even in fiction.  Has a major sweet tooth, no, 42 of them!",
         cost: {
             maplesyrup: 5000,
-            spamber: 10000,
-            wood: 700,
+            spamber: 1000,
+            wood: 1400,
         },
         production: {
             amber: 10,
@@ -372,9 +387,9 @@ const creatureConfigs = {
         },
         costScalingFunction:
             function () {
-                this.cost["amber"] *= 1.3;
-                this.cost["spamber"] *= 1.3;
                 this.cost["maplesyrup"] *= 1.3;
+                this.cost["spamber"] *= 1.3;
+                this.cost["wood"] *= 1.3;
             },
         quantity: 0,
     },
@@ -393,7 +408,7 @@ function loadCreature (save, creatureDiv, world) {
 
     const creature = new Creature(config);
 
-    for (var i = 1; i < config.quantity; ++i) {
+    for (var i = 1; i <= config.quantity; ++i) {
         creature.costScalingFunction();
     }
 

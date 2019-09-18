@@ -4,7 +4,7 @@
 import { settings } from "./Settings.js";
 
 var fix = function (num) {
-  return Math.floor(num);
+  return Math.floor(num + 0.000001);
 };
 
 var deepFix = function (obj) {
@@ -73,7 +73,7 @@ var timeToGet = function (totalAmount, amountPerSecond) {
         return formatDuration(0);
     }
     if (amountPerSecond === 0) {
-        console.log(totalAmount);
+        return "Infinity";
     }
     return formatDuration(totalAmount / amountPerSecond);
 };
@@ -84,7 +84,7 @@ var maximumTimeToGet = function (amounts, amountsPerSecond) {
         if (amounts[i] <= 0) {
             continue;
         }
-        if (amountsPerSecond[i] === 0) {
+        if (amountsPerSecond[i] <= 0) {
             return "Infinity";
         }
         maxSecondsSoFar = Math.max(maxSecondsSoFar, amounts[i] / amountsPerSecond[i]);

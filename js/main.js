@@ -26,12 +26,6 @@ window.onload = function () {
     };
     setTimeout(saveAndNotify, 10 * 1000, game);
 
-
-    // TODO: move to Game constructor
-    document.getElementById("hardReset").onclick = game.hardReset.bind(game, true);
-    document.getElementById("export").onclick = game.exportSave.bind(game);
-    document.getElementById("import").onclick = game.importSave.bind(game);
-
     game.tick();
 
     window.addEventListener("blur", function () {

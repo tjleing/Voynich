@@ -67,7 +67,7 @@ class Resource {
         const nameToUse = fixedAmount === 1 ? this.displayNameSingular : this.displayNamePlural;
         const amountPerSecond = fix(this.amountPerTick * settings.fps * 100) / 100;
 
-        const plus = amountPerSecond >= 0 ? "+" : "-"; // + if amountPerSecond positive, - if negative
+        const plus = amountPerSecond >= 0 ? "+" : ""; // + if amountPerSecond positive, nothing if negative (it'll have its own negative)
         const newTooltipSpanHTML = `<span class="tooltipTextInner">${this.flavorText}<br><br>Currently: ${plus}${amountPerSecond} per second<hr></span>`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
             this.tooltipSpan.innerHTML = newTooltipSpanHTML;
@@ -164,7 +164,7 @@ const resourceConfigs = {
         displayNamePlural: "Chunks of Amber",
         flavorText: "That liquid gold!  Maybe there's a bug in this one...",
         amount: 0,
-        hitpoints: 20,
+        hitpoints: 10,
         active: true,
     },
     "maplesyrup": {
