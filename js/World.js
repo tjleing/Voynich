@@ -7,11 +7,12 @@ import { TabSet } from "./TabSet.js";
 import { setAllSettings } from "./Settings.js";
 
 class World {
-    constructor (name) {
+    constructor (name, okraGain) {
         this.constructHTML();
 
         this.name = name;
         this.focusPower = 1; // TODO: put in Stats or something
+        this.okraGain = okraGain; // TODO: scrap in prestige PR plz
 
         setAllSettings({"bgColor": "#E82B2B", "fps": 60, "saveTime": 5});
 
@@ -40,11 +41,13 @@ class World {
             divToShow: this.upgradeDiv,
             unlockCondition: () => {return true;},
         });
+        /*
         tabInfo.push({
             buttonText: "Another one...",
             divToShow: this.prestigeDiv,
             unlockCondition: () => {return this.resources.wood.amount >= 100000;},
         });
+        */
 
         this.tabs = new TabSet(tabInfo, this.tabDiv, 0, this);
     }
@@ -84,12 +87,16 @@ class World {
                 <div class="tabs" id="tabs"></div>
                 <div id="upgrades"></div>
                 <div id="creatures"></div>
+            </div>
+        `;
+        /* TODO: maybe put back in if there's any useful info localized to worlds that can't be just in the top tab
                 <div id="prestige">
                       <div id="prestigeResourceAmounts"></div>
                       <div id="prestigeInfo"></div>
                 </div>
             </div>
         `;
+        */
         const leftPanel = this.worldDiv.children[0];
         this.resourceDiv = leftPanel.children[0];
 
@@ -99,7 +106,7 @@ class World {
         this.tabDiv = rightPanel.children[0];
         this.upgradeDiv = rightPanel.children[1];
         this.creatureDiv = rightPanel.children[2];
-        this.prestigeDiv = rightPanel.children[3];
+        // this.prestigeDiv = rightPanel.children[3];
     }
 
     save () {
@@ -108,6 +115,7 @@ class World {
         save.c = this.creatures.save();
         save.u = this.upgrades.save();
         save.n = this.name;
+        save.o = this.okraGain;
         return save;
     }
 }
@@ -116,17 +124,17 @@ const worldConfigs = {
     lush: {
         resourceNames: ["berries", "wood", "flowers"],
         creatureNames: ["weaseal", "beaverine", "buckaroo", "ptrocanfer"],
-        upgradeNames: ["twoForOne", "BeaverineUp1", "everythingIsAwful", "undoAwful", "greyBG", "getPtroed", "doubleFocusPower"],
+        upgradeNames: ["twoForOne", "BeaverineUp1", "everythingIsAwful", "undoAwful", "greyBG", "getPtroed", "doubleFocusPower", "lushOkra0", "lushOkra1", "lushOkra2"],
     },
     wooded: {
         resourceNames: ["amber", "maplesyrup", "spamber", "wood"],
         creatureNames: ["ambear", "spicewolf", "chuckpecker", "tasdevil"],
-        upgradeNames: [],
+        upgradeNames: ["woodedOkra1", "woodedOkra2"],
     },
 };
 
 function createWorld (name) {
-    const world = new World(name);
+    const world = new World(name, 0);
 
     const config = worldConfigs[name];
     const resources = createWorldResourceSet(config.resourceNames, world.resourceDiv, world);
@@ -139,7 +147,8 @@ function createWorld (name) {
 
 function loadWorld (save) {
     const name = save.n;
-    const world = new World(name);
+    const okraGain = save.o;
+    const world = new World(name, okraGain);
 
     const resources = loadWorldResourceSet(save.r, world.resourceDiv, world);
     const creatures = loadWorldCreatureSet(save.c, world.creatureDiv, world);

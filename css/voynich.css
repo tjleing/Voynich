@@ -27,6 +27,14 @@ body {
 	margin:0;
 	padding:0;
 	height:100%;
+
+	opacity: 1;
+	transition: opacity 1s;
+}
+
+.fadeout {
+	opacity: 0;
+	transition: opacity 1s;
 }
 
 button {
@@ -42,8 +50,12 @@ button {
 	overflow: hidden;
 }
 
+#prestige {
+	margin: 15px;
+}
+
 #settings {
-	margin: 10px;
+	margin: 15px;
 }
 
 .world {
@@ -185,7 +197,6 @@ button:focus {outline:0;}
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-evenly;
-	margin-top: 10px;
 	width: 100%;
 }
 
@@ -197,7 +208,7 @@ button:focus {outline:0;}
   transition: 0.3s;
   padding: 2px 16px;
   text-align: center;
-  margin: 5px;
+  margin: 15px;
   background-color: #E82B2B;
 }
 /* On mouse-over, add a deeper shadow */

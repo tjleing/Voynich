@@ -16,14 +16,17 @@ class Game {
         this.worlds = [];
         document.getElementById("game").innerHTML = "";
 
+        // TODO: figure out why these need to be in both prep() and hardReset()
         this.achievements = [];
         this.createAchievements();
+        this.prestigeResources = [];
+        this.createPrestige();
 
         // TODO: move to own function
         document.getElementById("hardReset").onclick = this.hardReset.bind(this, true);
         document.getElementById("export").onclick = this.exportSave.bind(this);
         document.getElementById("import").onclick = this.importSave.bind(this);
-
+        document.getElementById("anotherOne").onclick = this.anotherOne.bind(this);
     }
 
     hardReset (prompt) {
@@ -49,6 +52,32 @@ class Game {
             this.createAchievements();
             this.createPrestige();
         }
+    }
+
+    anotherOne () {
+        // Add prestige resources
+        for (const pResource of this.prestigeResources) {
+            pResource.amount += pResource.calculateAmountGained();
+        }
+
+        // Fancy transition
+        document.body.classList.add("fadeout");
+
+        setTimeout((() => {
+            document.body.classList.remove("fadeout");
+
+            // Soft reset
+            this.softReset();
+        }).bind(this), 1000);
+    }
+
+    softReset () {
+        document.getElementById("game").innerHTML = "";
+        this.worlds = [];
+        this.worlds.push(createWorld("lush"));
+        this.worlds.push(createWorld("wooded"));
+
+        this.createTopTabBar();
     }
 
     // TODO: probably this function should just live in Achievement.js and return the list
@@ -97,8 +126,7 @@ class Game {
                     unlockedFlavorText: "Yes our naming scheme is terrible, who even came up with 'A1,' seriously",
                     unlockCondition: () => {
                         for (const world of this.worlds) {
-                            // TODO: fix, this isn't the right unlock
-                            if ("flowers" in world.resources && world.resources.flowers.amount >= 1)
+                            if (world.okraGain > 0)
                                 return true;
                         }
                         return false;
@@ -119,7 +147,13 @@ class Game {
                     displayNamePlural: "Okra",
                     flavorText: "The perfect solution to the world's drought!",
                     startingAmount: 0,
-                    calculateAmountGained: () => {return this.worlds[0].resources.wood.amount;},
+                    calculateAmountGained: () => {
+                        let okraGain = 0;
+                        for (const world of this.worlds) {
+                            okraGain += world.okraGain;
+                        }
+                        return okraGain;
+                    },
                     active: true,
                 }
             )
@@ -136,6 +170,25 @@ class Game {
                 unlockCondition: () => true,
             });
         }
+        tabInfo.push({
+            buttonText: `Prestige`,
+            divToShow: document.getElementById('prestige'),
+            unlockCondition: () => {
+                // If they've prestiged before, they know the ropes
+                for (const pResource of this.prestigeResources) {
+                    if (pResource.amount > 0) {
+                        return true;
+                    }
+                }
+                // Unlock when they would be able to get their first okra
+                for (const world of this.worlds) {
+                    if (world.okraGain > 0) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+        })
         tabInfo.push({
             buttonText: `Achievements`,
             divToShow: document.getElementById('achievements'),
@@ -158,6 +211,8 @@ class Game {
             achievement.tick();
         }
 
+        this.tabs.tick();
+
         this.draw();
 
         // bind() to set the this var correctly.
@@ -169,11 +224,9 @@ class Game {
             achievement.draw();
         }
         
-        /*
         for (const prestigeResource of this.prestigeResources) {
             prestigeResource.draw();
         }
-        */
 
         for (const world of this.worlds) {
             world.draw();
@@ -207,8 +260,7 @@ class Game {
             prestigeResource.amount += prestigeResource.calculateAmountGained();
         }
 
-        // this.softReset();
-        // Or maybe just clear this.worlds...
+        this.softReset();
     }
 
     prestigeReturn () {
