@@ -43,7 +43,6 @@ class Game {
             this.achievements = [];
             clearAchievements();
 
-            PrestigeResource.Map = {};
             this.prestigeResources = [];
             clearPrestigeResources();
 
@@ -58,6 +57,12 @@ class Game {
         // Add prestige resources
         for (const pResource of this.prestigeResources) {
             pResource.amount += pResource.calculateAmountGained();
+        }
+
+        // Show +0 okra on fadeout
+        // TODO: more resetting involved in future...  another option is just to override calculateAmountGained() or something
+        for (const world of this.worlds) {
+            world.okraGain = 0;
         }
 
         // Fancy transition
@@ -288,6 +293,8 @@ class Game {
 
         save["t"] = this.tabs.save();
 
+        save["p"] = this.prestigeResources.map(pResource => pResource.save()).join("|");
+
         // Save it to localStorage, base64-encoded
         localStorage.setItem("save", btoa(JSON.stringify(save)));
     }
@@ -373,6 +380,11 @@ class Game {
         let achievementsSave = save.a.split("|");
         for (let i = 0; i<this.achievements.length; ++i) {
             this.achievements[i].load(achievementsSave[i]);
+        }
+
+        let prestigeResourceSave = save.p.split("|");
+        for (let i = 0; i<this.prestigeResources.length; ++i) {
+            this.prestigeResources[i].load(prestigeResourceSave[i]);
         }
 
         let settingsSave = save.s;

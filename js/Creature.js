@@ -2,6 +2,7 @@
 
 import { settings } from "./Settings.js";
 import { deepCopy, fix, maximumTimeToGet } from "./Utils.js";
+import { game } from "./main.js";
 
 class Creature {
     constructor({
@@ -67,6 +68,27 @@ class Creature {
         this.creatureDiv.appendChild(buttonDiv);
     }
 
+    calculateResourcesPerTick () {
+        // Determine limiting factor in production, if any (dry run)
+        // TODO: either make sure that no two creatures consume same resource or do fancy logic or just settle for "first creature gets dibs"
+        let productionFactor = 1; // Full production
+        for (const resourceName of Object.keys(this.production)) {
+            const amountProduced = this.production[resourceName] * this.quantity / settings.fps;
+            if (amountProduced < 0) {
+                // Consuming this resource
+                productionFactor = Math.min(productionFactor, -1.0 * this.world.resources[resourceName].amount / amountProduced);
+            }
+        }
+
+        // Actually calculate
+        const rps = {};
+        for (const resourceName of Object.keys(this.production)) {
+            rps[resourceName] = this.production[resourceName] * this.quantity / settings.fps * productionFactor * (game.prestigeResources[0].amount + 1);
+        }
+
+        return rps;
+    }
+
     draw () {
         const newNameSpan = `${this.displayNameSingular}`;
         if (this.nameSpan.textContent !== newNameSpan) {
@@ -93,10 +115,10 @@ class Creature {
         }
 
         let resourcesPerSecondString = "";
-        for (const resourceName of Object.keys(this.production)) {
-            const resourcePerSecondPerOneCreature = this.production[resourceName];
+        const rpt = this.calculateResourcesPerTick();
+        for (const resourceName of Object.keys(rpt)) {
             // Round to one decimal point (since we have some creatures that produce 0.2/sec)
-            const resourcePerSecond = fix(resourcePerSecondPerOneCreature * this.quantity * 100) / 100;
+            const resourcePerSecond = fix(rpt[resourceName] * settings.fps * 100) / 100;
             const plus = resourcePerSecond >= 0 ? "+" : ""; // + if amountPerSecond positive, nothing if negative (it'll have its own negative)
             resourcesPerSecondString += `<br/>${plus}${resourcePerSecond} ${resourceName}/sec`;
         }
@@ -135,20 +157,9 @@ class Creature {
     }
 
     tick () {
-        // Determine limiting factor in production, if any (dry run)
-        // TODO: either make sure that no two creatures consume same resource or do fancy logic or just settle for "first creature gets dibs"
-        let productionFactor = 1; // Full production
-        for (const resourceName of Object.keys(this.production)) {
-            const amountProduced = this.production[resourceName] * this.quantity / settings.fps;
-            if (amountProduced < 0) {
-                // Consuming this resource
-                productionFactor = Math.min(productionFactor, -1.0 * this.world.resources[resourceName].amount / amountProduced);
-            }
-        }
-
-        // Actually produce and consume
-        for (const resourceName of Object.keys(this.production)) {
-            const amountProduced = this.production[resourceName] * this.quantity / settings.fps * productionFactor;
+        const rpt = this.calculateResourcesPerTick();
+        for (const resourceName of Object.keys(rpt)) {
+            const amountProduced = rpt[resourceName];
             this.world.resources[resourceName].tickAdd(amountProduced);
             this.totalProduced[resourceName] += amountProduced;
         }
