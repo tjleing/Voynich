@@ -9,6 +9,7 @@ class Upgrade {
         displayName,
         flavorText,
         cost,
+        purchased,
         effect,
         unlockCondition,
         world,
@@ -20,9 +21,9 @@ class Upgrade {
         this.effect = effect.bind(this);
         this.unlockCondition = unlockCondition.bind(this);
         this.world = world;
+        this.purchased = purchased;
 
         this.unlocked = false;
-        this.purchased = false;
         this.affordable = false;
     }
 
@@ -177,6 +178,7 @@ const upgradeConfigs = {
             berries: 100,
             wood: 100,
         },
+        purchased: false,
         effect: function () {
             for (const creature of this.world.creatures.creatureList) {
                 for (const resource in creature.cost) {
@@ -201,6 +203,7 @@ const upgradeConfigs = {
             berries: 1000,
             wood: 1000,
         },
+        purchased: false,
         effect: function () {
             this.world.creatures.beaverine.production["wood"] *= 3;
         },
@@ -220,6 +223,7 @@ const upgradeConfigs = {
             berries: 10,
             wood: 10,
         },
+        purchased: false,
         effect: function () {
             for (const creature of this.world.creatures.creatureList) {
                 creature.production["wood"] *= 0.001;
@@ -238,6 +242,7 @@ const upgradeConfigs = {
             berries: 100,
             wood: 100,
         },
+        purchased: false,
         effect: function () {
             for (const creature of this.world.creatures.creatureList) {
                 creature.production["wood"] /= 0.001;
@@ -257,6 +262,7 @@ const upgradeConfigs = {
             wood: 0,
             flowers: 0,
         },
+        purchased: false,
         effect: function () {
             settings.bgColor = "#888888";
         },
@@ -274,6 +280,7 @@ const upgradeConfigs = {
         cost: {
             flowers: 1,
         },
+        purchased: false,
         effect: function () {
             this.world.creatures.ptrocanfer.quantity++;
         },
@@ -292,6 +299,7 @@ const upgradeConfigs = {
             berries: 10000,
             wood: 10000,
         },
+        purchased: false,
         effect: function () {
             this.focusPower *= 2;
         },
@@ -310,6 +318,7 @@ const upgradeConfigs = {
         cost: {
             wood: 0,
         },
+        purchased: false,
         effect: function () {
             // TODO: v hardcoded rn
             this.world.okraGain += 1;
@@ -325,12 +334,13 @@ const upgradeConfigs = {
         cost: {
             wood: 0,
         },
+        purchased: false,
         effect: function () {
             // TODO: v hardcoded rn
             this.world.okraGain += 1;
         },
         unlockCondition: function () {
-            return (this.world.resources.wood.amount >= 10000 && this.world.resources.lilies >= 1000);
+            return (this.world.resources.wood.amount >= 10000 && this.world.resources.flowers.amount >= 1000);
         }
     },
     "lushOkra2": {
@@ -340,12 +350,13 @@ const upgradeConfigs = {
         cost: {
             wood: 0,
         },
+        purchased: false,
         effect: function () {
             // TODO: v hardcoded rn
             this.world.okraGain += 1;
         },
         unlockCondition: function () {
-            return (this.world.resources.wood.amount >= 30000 && this.world.resources.lilies >= 3000);
+            return (this.world.resources.wood.amount >= 30000 && this.world.resources.flowers.amount >= 3000);
         }
     },
     "woodedOkra1": {
@@ -355,12 +366,13 @@ const upgradeConfigs = {
         cost: {
             wood: 0,
         },
+        purchased: false,
         effect: function () {
             // TODO: v hardcoded rn
             this.world.okraGain += 1;
         },
         unlockCondition: function () {
-            return (this.world.resources.wood.amount >= 10000 && this.world.resources.amber >= 1000);
+            return (this.world.resources.wood.amount >= 5000 && this.world.resources.amber.amount >= 1000);
         }
     },
     "woodedOkra2": {
@@ -370,12 +382,13 @@ const upgradeConfigs = {
         cost: {
             wood: 0,
         },
+        purchased: false,
         effect: function () {
             // TODO: v hardcoded rn
             this.world.okraGain += 1;
         },
         unlockCondition: function () {
-            return (this.world.resources.wood.amount >= 100000 && this.world.resources.amber >= 10000);
+            return (this.world.resources.wood.amount >= 10000 && this.world.resources.amber.amount >= 10000);
         }
     },
 };
