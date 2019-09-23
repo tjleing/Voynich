@@ -20,11 +20,8 @@ class PrestigeResource {
         // TODO: amount vs. quantity
         this.amount = startingAmount;
         this.calculateAmountGained = calculateAmountGained;
-        this.amountPerTick = 0;
         this.isFocused = false;
         this.active = active;
-
-        PrestigeResource.Map[internalName] = this;
 
         if (this.active) {
             this.constructHTML();
@@ -46,8 +43,8 @@ class PrestigeResource {
 
         this.amountDiv.appendChild(this.tooltipSpan);
 
-        const prestigeResourceAmounts = document.getElementById("prestigeResourceAmounts");
-        prestigeResourceAmounts.appendChild(this.amountDiv);
+        const prestige = document.getElementById("prestigeResources");
+        prestige.appendChild(this.amountDiv);
     }
 
     draw () {
@@ -65,7 +62,7 @@ class PrestigeResource {
         const nameToUse = fixedAmount === 1 ? this.displayNameSingular : this.displayNamePlural;
         const amountGainedOnPrestige = fix(this.calculateAmountGained());
 
-        const newTooltipSpanHTML = `${this.flavorText}<br><br>Currently: +${amountGainedOnPrestige} upon 'another one'<hr>`;
+        const newTooltipSpanHTML = `<span class="tooltipTextInner">${this.flavorText}<br><br>Currently: +${amountGainedOnPrestige} upon 'another one'<hr></span>`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
             this.tooltipSpan.innerHTML = newTooltipSpanHTML;
         }
@@ -96,8 +93,8 @@ class PrestigeResource {
 }
 
 function clearPrestigeResources () {
-    const prestigeResourceAmounts = document.getElementById("prestigeResourceAmounts");
-    prestigeResourceAmounts.innerHTML = "";
+    const prestige = document.getElementById("prestigeResources");
+    prestige.innerHTML = "";
 }
 
 export { clearPrestigeResources, PrestigeResource };

@@ -4,7 +4,7 @@
 import { settings } from "./Settings.js";
 
 var fix = function (num) {
-  return Math.floor(num);
+  return Math.floor(num + 0.000001);
 };
 
 var deepFix = function (obj) {
@@ -16,6 +16,17 @@ var deepFix = function (obj) {
     }
     return objCopy;
 };
+
+var deepCopy = function (obj) {
+    if (typeof(obj) !== "object") {
+        return obj;
+    }
+    const copy = {};
+    for (const key in obj) {
+        copy[key] = deepCopy(obj[key]);
+    }
+    return copy;
+}
 
 var formatDuration = function (seconds) {
     var secNum = parseFloat(seconds);
@@ -62,7 +73,7 @@ var timeToGet = function (totalAmount, amountPerSecond) {
         return formatDuration(0);
     }
     if (amountPerSecond === 0) {
-        console.log(totalAmount);
+        return "Infinity";
     }
     return formatDuration(totalAmount / amountPerSecond);
 };
@@ -73,7 +84,7 @@ var maximumTimeToGet = function (amounts, amountsPerSecond) {
         if (amounts[i] <= 0) {
             continue;
         }
-        if (amountsPerSecond[i] === 0) {
+        if (amountsPerSecond[i] <= 0) {
             return "Infinity";
         }
         maxSecondsSoFar = Math.max(maxSecondsSoFar, amounts[i] / amountsPerSecond[i]);
@@ -92,4 +103,4 @@ var notify = function (text) {
     }).show();
 };
 
-export { deepFix, fix, formatDuration, notify, timeToGet, maximumTimeToGet };
+export { deepCopy, deepFix, fix, formatDuration, notify, timeToGet, maximumTimeToGet };

@@ -1,7 +1,7 @@
 // @ts-check
 
 import { settings } from "./Settings.js";
-import { fix, maximumTimeToGet } from "./Utils.js";
+import { deepCopy, fix, maximumTimeToGet } from "./Utils.js";
 
 class Upgrade {
     constructor ({
@@ -9,6 +9,7 @@ class Upgrade {
         displayName,
         flavorText,
         cost,
+        purchased,
         effect,
         unlockCondition,
         world,
@@ -20,9 +21,9 @@ class Upgrade {
         this.effect = effect.bind(this);
         this.unlockCondition = unlockCondition.bind(this);
         this.world = world;
+        this.purchased = purchased;
 
         this.unlocked = false;
-        this.purchased = false;
         this.affordable = false;
     }
 
@@ -51,13 +52,13 @@ class Upgrade {
 
         this.buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
         this.buttonDiv.appendChild(this.button);
-        const upgradeDiv = document.getElementById("upgrades");
+        const upgradeDiv = this.world.upgradeDiv;
         upgradeDiv.appendChild(this.buttonDiv);
     }
 
     destroyDOM () {
         try {
-            document.getElementById("upgrades").removeChild(this.buttonDiv);
+            this.world.upgradeDiv.removeChild(this.buttonDiv);
         }
         catch (error) {
             // Already removed
@@ -101,7 +102,7 @@ class Upgrade {
             );
             timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`;
         }
-        const newTooltipSpanHTML = `${this.flavorText}${timeUntilAffordableString}`;
+        const newTooltipSpanHTML = `<span class="tooltipTextInner">${this.flavorText}${timeUntilAffordableString}</span>`;
         if (this.tooltipSpan.innerHTML !== newTooltipSpanHTML) {
             this.tooltipSpan.innerHTML = newTooltipSpanHTML;
         }
@@ -157,24 +158,13 @@ class Upgrade {
         }
     }
 
-    // Saving and loading
-    load (saveString) {
-        let saveComponents = saveString.split("$");
-        this.purchased = saveComponents[0] === "1";
-        if (this.purchased || !this.unlocked) {
-            this.destroyDOM();
-        }
-        if (this.purchased) {
-            this.effect();
-        }
-    }
-
+    // Saving (loading is at the bottom with createUpgrade)
     save () {
-        // TODO: compress
-        let saveComponents = [];
-        saveComponents.push(this.purchased ? "1" : "0");
+        const save = {};
+        save.n = this.internalName;
+        save.p = this.purchased ? 1 : 0;
 
-        return saveComponents.join("$");
+        return save;
     }
 }
 
@@ -188,6 +178,7 @@ const upgradeConfigs = {
             berries: 100,
             wood: 100,
         },
+        purchased: false,
         effect: function () {
             for (const creature of this.world.creatures.creatureList) {
                 for (const resource in creature.cost) {
@@ -212,6 +203,7 @@ const upgradeConfigs = {
             berries: 1000,
             wood: 1000,
         },
+        purchased: false,
         effect: function () {
             this.world.creatures.beaverine.production["wood"] *= 3;
         },
@@ -231,6 +223,7 @@ const upgradeConfigs = {
             berries: 10,
             wood: 10,
         },
+        purchased: false,
         effect: function () {
             for (const creature of this.world.creatures.creatureList) {
                 creature.production["wood"] *= 0.001;
@@ -249,6 +242,7 @@ const upgradeConfigs = {
             berries: 100,
             wood: 100,
         },
+        purchased: false,
         effect: function () {
             for (const creature of this.world.creatures.creatureList) {
                 creature.production["wood"] /= 0.001;
@@ -268,6 +262,7 @@ const upgradeConfigs = {
             wood: 0,
             flowers: 0,
         },
+        purchased: false,
         effect: function () {
             settings.bgColor = "#888888";
         },
@@ -285,6 +280,7 @@ const upgradeConfigs = {
         cost: {
             flowers: 1,
         },
+        purchased: false,
         effect: function () {
             this.world.creatures.ptrocanfer.quantity++;
         },
@@ -303,6 +299,7 @@ const upgradeConfigs = {
             berries: 10000,
             wood: 10000,
         },
+        purchased: false,
         effect: function () {
             this.focusPower *= 2;
         },
@@ -310,10 +307,103 @@ const upgradeConfigs = {
             return (this.world.resources.wood.amount >= 1000);
         },
     },
+
+
+    // World prestige upgrades (hopefully temporary)
+    // TODO: prestige rework, remove all these plz
+    "lushOkra0": {
+        internalName: "lushOkra0",
+        displayName: "Lush okra piece #0",
+        flavorText: "I'll be honest, this one is just for testing the game more easily",
+        cost: {
+            wood: 0,
+        },
+        purchased: false,
+        effect: function () {
+            // TODO: v hardcoded rn
+            this.world.okraGain += 1;
+        },
+        unlockCondition: function () {
+            return (this.world.resources.wood.amount >= 0);
+        }
+    },
+    "lushOkra1": {
+        internalName: "lushOkra1",
+        displayName: "Lush okra piece #1",
+        flavorText: "Your trip to the lush biome has not been in vain!",
+        cost: {
+            wood: 0,
+        },
+        purchased: false,
+        effect: function () {
+            // TODO: v hardcoded rn
+            this.world.okraGain += 1;
+        },
+        unlockCondition: function () {
+            return (this.world.resources.wood.amount >= 10000 && this.world.resources.flowers.amount >= 1000);
+        }
+    },
+    "lushOkra2": {
+        internalName: "lushOkra2",
+        displayName: "Lush okra piece #2",
+        flavorText: "Two pieces of okra here?  That's overpowered, seriously",
+        cost: {
+            wood: 0,
+        },
+        purchased: false,
+        effect: function () {
+            // TODO: v hardcoded rn
+            this.world.okraGain += 1;
+        },
+        unlockCondition: function () {
+            return (this.world.resources.wood.amount >= 30000 && this.world.resources.flowers.amount >= 3000);
+        }
+    },
+    "woodedOkra1": {
+        internalName: "woodedOkra1",
+        displayName: "Wooded okra piece #1",
+        flavorText: "Your trip to the wooded biome has not been in vain!",
+        cost: {
+            wood: 0,
+        },
+        purchased: false,
+        effect: function () {
+            // TODO: v hardcoded rn
+            this.world.okraGain += 1;
+        },
+        unlockCondition: function () {
+            return (this.world.resources.wood.amount >= 5000 && this.world.resources.amber.amount >= 1000);
+        }
+    },
+    "woodedOkra2": {
+        internalName: "woodedOkra2",
+        displayName: "Wooded okra piece #2",
+        flavorText: "Shucks I guess this is the end of the game huh",
+        cost: {
+            wood: 0,
+        },
+        purchased: false,
+        effect: function () {
+            // TODO: v hardcoded rn
+            this.world.okraGain += 1;
+        },
+        unlockCondition: function () {
+            return (this.world.resources.wood.amount >= 10000 && this.world.resources.amber.amount >= 10000);
+        }
+    },
 };
 
 function createUpgrade (name, upgradeDiv, world) {
-    return new Upgrade({ ...upgradeConfigs[name], upgradeDiv: upgradeDiv, world: world });
+    return new Upgrade({ ...deepCopy(upgradeConfigs[name]), upgradeDiv: upgradeDiv, world: world });
 }
 
-export { createUpgrade };
+function loadUpgrade (save, upgradeDiv, world) {
+    const config = deepCopy(upgradeConfigs[save.n]);
+    config.purchased = save.p === 1 ? true : false;
+    config.resourceDiv = upgradeDiv;
+    config.world = world;
+
+    return new Upgrade(config);
+}
+
+export { createUpgrade, loadUpgrade };

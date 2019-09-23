@@ -6,6 +6,10 @@
 	unicode-range: U+30-39;
 }
 
+html {
+	height: 100%;
+}
+
 body {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -18,7 +22,19 @@ body {
 	font-family: MonospaceNumbers, -apple-system, BlinkMacSystemFont,
     “Segoe UI”, “Roboto”, “Oxygen”,
     “Ubuntu”, “Cantarell”, “Fira Sans”,
-    “Droid Sans”, “Helvetica Neue”, sans-serif;
+	“Droid Sans”, “Helvetica Neue”, sans-serif;
+	
+	margin:0;
+	padding:0;
+	height:100%;
+
+	opacity: 1;
+	transition: opacity 1s;
+}
+
+.fadeout {
+	opacity: 0;
+	transition: opacity 1s;
 }
 
 button {
@@ -29,13 +45,22 @@ button {
 }
 
 #game {
-	position: absolute;
 	display: flex;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
+	height: 100%;
 	overflow: hidden;
+}
+
+#prestige {
+	margin: 15px;
+}
+
+#settings {
+	margin: 15px;
+}
+
+.world {
+	width: 100%;
+	display: flex;
 }
 
 #leftpanel {
@@ -47,7 +72,6 @@ button {
 }
 
 #middlepanel {
-	margin-right: 15px;
 	height: 100%;
 	width: 33%;
 	overflow-x: hidden;
@@ -115,20 +139,22 @@ button {
 }
 
 .tooltip .tooltipText {
-	visibility: hidden;
-    width: 100%;
+	opacity: 0;
+	width: 100%;
     background-color: black;
     color: #fff;
     text-align: center;
-    padding: 5px 0;
+    padding: 5px 0px;
     border-radius: 6px;
 	position: absolute;
-    z-index: 1;
+	z-index: 1;
     top: 100%;
     left: 50%;
     margin-left: -50%; /* Use half of the width to center the tooltip */
 	font-size: 14px;
 	background: rgba(20, 20, 20, 0.8);
+	transition: opacity 0.5s;
+	pointer-events: none;
 }
 
 .tooltip .tooltipText::after {
@@ -142,12 +168,16 @@ button {
     border-color: transparent transparent black transparent;
 }
 
+.tooltipTextInner {
+	padding: 0px 5px;
+}
+
 .tooltip:hover .tooltipText {
-    visibility: visible;
+	opacity: 1;
 }
 
 .tooltip .tooltipText:hover {
-    visibility: hidden; /* Get tooltip out of the way of clicks */
+    opacity: 0; /* Get tooltip out of the way of clicks */
 }
 
 .button {
@@ -159,12 +189,26 @@ button:focus {outline:0;}
 
 
 /* ACHIEVEMENT CARDS */
+#achievement-container {
+	display: flex;
+}
+
+#achievements {
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-evenly;
+	width: 100%;
+}
+
 .achievement {
+  flex-grow: 1;
+  flex: 1 1 25%;
   /* Add shadows to create the "card" effect */
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
   padding: 2px 16px;
-  margin-top: 5px;
+  text-align: center;
+  margin: 15px;
   background-color: #E82B2B;
 }
 /* On mouse-over, add a deeper shadow */
