@@ -1,8 +1,10 @@
 // @ts-check
 
 import { createWorld, loadWorld } from "./World.js";
+import { baseWorlds } from "./configs/WorldConfigs.js";
 import { clearPrestigeResources, PrestigeResource } from "./PrestigeResource.js";
 import { clearAchievements, Achievement } from "./Achievement.js";
+import { createAchievements } from "./configs/AchievementConfigs.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
 import { TabSet } from "./TabSet.js";
 import { fix, notify } from "./Utils.js";
@@ -17,8 +19,7 @@ class Game {
         document.getElementById("game").innerHTML = "";
 
         // TODO: figure out why these need to be in both prep() and hardReset()
-        this.achievements = [];
-        this.createAchievements();
+        this.achievements = createAchievements(this);
         this.prestigeResources = [];
         this.createPrestige();
 
@@ -35,20 +36,22 @@ class Game {
 
             document.getElementById("game").innerHTML = "";
             this.worlds = [];
-            this.worlds.push(createWorld("lush"));
-            this.worlds.push(createWorld("wooded"));
+
+            for (const worldName of baseWorlds) {
+                this.worlds.push(createWorld(worldName));
+            }
 
             this.createTopTabBar();
 
             this.achievements = [];
             clearAchievements();
+            this.achievements = createAchievements(this);
 
             this.prestigeResources = [];
             clearPrestigeResources();
 
             setAllSettings({"bgColor": "#E82B2B", "fps": 20, "saveTime": 20});
 
-            this.createAchievements();
             this.createPrestige();
         }
     }
@@ -79,67 +82,11 @@ class Game {
     softReset () {
         document.getElementById("game").innerHTML = "";
         this.worlds = [];
-        this.worlds.push(createWorld("lush"));
-        this.worlds.push(createWorld("wooded"));
+        for (const worldName of baseWorlds) {
+            this.worlds.push(createWorld(worldName));
+        }
 
         this.createTopTabBar();
-    }
-
-    // TODO: probably this function should just live in Achievement.js and return the list
-    createAchievements () {
-        this.achievements.push(
-            new Achievement(
-                {
-                    displayName: "We'll seal you later!",
-                    lockedFlavorText: "Hmm... maybe there's a creature with a name like that",
-                    unlockedFlavorText: "In fact, we'll seal you now!",
-                    unlockCondition: () => {
-                        for (const world of this.worlds) {
-                            if ("weaseal" in world.creatures && world.creatures.weaseal.quantity >= 1)
-                                return true;
-                        }
-                        return false;
-                    },
-                    effect: () => {},
-                }
-            )
-        );
-        this.achievements.push(
-            new Achievement(
-                {
-                    displayName: "The smallest e",
-                    lockedFlavorText: "Is this one a pun too?",
-                    unlockedFlavorText: "Lil' e, sounds like a rapper!  Shucks that was terrible",
-                    unlockCondition: () => {
-                        for (const world of this.worlds) {
-                            if ("flowers" in world.resources && world.resources.flowers.amount >= 1)
-                                return true;
-                        }
-                        return false;
-                    },
-                    effect: () => {
-                        this.worlds[0].resources.flowers.amount += 5;
-                    },
-                }
-            )
-        );
-        this.achievements.push(
-            new Achievement(
-                {
-                    displayName: "Mmmm, steak sauce",
-                    lockedFlavorText: "Smells prestigous... you could say it's known for its excellence",
-                    unlockedFlavorText: "Yes our naming scheme is terrible, who even came up with 'A1,' seriously",
-                    unlockCondition: () => {
-                        for (const world of this.worlds) {
-                            if (world.okraGain > 0)
-                                return true;
-                        }
-                        return false;
-                    },
-                    effect: () => {},
-                }
-            )
-        );
     }
 
     // TODO: decide wtf is going on with prestige

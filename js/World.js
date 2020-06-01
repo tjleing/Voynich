@@ -5,6 +5,7 @@ import { createWorldResourceSet, loadWorldResourceSet } from "./WorldResourceSet
 import { createWorldUpgradeSet, loadWorldUpgradeSet } from "./WorldUpgradeSet.js";
 import { TabSet } from "./TabSet.js";
 import { setAllSettings } from "./Settings.js";
+import { worldConfigs } from "./configs/WorldConfigs.js";
 
 class World {
     constructor (name, okraGain) {
@@ -120,18 +121,6 @@ class World {
     }
 }
 
-const worldConfigs = {
-    lush: {
-        resourceNames: ["berries", "wood", "flowers"],
-        creatureNames: ["weaseal", "beaverine", "buckaroo", "ptrocanfer"],
-        upgradeNames: ["twoForOne", "BeaverineUp1", "everythingIsAwful", "undoAwful", "greyBG", "getPtroed", "doubleFocusPower", "lushOkra0", "lushOkra1", "lushOkra2"],
-    },
-    wooded: {
-        resourceNames: ["amber", "maplesyrup", "spamber", "wood"],
-        creatureNames: ["ambear", "spicewolf", "chuckpecker", "tasdevil"],
-        upgradeNames: ["woodedOkra1", "woodedOkra2"],
-    },
-};
 
 function createWorld (name) {
     const world = new World(name, 0);
