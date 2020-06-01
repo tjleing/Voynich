@@ -13,7 +13,7 @@ const resourceConfigs = {
         internalName: "wood",
         displayNameSingular: "Branch of Mahogany",
         displayNamePlural: "Branches of Mahogany",
-        flavorText: "You could carve a nice sculpture out of one of these.",
+        flavorText: "You could carve a nice sculpture out of one of these. nice!",
         amount: 0,
         hitpoints: 20,
         active: true,
