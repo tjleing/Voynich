@@ -8,6 +8,7 @@ import { createAchievements } from "./configs/AchievementConfigs.js";
 import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
 import { TabSet } from "./TabSet.js";
 import { fix, notify } from "./Utils.js";
+import { stats } from "./Stats.js";
 
 class Game {
     constructor () {
@@ -53,6 +54,9 @@ class Game {
             setAllSettings({"bgColor": "#E82B2B", "fps": 20, "saveTime": 20});
 
             this.createPrestige();
+
+            // Needs to be after creating the worlds
+            stats.initialize(this);
         }
     }
 
@@ -86,7 +90,9 @@ class Game {
             this.worlds.push(createWorld(worldName));
         }
 
+        // Both of these need to happen after the worlds have been created
         this.createTopTabBar();
+        stats.startNewAsc();
     }
 
     // TODO: decide wtf is going on with prestige
@@ -147,6 +153,11 @@ class Game {
             unlockCondition: () => true,
         })
         tabInfo.push({
+            buttonText: `Stats`,
+            divToShow: document.getElementById('stats'),
+            unlockCondition: () => true,
+        })
+        tabInfo.push({
             buttonText: `Settings`,
             divToShow: document.getElementById('settings'),
             unlockCondition: () => true,
@@ -172,6 +183,10 @@ class Game {
     }
 
     draw () {
+        for (const world of this.worlds) {
+            world.draw();
+        }
+
         for (const achievement of this.achievements) {
             achievement.draw();
         }
@@ -180,11 +195,8 @@ class Game {
             prestigeResource.draw();
         }
 
-        for (const world of this.worlds) {
-            world.draw();
-        }
-
         document.body.style.backgroundColor = settings.bgColor;
+        stats.draw();
     }
 
     // TODO: modifiers to buy max or multiple, etc.; also visual indicator for such
@@ -226,35 +238,30 @@ class Game {
 
     // SAVING AND LOADING
     save () {
-        // Combine save objects from each world + global saves
         let save = {};
 
-        let worldSaves = [];
-        for (const world of this.worlds) {
-            worldSaves.push(world.save());
-        }
-        save["w"] = worldSaves;
-
-        save["a"] = this.achievements.map(achievement => achievement.save()).join("|");
-        save["s"] = saveSettings();
-
+        // Terse map key names to save space in localStorage
+        save["w"] = this.worlds.map(world => world.save());
+        save["a"] = this.achievements.map(achievement => achievement.save());
+        save["p"] = this.prestigeResources.map(pResource => pResource.save());
         save["t"] = this.tabs.save();
+        save["s"] = saveSettings();
+        save["st"] = stats.save();
 
-        save["p"] = this.prestigeResources.map(pResource => pResource.save()).join("|");
-
-        // Save it to localStorage, base64-encoded
+        // Save it to localStorage, base-64 encoded
         localStorage.setItem("save", btoa(JSON.stringify(save)));
     }
 
     load () {
-        // Get save string from localStorage
         const save = localStorage.getItem("save");
 
         try {
+            // TODO: save versioning -- if it's an old save, update it if possible
             this.loadSave(save);
         }
         catch (error) {
             // Invalid or missing save
+            // Because this is called on startup, we need to just wipe the game
             console.log(error);
             this.hardReset();
         }
@@ -262,7 +269,9 @@ class Game {
 
     importSave () {
         this.save();
-        const oldSave = localStorage.getItem("save"); // To restore back to if the new save is invalid
+
+        // To restore back to if the new save is invalid
+        const oldSave = localStorage.getItem("save");
         const newSave = prompt("Paste your save (your current save will be overwritten)!");
 
         document.getElementById("game").innerHTML = "";
@@ -273,25 +282,33 @@ class Game {
             return;
         }
 
+        // prompt() blurs and refocuses the page, which clears the Noty notifications
+        // so that there's not an extra backlog waiting for a user after being
+        // off the page for a long time.  Moreover, it seems that the blur and
+        // refocus events are called a fair amount after the prompt is closed?
+        // In any case, notifications sent at least 300 ms after the prompt is
+        // closed will appear.
+        const NOTY_REFOCUS_DELAY = 300;
         try {
             this.loadSave(newSave);
-            setTimeout(function () { notify("Save loaded"); }, 300);
+            setTimeout(function () { notify("Save loaded"); }, NOTY_REFOCUS_DELAY);
         }
         catch (error) {
             this.loadSave(oldSave);
-            setTimeout(function () { notify("Invalid save"); }, 300);
+            setTimeout(function () { notify("Invalid save"); }, NOTY_REFOCUS_DELAY);
         }
-        // About the strange setTimeouts: prompt() blurs and refocuses the page, which clears the Noty notifications
-        // so that there's not an extra backlog waiting for a user after being off the page for a long time.  Moreover
-        // it seems that the blur and refocus events are called a fair amount after the prompt is closed?  In any case,
-        // 300 ms after the prompt is closed, notifications can be sent.
     }
 
     exportSave () {
         this.save();
         const save = localStorage.getItem("save");
 
+        // Boilerplate clipboard code
         const saveTextArea = document.createElement("textarea");
+        // Avoid scrolling!
+        saveTextArea.style.top = "0";
+        saveTextArea.style.left = "0";
+        saveTextArea.style.position = "fixed";
         saveTextArea.value = save;
         document.body.appendChild(saveTextArea);
         saveTextArea.focus();
@@ -313,29 +330,34 @@ class Game {
         save = JSON.parse(atob(save));
 
         // Initialize everything from the save string
-
-        const worldSaves = save.w;
+        const worldsSave = save.w;
         this.worlds = [];
-        for (const worldSave of worldSaves) {
+        for (const worldSave of worldsSave) {
             const world = loadWorld(worldSave);
             this.worlds.push(world);
         }
-        this.createTopTabBar();
 
-        this.tabs.load(save.t);
-
-        let achievementsSave = save.a.split("|");
+        const achievementsSave = save.a;
         for (let i = 0; i<this.achievements.length; ++i) {
             this.achievements[i].load(achievementsSave[i]);
         }
 
-        let prestigeResourceSave = save.p.split("|");
+        const prestigeResourcesSave = save.p;
         for (let i = 0; i<this.prestigeResources.length; ++i) {
-            this.prestigeResources[i].load(prestigeResourceSave[i]);
+            this.prestigeResources[i].load(prestigeResourcesSave[i]);
         }
 
-        let settingsSave = save.s;
+        // TODO: eliminate (i.e. only call in prep()?) and just load tabs
+        this.createTopTabBar();
+        const tabsSave = save.t;
+        this.tabs.load(tabsSave);
+
+        const settingsSave = save.s;
         loadSettings(settingsSave);
+
+        const statsSave = save.st;
+        stats.initialize(this);
+        stats.load(statsSave);
     }
 }
 
