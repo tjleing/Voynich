@@ -38,7 +38,7 @@ class Creature {
 
     constructDOM () {
         // create button on right panel
-        const buttonDiv = document.createElement("div");
+        this.buttonDiv = document.createElement("div");
         const br1 = document.createElement("br");
         const br2 = document.createElement("br");
 
@@ -64,9 +64,12 @@ class Creature {
         this.button.appendChild(this.costSpan);
         this.button.appendChild(this.tooltipSpan);
 
-        buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
-        buttonDiv.appendChild(this.button);
-        this.creatureDiv.appendChild(buttonDiv);
+        // Don't add the event listener here because we want to use the wrapped one
+        // in stats
+        // TODO: probably decorator is a better option...
+        //buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
+        this.buttonDiv.appendChild(this.button);
+        this.creatureDiv.appendChild(this.buttonDiv);
     }
 
     calculateResourcesPerTick () {
