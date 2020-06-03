@@ -42,14 +42,17 @@ class Game {
                 this.worlds.push(createWorld(worldName));
             }
 
-            this.createTopTabBar();
-
             this.achievements = [];
             clearAchievements();
             this.achievements = createAchievements(this);
 
             this.prestigeResources = [];
             clearPrestigeResources();
+
+            // Put the tab creation after at least prestige resources, because
+            // it is able to check if the prestige tab is unlocked in between
+            // tab construction and prestige resource destrustion somehow...
+            this.createTopTabBar();
 
             setAllSettings({"bgColor": "#E82B2B", "fps": 20, "saveTime": 20});
 

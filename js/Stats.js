@@ -46,6 +46,22 @@ class Stats {
                     oldTickAdd.call(this, amount);
                 };
             }
+
+            for (const creature of world.creatures.creatureList) {
+                const oldBuy = creature.buy;
+                creature.buy = function () {
+                    stats.creatureCounts[this.internalName][0]++;
+                    stats.creatureCounts[this.internalName][1]++;
+                    oldBuy.call(this);
+                }
+                creature.buttonDiv.addEventListener("mouseup", creature.buy.bind(creature), false);
+            }
+
+            // Does this really belong in a function called "addWrappers"?
+            // The idea is that you'd only call addWrappers when starting an asc
+            // or loading, and if we're loading we immediately write over the
+            // world counts with the save data, so it's fine
+            this.worldCounts[world.name]++;
         }
     }
 
@@ -54,7 +70,6 @@ class Stats {
             // Already constructed the HTML.
             return;
         }
-        // TODO: think about how to actually do the DOM
         this.statsDiv = document.getElementById("stats");
 
         this.draw();
@@ -62,10 +77,31 @@ class Stats {
 
     draw () {
         const d = new Date();
-        this.statsDiv.innerHTML = `
-        wood: ${fix(this.resourceCounts['wood'][0])} this run, ${fix(this.resourceCounts['wood'][1])} all time<br>
-        you've been playing for: ${formatDuration((d.getTime() - this.runTime)/1000)}
-        `;
+        var content = `
+        This ascension has lasted for ${formatDuration((d.getTime() - this.ascTime)/1000)}.<br>
+        You've been playing for ${formatDuration((d.getTime() - this.runTime)/1000)}.  That's too long!<br><br>
+        <u>World statistics:</u><br>`;
+        for (const worldType in this.worldCounts) {
+            if (this.worldCounts[worldType] !== 0) {
+                content += `Created a ${worldType} world ${this.worldCounts[worldType]} times<br>`;
+            }
+        }
+
+        content += "<br><u>Creature statistics:</u><br>";
+        for (const creatureType in this.creatureCounts) {
+            if (this.creatureCounts[creatureType][1] !== 0) {
+                content += `Hired ${creatureConfigs[creatureType].displayNamePlural}: ${fix(this.creatureCounts[creatureType][0])} this run, ${fix(this.creatureCounts[creatureType][1])} all time<br>`;
+            }
+        }
+
+        content += "<br><u>Resource statistics:</u><br>";
+        for (const resourceType in this.resourceCounts) {
+            if (this.resourceCounts[resourceType][1] !== 0) {
+                content += `Collected ${resourceConfigs[resourceType].displayNamePlural}: ${fix(this.resourceCounts[resourceType][0])} this run, ${fix(this.resourceCounts[resourceType][1])} all time<br>`;
+            }
+        }
+
+        this.statsDiv.innerHTML = content;
     }
 
     // Reset stats pertaining to current ascension only
