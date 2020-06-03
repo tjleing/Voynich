@@ -6,7 +6,7 @@ const resourceConfigs = {
         displayNamePlural: "Liquid Gold Berries",
         flavorText: "It's worth its weight in liquid gold berries.",
         amount: 0,
-        hitpoints: 20,
+        hitpoints: 1,
         active: true,
     },
     "wood": {
@@ -15,7 +15,7 @@ const resourceConfigs = {
         displayNamePlural: "Branches of Mahogany",
         flavorText: "You could carve a nice sculpture out of one of these. nice!",
         amount: 0,
-        hitpoints: 20,
+        hitpoints: 1,
         active: true,
     },
     "flowers": {
@@ -24,7 +24,7 @@ const resourceConfigs = {
         displayNamePlural: "Meadow Lilies",
         flavorText: "The rarest flower!",
         amount: 0,
-        hitpoints: 500,
+        hitpoints: 20,
         active: true,
     },
 
@@ -35,7 +35,7 @@ const resourceConfigs = {
         displayNamePlural: "Chunks of Amber",
         flavorText: "That liquid gold!  Maybe there's a bug in this one...",
         amount: 0,
-        hitpoints: 10,
+        hitpoints: 0.5,
         active: true,
     },
     "maplesyrup": {
@@ -44,7 +44,7 @@ const resourceConfigs = {
         displayNamePlural: "Drops of Maple Syrup",
         flavorText: "Tap that tree and wait!  Exhilirating.",
         amount: 0,
-        hitpoints: 40,
+        hitpoints: 2,
         active: true,
     },
     "spamber": {
@@ -53,7 +53,7 @@ const resourceConfigs = {
         displayNamePlural: "Chunks of Spamber",
         flavorText: "Spiced amber! ... it's disgusting.",
         amount: 0,
-        hitpoints: 80,
+        hitpoints: 4,
         active: false,
     },
 };

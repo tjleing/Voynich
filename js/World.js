@@ -15,8 +15,6 @@ class World {
         this.focusPower = 1; // TODO: put in Stats or something
         this.okraGain = okraGain; // TODO: scrap in prestige PR plz
 
-        setAllSettings({"bgColor": "#E82B2B", "fps": 60, "saveTime": 5});
-
         // TODO: move up probably
         //this.createPrestige();
 

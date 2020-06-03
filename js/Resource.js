@@ -113,7 +113,7 @@ class Resource {
     }
 
     tickFocus (amount) {
-        this.tickAdd(amount / this.hitpoints);
+        this.tickAdd(amount / this.hitpoints / settings.fps);
     }
 
     // Saving (loading is at the bottom with createResource)
