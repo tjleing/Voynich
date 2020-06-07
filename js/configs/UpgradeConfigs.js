@@ -1,4 +1,4 @@
-const upgradeConfigs = {
+const worldUpgradeConfigs = {
     "twoForOne": {
         internalName: "twoForOne",
         displayName: "Two for one deal!",
@@ -222,4 +222,6 @@ const upgradeConfigs = {
     },
 };
 
-export { upgradeConfigs };
+const ascensionUpgradeConfigs = {};
+
+export { worldUpgradeConfigs, ascensionUpgradeConfigs };

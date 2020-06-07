@@ -1,8 +1,7 @@
 // @ts-check
 
 import { settings } from "./Settings.js";
-import { deepCopy, fix, maximumTimeToGet } from "./Utils.js";
-import { upgradeConfigs } from "./configs/UpgradeConfigs.js";
+import { fix, maximumTimeToGet } from "./Utils.js";
 
 class Upgrade {
     constructor ({
@@ -13,7 +12,7 @@ class Upgrade {
         purchased,
         effect,
         unlockCondition,
-        world,
+        container,
       }) {
         this.internalName = internalName;
         this.displayName = displayName;
@@ -21,7 +20,7 @@ class Upgrade {
         this.cost = cost;
         this.effect = effect.bind(this);
         this.unlockCondition = unlockCondition.bind(this);
-        this.world = world;
+        this.container = container;
         this.purchased = purchased;
 
         this.unlocked = false;
@@ -53,13 +52,13 @@ class Upgrade {
 
         this.buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
         this.buttonDiv.appendChild(this.button);
-        const upgradeDiv = this.world.upgradeDiv;
+        const upgradeDiv = this.container.upgradeDiv;
         upgradeDiv.appendChild(this.buttonDiv);
     }
 
     destroyDOM () {
         try {
-            this.world.upgradeDiv.removeChild(this.buttonDiv);
+            this.container.upgradeDiv.removeChild(this.buttonDiv);
         }
         catch (error) {
             // Already removed
@@ -76,9 +75,9 @@ class Upgrade {
         }
         let newCostSpanHTML = "";
         for (const resourceName of Object.keys(this.cost)) {
-            const resource = this.world.resources[resourceName];
+            const resource = this.container.resources[resourceName];
             let affordableClass = "";
-            if (this.cost[resourceName] > this.world.resources[resourceName].amount) {
+            if (this.cost[resourceName] > this.container.resources[resourceName].amount) {
                 affordableClass = "costUnaffordable";
             }
             else {
@@ -95,10 +94,10 @@ class Upgrade {
             // TODO: two maps? gross -- at least maybe hide in Utils
             const timeUntilAffordable = maximumTimeToGet(
                 Object.keys(this.cost).map((resourceName) =>
-                    this.cost[resourceName]-this.world.resources[resourceName].amount
+                    this.cost[resourceName]-this.container.resources[resourceName].amount
                 ),
                 Object.keys(this.cost).map((resourceName) =>
-                    this.world.resources[resourceName].amountPerTick * settings.fps
+                    this.container.resources[resourceName].amountPerTick * settings.fps
                 )
             );
             timeUntilAffordableString = `<br/><br/>Time until affordable: ${timeUntilAffordable}`;
@@ -112,7 +111,7 @@ class Upgrade {
     setAffordable() {
         this.affordable = true;
         for (const resourceName of Object.keys(this.cost)) {
-            if (this.cost[resourceName] > this.world.resources[resourceName].amount) {
+            if (this.cost[resourceName] > this.container.resources[resourceName].amount) {
                 this.affordable = false;
             }
         }
@@ -150,7 +149,7 @@ class Upgrade {
         if (this.unlocked && this.affordable && !this.purchased) {
             for (var key in this.cost) {
                 if (this.cost.hasOwnProperty(key)) {
-                    this.world.resources[key].noTickConsume(this.cost[key]);
+                    this.container.resources[key].noTickConsume(this.cost[key]);
                 }
             }
             this.effect();
@@ -169,18 +168,4 @@ class Upgrade {
     }
 }
 
-
-function createUpgrade (name, upgradeDiv, world) {
-    return new Upgrade({ ...deepCopy(upgradeConfigs[name]), upgradeDiv: upgradeDiv, world: world });
-}
-
-function loadUpgrade (save, upgradeDiv, world) {
-    const config = deepCopy(upgradeConfigs[save.n]);
-    config.purchased = save.p === 1 ? true : false;
-    config.resourceDiv = upgradeDiv;
-    config.world = world;
-
-    return new Upgrade(config);
-}
-
-export { createUpgrade, loadUpgrade };
+export { Upgrade };

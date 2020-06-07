@@ -1,5 +1,5 @@
 // @ts-check
-import { createUpgrade, loadUpgrade } from "./Upgrade.js";
+import { createWorldUpgrade, loadWorldUpgrade } from "./WorldUpgrade.js";
 
 class WorldUpgradeSet {
     constructor (upgradeList, upgradeDiv, world) {
@@ -51,7 +51,7 @@ function createWorldUpgradeSet (upgradeNames, upgradeDiv, world) {
 
     for (const upgradeName of upgradeNames) {
         // TODO: consider whether it's a good idea to have both a list and a map of the same thing
-        upgradeList.push(createUpgrade(upgradeName, upgradeDiv, world));
+        upgradeList.push(createWorldUpgrade(upgradeName, world));
     }
 
     return new WorldUpgradeSet(upgradeList, upgradeDiv, world);
@@ -60,7 +60,7 @@ function createWorldUpgradeSet (upgradeNames, upgradeDiv, world) {
 function loadWorldUpgradeSet (save, upgradeDiv, world) {
     const upgradeList = [];
     for (const upgradeSave of save) {
-        upgradeList.push(loadUpgrade(upgradeSave, upgradeDiv, world));
+        upgradeList.push(loadWorldUpgrade(upgradeSave, world));
     }
 
     return new WorldUpgradeSet(upgradeList, upgradeDiv, world);
