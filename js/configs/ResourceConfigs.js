@@ -1,4 +1,4 @@
-const resourceConfigs = {
+const worldResourceConfigs = {
     // 1. Lush
     "berries": {
         internalName: "berries",
@@ -58,4 +58,6 @@ const resourceConfigs = {
     },
 };
 
-export { resourceConfigs };
+const ascensionResourceConfigs = {};
+
+export { worldResourceConfigs, ascensionResourceConfigs };

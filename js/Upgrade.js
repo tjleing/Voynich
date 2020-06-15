@@ -149,7 +149,7 @@ class Upgrade {
         if (this.unlocked && this.affordable && !this.purchased) {
             for (var key in this.cost) {
                 if (this.cost.hasOwnProperty(key)) {
-                    this.container.resources[key].noTickConsume(this.cost[key]);
+                    this.container.resources[key].consume(this.cost[key]);
                 }
             }
             this.effect();
