@@ -4,20 +4,14 @@ import { createWorldCreatureSet, loadWorldCreatureSet } from "./WorldCreatureSet
 import { createWorldResourceSet, loadWorldResourceSet } from "./WorldResourceSet.js";
 import { createWorldUpgradeSet, loadWorldUpgradeSet } from "./WorldUpgradeSet.js";
 import { TabSet } from "./TabSet.js";
-import { setAllSettings } from "./Settings.js";
 import { worldConfigs } from "./configs/WorldConfigs.js";
 
 class World {
-    constructor (name, okraGain) {
+    constructor (name) {
         this.constructHTML();
 
         this.name = name;
         this.focusPower = 1; // TODO: put in Stats or something
-        this.okraGain = okraGain; // TODO: scrap in prestige PR plz
-
-        // TODO: move up probably
-        //this.createPrestige();
-
     }
 
     initialize ({resources, creatures, upgrades}) {
@@ -48,7 +42,7 @@ class World {
         });
         */
 
-        this.tabs = new TabSet(tabInfo, this.tabDiv, 0, this);
+        this.tabs = new TabSet(tabInfo, this.tabDiv, 0);
     }
 
     tick () {
@@ -114,14 +108,13 @@ class World {
         save.c = this.creatures.save();
         save.u = this.upgrades.save();
         save.n = this.name;
-        save.o = this.okraGain;
         return save;
     }
 }
 
 
 function createWorld (name) {
-    const world = new World(name, 0);
+    const world = new World(name);
 
     const config = worldConfigs[name];
     const resources = createWorldResourceSet(config.resourceNames, world.resourceDiv, world);
@@ -134,8 +127,7 @@ function createWorld (name) {
 
 function loadWorld (save) {
     const name = save.n;
-    const okraGain = save.o;
-    const world = new World(name, okraGain);
+    const world = new World(name);
 
     const resources = loadWorldResourceSet(save.r, world.resourceDiv, world);
     const creatures = loadWorldCreatureSet(save.c, world.creatureDiv, world);

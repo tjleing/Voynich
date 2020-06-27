@@ -12,7 +12,7 @@ class WorldResource extends Resource {
         this.hitpoints = args.hitpoints;
         this.world = this.container;
         // TODO: as soon as I do the set rework, replace this with this.world.setFocusedResource(this)
-        this.amountDiv.onclick = () => { this.world.resources.setFocusedResource(this) };
+        this.resourceDiv.onclick = () => { this.world.resources.setFocusedResource(this) };
     }
 
     draw() {
@@ -48,11 +48,11 @@ class WorldResource extends Resource {
     }
 
     // To keep track of the resource gain per tick (and consequently per second),
-    // use startTick to zero out the gain, and then for adding or consuming the
+    // use tick to zero out the gain, and then for adding or consuming the
     // resource, use tickAdd and tickConsume.  When buying (or other actions
     // that shouldn't be tracked in resource gain per second, like selling),
     // use noTickAdd and noTickConsume.
-    startTick() {
+    tick() {
         this.amountPerTick = 0;
     }
 

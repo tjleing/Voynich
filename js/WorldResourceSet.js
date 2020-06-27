@@ -1,52 +1,17 @@
 // @ts-check
 
-import { createResource, loadResource } from "./Resource.js";
+import { Set } from "./Set.js";
+import { createWorldResource, loadWorldResource } from "./WorldResource.js";
 
-class WorldResourceSet {
-    constructor (resourceList, resourceDiv, world) {
-        // TODO: maybe just this.list and this.div?
-        this.resourceList = resourceList;
-        this.resourceDiv = resourceDiv;
-
-        for (const resource of resourceList) {
-            this[resource.internalName] = resource;
-        }
-    }
-
-    tick () {
-        for (const resource of this.resourceList) {
-            resource.startTick();
-        }
-    }
-
-    draw () {
-        for (const resource of this.resourceList) {
-            resource.draw();
-        }
-    }
-
-    forEach (operation) {
-        for (const resource of this.resourceList) {
-            operation(resource);
-        }
+class WorldResourceSet extends Set {
+    constructor (...args) {
+        super(...args);
     }
 
     save () {
-        let save = {};
+        let save = super.save();
         save.f = this.focusedResource ? this.focusedResource.internalName : undefined;
-        save.r = [];
-        for (const resource of this.resourceList) {
-            save.r.push(resource.save());
-        }
         return save;
-    }
-
-    clear () {
-        for (const resource of this.resourceList) {
-            this[resource.name] = undefined;
-        }
-        this.resourceList = [];
-        this.resourceDiv.innerHTML = "";
     }
 
     setFocusedResource (newFocusedResource) {
@@ -67,27 +32,25 @@ class WorldResourceSet {
     // TODO: idk where this should go, but should do something when there are no upgrades to buy -- right now it looks weird if there's nothing to buy (c.f. cookie clicker?)
 }
 
-function createWorldResourceSet (resourceNames, resourceDiv, world) {
-    const resourceList = [];
+// TODO: reinvestigate if there's a way to call the createSet fn and construct a WorldResourceSet instead of a Set
+//       might have to be a method instead of a function?
+function createWorldResourceSet (resourceNames, div, world) {
+    const list = [];
 
-    for (const resourceName of resourceNames) {
-        // TODO: consider whether it's a good idea to have both a list and a map of the same thing
-        resourceList.push(createResource(resourceName, resourceDiv, world));
+    for (const name of resourceNames) {
+        list.push(createWorldResource(name, div, world));
     }
 
-    return new WorldResourceSet(resourceList, resourceDiv, world);
+    return new WorldResourceSet(list, div);
 }
 
-function loadWorldResourceSet (save, resourceDiv, world) {
-    const resourceList = [];
-    for (const resourceSave of save.r) {
-        resourceList.push(loadResource(resourceSave, resourceDiv, world));
+function loadWorldResourceSet (save, div, world) {
+    const list = [];
+    for (const itemSave of save.l) {
+        list.push(loadWorldResource(itemSave, div, world));
     }
 
-    const wrs = new WorldResourceSet(resourceList, resourceDiv, world);
-    wrs.setFocusedResource(wrs[save.f]);
-
-    return wrs;
+    return new WorldResourceSet(list, div);
 }
 
 export { createWorldResourceSet, loadWorldResourceSet };

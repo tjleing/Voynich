@@ -1,5 +1,5 @@
 import { worldConfigs } from './configs/WorldConfigs.js';
-import { resourceConfigs } from './configs/ResourceConfigs.js';
+import { worldResourceConfigs } from './configs/ResourceConfigs.js';
 import { creatureConfigs } from './configs/CreatureConfigs.js';
 import { fix, formatDuration } from './Utils.js';
 
@@ -15,7 +15,7 @@ class Stats {
 
         // How much of each resource you've accumulated all-time and this run
         this.resourceCounts = {};
-        for (const resourceType in resourceConfigs) {
+        for (const resourceType in worldResourceConfigs) {
             this.resourceCounts[resourceType] = [0, 0];
         }
 

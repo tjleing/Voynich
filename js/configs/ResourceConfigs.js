@@ -58,6 +58,24 @@ const worldResourceConfigs = {
     },
 };
 
-const ascensionResourceConfigs = {};
+const ascensionResourceConfigs = {
+    "okra": {
+        internalName: "okra",
+        displayNameSingular: "Pod of Okra",
+        displayNamePlural: "Pods of Okra",
+        flavorText: "The perfect solution to the world's drought!  Oh look, it's really dripping...  Mop it up!",
+        amount: 0,
+        active: true,
+        calculateGain: function (ascension) {
+            let gain = 0;
+            for (const world in ascension.worlds) {
+                for (const resource in world.resources) {
+                    gain += Math.log(resource.amount)/10;
+                }
+            }
+            return Math.floor(gain);
+        },
+    },
+};
 
 export { worldResourceConfigs, ascensionResourceConfigs };

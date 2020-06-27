@@ -3,7 +3,7 @@
 import { createTab } from "./Tab.js";
 
 class TabSet {
-    constructor (tabInfo, tabDiv, activeIndex, world) {
+    constructor (tabInfo, tabDiv, activeIndex) {
         this.tabList = [];
         tabDiv.innerHTML = "";
         this.tabDiv = tabDiv;
@@ -11,7 +11,7 @@ class TabSet {
 
         for (let i = 0; i<tabInfo.length; ++i) {
             const info = tabInfo[i];
-            const tab = createTab(info, tabDiv, world);
+            const tab = createTab(info, tabDiv);
             tab.button.onclick = this.setActive.bind(this, i);
             this.tabList.push(tab);
         }

@@ -1,7 +1,7 @@
 // @ts-check
 
 class Tab {
-    constructor ({buttonText, divToShow, unlockCondition, tabDiv, world}) {
+    constructor ({buttonText, divToShow, unlockCondition, tabDiv}) {
         this.unlockCondition = unlockCondition;
         this.unlocked = this.unlockCondition();
         this.buttonText = buttonText;
@@ -21,7 +21,6 @@ class Tab {
         this.divToShow.style.display = "none";
         this.button.classList.remove("active");
 
-        this.world = world;
         tabDiv.appendChild(this.button);
     }
 
@@ -35,8 +34,8 @@ class Tab {
     }
 }
 
-function createTab (config, tabDiv, world) {
-    return new Tab({ ...config, tabDiv: tabDiv, world: world });
+function createTab (config, tabDiv) {
+    return new Tab({ ...config, tabDiv: tabDiv });
 }
 
 

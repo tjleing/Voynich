@@ -87,6 +87,7 @@ class Creature {
         // Actually calculate
         const rps = {};
         for (const resourceName of Object.keys(this.production)) {
+            // TODO: fix after ascension encapsulates worlds or whatever
             rps[resourceName] = this.production[resourceName] * this.quantity / settings.fps * productionFactor * (game.prestigeResources[0].amount + 1);
         }
 
