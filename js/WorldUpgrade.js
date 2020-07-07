@@ -12,13 +12,14 @@ class WorldUpgrade extends Upgrade {
 }
 
 
-function createWorldUpgrade (name, world) {
-    return new WorldUpgrade({ ...deepCopy(worldUpgradeConfigs[name]), container: world });
+function createWorldUpgrade (name, div, world) {
+    return new WorldUpgrade({ ...deepCopy(worldUpgradeConfigs[name]), div: div, container: world });
 }
 
-function loadWorldUpgrade (save, world) {
+function loadWorldUpgrade (save, div, world) {
     const config = deepCopy(worldUpgradeConfigs[save.n]);
     config.purchased = save.p === 1 ? true : false;
+    config.div = div;
     config.container = world;
 
     return new WorldUpgrade(config);

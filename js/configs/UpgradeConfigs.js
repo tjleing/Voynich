@@ -1,3 +1,5 @@
+import { settings } from "../Settings.js";
+
 const worldUpgradeConfigs = {
     "twoForOne": {
         internalName: "twoForOne",
@@ -9,12 +11,12 @@ const worldUpgradeConfigs = {
         },
         purchased: false,
         effect: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 for (const resource in creature.cost) {
                     creature.cost[resource] *= 0.5;
                 }
             }
-            for (const upgrade of this.world.upgrades.upgradeList) {
+            for (const upgrade of this.world.upgrades.list) {
                 for (const resource in upgrade.cost) {
                     upgrade.cost[resource] *= 0.5;
                 }
@@ -38,7 +40,7 @@ const worldUpgradeConfigs = {
         },
         unlockCondition: function () {
             var sum = 0;
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 sum += creature.quantity;
             }
             return (sum >= 10);
@@ -54,7 +56,7 @@ const worldUpgradeConfigs = {
         },
         purchased: false,
         effect: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 creature.production["wood"] *= 0.001;
                 creature.production["berries"] *= 0.001;
             }
@@ -73,7 +75,7 @@ const worldUpgradeConfigs = {
         },
         purchased: false,
         effect: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 creature.production["wood"] /= 0.001;
                 creature.production["berries"] /= 0.001;
             }
@@ -96,7 +98,7 @@ const worldUpgradeConfigs = {
             settings.bgColor = "#888888";
         },
         unlockCondition: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 if (creature.quantity >= 13) return true;
             }
             return false;
@@ -114,7 +116,7 @@ const worldUpgradeConfigs = {
             this.world.creatures.ptrocanfer.quantity++;
         },
         unlockCondition: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 if (creature.quantity > 0) return false;
             }
             return true;

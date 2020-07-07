@@ -6,13 +6,15 @@ import { Resource } from "./Resource.js";
 import { settings } from "./Settings.js";
 
 class WorldResource extends Resource {
-    constructor(...args) {
-        super(...args);
+    constructor(args) {
+        super(args);
         this.isFocused = false;
         this.hitpoints = args.hitpoints;
         this.world = this.container;
-        // TODO: as soon as I do the set rework, replace this with this.world.setFocusedResource(this)
-        this.resourceDiv.onclick = () => { this.world.resources.setFocusedResource(this) };
+
+        if (this.active) {
+            this.amountDiv.onclick = () => { this.world.resources.setFocusedResource(this) };
+        }
     }
 
     draw() {
@@ -20,6 +22,8 @@ class WorldResource extends Resource {
             if (this.amount > 0) {
                 this.active = true;
                 this.constructDOM();
+                // TODO: does this really need to be here twice?  code smell
+                this.amountDiv.onclick = () => { this.world.resources.setFocusedResource(this) };
             }
             else {
                 return;
@@ -51,7 +55,7 @@ class WorldResource extends Resource {
     // use tick to zero out the gain, and then for adding or consuming the
     // resource, use tickAdd and tickConsume.  When buying (or other actions
     // that shouldn't be tracked in resource gain per second, like selling),
-    // use noTickAdd and noTickConsume.
+    // use add and consume.
     tick() {
         this.amountPerTick = 0;
     }

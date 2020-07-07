@@ -1,10 +1,9 @@
 // @ts-check
 
-import { createWorld, loadWorld } from "./World.js";
-import { clearAchievements, Achievement } from "./Achievement.js";
+import { clearAchievements } from "./Achievement.js";
 import { createAchievements } from "./configs/AchievementConfigs.js";
-import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
-import { fix, notify } from "./Utils.js";
+import { loadSettings, saveSettings, settings, setAllSettings } from "./Settings.js";
+import { notify } from "./Utils.js";
 import { stats } from "./Stats.js";
 import { createAscension, loadAscension } from "./Ascension.js";
 import { baseAscensions } from "./configs/AscensionConfigs.js";
@@ -15,8 +14,7 @@ class Game {
     }
 
     prep () {
-        this.worlds = [];
-        document.getElementById("game").innerHTML = "";
+        this.ascensions = [];
 
         // TODO: figure out why these need to be in both prep() and hardReset()
         this.achievements = createAchievements(this);
@@ -31,7 +29,7 @@ class Game {
         if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
             this.focusPower = 1; // TODO: put in World constructor or something
 
-            document.getElementById("game").innerHTML = "";
+            document.getElementById("worldLevel").innerHTML = "";
 
             this.ascensions = [];
             for (const ascensionName of baseAscensions) {
@@ -55,8 +53,8 @@ class Game {
     }
 
     tick () {
-        for (const world of this.worlds) {
-            world.tick();
+        for (const ascension of this.ascensions) {
+            ascension.tick();
         }
         
         for (const achievement of this.achievements) {
@@ -95,7 +93,6 @@ class Game {
         let save = {};
 
         // Terse map key names to save space in localStorage
-        save["w"] = this.worlds.map(world => world.save());
         // TODO: make acheivements a singleton thing like settings?
         save["a"] = this.achievements.map(achievement => achievement.save());
         save["as"] = this.ascensions.map(ascension => ascension.save());
@@ -128,7 +125,7 @@ class Game {
         const oldSave = localStorage.getItem("save");
         const newSave = prompt("Paste your save (your current save will be overwritten)!");
 
-        document.getElementById("game").innerHTML = "";
+        document.getElementById("worldLevel").innerHTML = "";
 
         // Common exit case: user didn't mean to open the import box, don't flash at them
         if (newSave === null) {
@@ -184,23 +181,16 @@ class Game {
         save = JSON.parse(atob(save));
 
         // Initialize everything from the save string
-        const worldsSave = save.w;
-        this.worlds = [];
-        for (const worldSave of worldsSave) {
-            const world = loadWorld(worldSave);
-            this.worlds.push(world);
-        }
-
-        const achievementsSave = save.a;
-        for (let i = 0; i<this.achievements.length; ++i) {
-            this.achievements[i].load(achievementsSave[i]);
-        }
-
         const ascensionsSave = save.as;
         this.ascensions = [];
         for (const ascensionSave of ascensionsSave) {
             const ascension = loadAscension(ascensionSave);
             this.ascensions.push(ascension);
+        }
+
+        const achievementsSave = save.a;
+        for (let i = 0; i<this.achievements.length; ++i) {
+            this.achievements[i].load(achievementsSave[i]);
         }
 
         const settingsSave = save.s;

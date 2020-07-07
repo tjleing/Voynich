@@ -44,13 +44,17 @@ button {
     “Droid Sans”, “Helvetica Neue”, sans-serif;
 }
 
-#game {
+#worldLevelContainer {
+	height: 100%;
+}
+
+#worldLevel {
 	display: flex;
 	height: 100%;
 	overflow: hidden;
 }
 
-#prestige {
+#worldAscension {
 	margin: 15px;
 }
 

@@ -1,3 +1,5 @@
+import { stats } from "../Stats.js";
+
 const worldResourceConfigs = {
     // 1. Lush
     "berries": {
@@ -68,10 +70,8 @@ const ascensionResourceConfigs = {
         active: true,
         calculateGain: function (ascension) {
             let gain = 0;
-            for (const world in ascension.worlds) {
-                for (const resource in world.resources) {
-                    gain += Math.log(resource.amount)/10;
-                }
+            for (const name in stats.resourceCounts) {
+                gain += Math.log(stats.resourceCounts[name][0]+1)/10;
             }
             return Math.floor(gain);
         },

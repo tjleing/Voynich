@@ -85,13 +85,13 @@ class Creature {
         }
 
         // Actually calculate
-        const rps = {};
+        const rpt = {};
         for (const resourceName of Object.keys(this.production)) {
             // TODO: fix after ascension encapsulates worlds or whatever
-            rps[resourceName] = this.production[resourceName] * this.quantity / settings.fps * productionFactor * (game.prestigeResources[0].amount + 1);
+            rpt[resourceName] = this.production[resourceName] * this.quantity / settings.fps * productionFactor * (this.world.ascension.calculateMultiplier());
         }
 
-        return rps;
+        return rpt;
     }
 
     draw () {
@@ -188,7 +188,7 @@ class Creature {
 
         for (var key in this.cost) {
             if (this.cost.hasOwnProperty(key)) {
-                this.world.resources[key].noTickConsume(this.cost[key]);
+                this.world.resources[key].consume(this.cost[key]);
             }
         }
 

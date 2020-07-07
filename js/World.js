@@ -7,11 +7,12 @@ import { TabSet } from "./TabSet.js";
 import { worldConfigs } from "./configs/WorldConfigs.js";
 
 class World {
-    constructor (name) {
-        this.constructHTML();
-
+    constructor (name, ascension) {
         this.name = name;
+        this.ascension = ascension;
         this.focusPower = 1; // TODO: put in Stats or something
+
+        this.constructDOM();
     }
 
     initialize ({resources, creatures, upgrades}) {
@@ -61,9 +62,9 @@ class World {
         this.upgrades.draw();
     }
 
-    constructHTML () {
+    constructDOM () {
         this.worldDiv = document.createElement("div");
-        document.getElementById("game").appendChild(this.worldDiv);
+        this.ascension.worldLevelDiv.appendChild(this.worldDiv);
 
         this.worldDiv.className = "world";
         this.worldDiv.innerHTML = `
@@ -113,8 +114,8 @@ class World {
 }
 
 
-function createWorld (name) {
-    const world = new World(name);
+function createWorld (name, ascension) {
+    const world = new World(name, ascension);
 
     const config = worldConfigs[name];
     const resources = createWorldResourceSet(config.resourceNames, world.resourceDiv, world);
@@ -125,9 +126,9 @@ function createWorld (name) {
     return world;
 }
 
-function loadWorld (save) {
+function loadWorld (save, ascension) {
     const name = save.n;
-    const world = new World(name);
+    const world = new World(name, ascension);
 
     const resources = loadWorldResourceSet(save.r, world.resourceDiv, world);
     const creatures = loadWorldCreatureSet(save.c, world.creatureDiv, world);

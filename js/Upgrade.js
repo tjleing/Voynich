@@ -12,6 +12,7 @@ class Upgrade {
         purchased,
         effect,
         unlockCondition,
+        div,
         container,
       }) {
         this.internalName = internalName;
@@ -21,6 +22,7 @@ class Upgrade {
         this.effect = effect.bind(this);
         this.unlockCondition = unlockCondition.bind(this);
         this.container = container;
+        this.div = div;
         this.purchased = purchased;
 
         this.unlocked = false;
@@ -52,8 +54,7 @@ class Upgrade {
 
         this.buttonDiv.addEventListener("mouseup", this.buy.bind(this), false);
         this.buttonDiv.appendChild(this.button);
-        const upgradeDiv = this.container.upgradeDiv;
-        upgradeDiv.appendChild(this.buttonDiv);
+        this.div.appendChild(this.buttonDiv);
     }
 
     destroyDOM () {
@@ -111,6 +112,7 @@ class Upgrade {
     setAffordable() {
         this.affordable = true;
         for (const resourceName of Object.keys(this.cost)) {
+            // TODO: !!!!!!!!!!!!!!
             if (this.cost[resourceName] > this.container.resources[resourceName].amount) {
                 this.affordable = false;
             }
