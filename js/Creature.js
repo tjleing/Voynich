@@ -2,7 +2,6 @@
 
 import { settings } from "./Settings.js";
 import { deepCopy, fix, maximumTimeToGet } from "./Utils.js";
-import { game } from "./main.js";
 import { creatureConfigs } from "./configs/CreatureConfigs.js";
 
 class Creature {
