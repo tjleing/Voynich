@@ -24,17 +24,30 @@ body {
     “Ubuntu”, “Cantarell”, “Fira Sans”,
 	“Droid Sans”, “Helvetica Neue”, sans-serif;
 	
-	margin:0;
-	padding:0;
-	height:100%;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
 
+	position: absolute;
+	top: 0px;
 	opacity: 1;
-	transition: opacity 1s;
+	transition: 1s;
 }
 
 .fadeout {
 	opacity: 0;
-	transition: opacity 1s;
+	transition: 1s;
+}
+
+.up {
+	top: 600px;
+	transition: 1s;
+}
+
+.down {
+	top: -600px;
+	transition: 1s;
 }
 
 button {
@@ -44,8 +57,8 @@ button {
     “Droid Sans”, “Helvetica Neue”, sans-serif;
 }
 
-#worldLevelContainer {
-	height: 100%;
+#ascension > div {
+	margin: 15px;
 }
 
 #worldLevel {
@@ -69,6 +82,7 @@ button {
 .world {
 	width: 100%;
 	display: flex;
+	height: calc(100vh - 47px);
 }
 
 #leftpanel {

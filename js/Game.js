@@ -30,6 +30,8 @@ class Game {
             this.focusPower = 1; // TODO: put in World constructor or something
 
             document.getElementById("worldLevel").innerHTML = "";
+            // TODO: will need to fix this when I add the ascension level stuff
+            document.getElementById("ascensionResources").innerHTML = "";
 
             this.ascensions = [];
             for (const ascensionName of baseAscensions) {
@@ -40,10 +42,6 @@ class Game {
             this.achievements = [];
             clearAchievements();
             this.achievements = createAchievements(this);
-
-            // Put the tab creation after at least prestige resources, because
-            // it is able to check if the prestige tab is unlocked in between
-            // tab construction and prestige resource destrustion somehow...
 
             setAllSettings({"bgColor": "#E82B2B", "fps": 20, "saveTime": 20});
 

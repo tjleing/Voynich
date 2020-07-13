@@ -7,6 +7,7 @@ import { createAscensionResource, loadAscensionResource } from "./AscensionResou
 import { createAscensionUpgrade, loadAscensionUpgrade } from "./AscensionUpgrade.js";
 import { createWorld, loadWorld } from "./World.js";
 import { stats } from "./Stats.js";
+import { setSetting } from "./Settings.js";
 
 class Ascension {
     constructor (name) {
@@ -21,15 +22,17 @@ class Ascension {
         this.upgrades = upgrades;
         this.worlds = worlds;
 
-        let worldTab = undefined, ascensionTab = undefined;
+        // backwards (not utilizing constructor) because divs are used in both
+        // tab bars, so we construct to set everything invis and then only set up
+        // the one we need
+        this.createWorldTabBar(0);
+        this.createAscensionTabBar(0);
         if (this.worlds === []) {
-            ascensionTab = activeTab;
+            this.ascensionTabs.setActive(activeTab);
         }
         else {
-            worldTab = activeTab;
+            this.worldTabs.setActive(activeTab);
         }
-        this.createWorldTabBar(worldTab);
-        this.createAscensionTabBar(ascensionTab);
         this.setVisibility();
     }
 
@@ -92,6 +95,8 @@ class Ascension {
 
         this.shrineDiv = this.ascensionDiv.children[1];
         this.selectionDiv = this.ascensionDiv.children[2];
+
+        document.getElementById("descend").onclick = this.descend.bind(this);
     }
 
     constructWorldDOM () {
@@ -99,46 +104,83 @@ class Ascension {
         this.worldAscensionDiv = document.getElementById("worldAscension");
         this.worldAscensionResourcesDiv = this.worldAscensionDiv.children[0];
 
-        document.getElementById("anotherOne").onclick = this.anotherOne.bind(this);
+        document.getElementById("ascend").onclick = this.ascend.bind(this);
     }
 
-    anotherOne () {
+    ascend () {
         // Add prestige resources
+        var gainFunctionBackups = {};
         for (const resource of this.resources.list) {
             resource.amount += resource.toGain;
             // For visual purposes only: gain is visible while fading out, so
             // show that the gain has occurred by clearing out the gain
             resource.toGain = 0;
+            gainFunctionBackups[resource.name] = resource.calculateGain;
+            resource.calculateGain = function (){return 0;};
+            resource.draw();
         }
+
+        // Disable button so you can't click it twice
+        document.getElementById("ascend").onclick = function() {};
 
         // Fancy transition
         document.body.classList.add("fadeout");
+        document.body.classList.add("up");
 
         setTimeout((() => {
             document.body.classList.remove("fadeout");
+            document.body.classList.remove("up");
+            setSetting("bgColor", "#2BE88B");
 
             // Up to ascension screen
-            this.softReset();
+            this.worlds = [];
             this.setVisibility();
+
+            for (const resource of this.resources.list) {
+                resource.calculateGain = gainFunctionBackups[resource.name];
+            }
+
+            // Reenable button
+            document.getElementById("ascend").onclick = this.ascend.bind(this);
         }).bind(this), 1000);
     }
 
-    softReset () {
-        document.getElementById("worldLevel").innerHTML = "";
+    descend () {
 
-        this.constructWorldDOM();
+        // Disable button so you can't click it twice
+        document.getElementById("descend").onclick = function() {};
 
-        // TODO: pick new worlds
-        const config = ascensionConfigs[this.name];
-        this.worlds = [];
-        for (const worldName of config.baseWorlds) {
-            this.worlds.push(createWorld(worldName, this));
-        }
+        // Fancy transition
+        document.body.classList.add("fadeout");
+        document.body.classList.add("down");
 
-        // Both of these need to happen after the worlds have been created
-        this.createWorldTabBar();
-        this.createAscensionTabBar();
-        stats.startNewAsc();
+        setTimeout((() => {
+            document.body.classList.remove("fadeout");
+            document.body.classList.remove("down");
+
+            document.getElementById("worldLevel").innerHTML = "";
+            setSetting("bgColor", "#E82B2B");
+            // TODO: pick new worlds
+            const config = ascensionConfigs[this.name];
+            this.worlds = [];
+            for (const worldName of config.baseWorlds) {
+                this.worlds.push(createWorld(worldName, this));
+            }
+
+            this.constructWorldDOM();
+
+            // Both of these need to happen after the worlds have been created
+            this.createWorldTabBar();
+            this.setVisibility();
+
+            stats.startNewAsc();
+
+            // Down to world level screen
+            this.setVisibility();
+
+            // Reenable button
+            document.getElementById("descend").onclick = this.descend.bind(this);
+        }).bind(this), 1000);
     }
 
     createWorldTabBar (activeTab = 0) {
