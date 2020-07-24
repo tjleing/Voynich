@@ -20,6 +20,14 @@ class World {
         this.creatures = creatures;
         this.upgrades = upgrades;
 
+        // Apply the effects of the purchased upgrades.  Needs to be after the
+        // world's creatures are set to apply the effects, so we're putting it
+        // here
+        for (const upgrade of this.upgrades.list) {
+            if (upgrade.purchased)
+                upgrade.effect();
+        }
+
         this.createTabs();
     }
 
@@ -49,7 +57,7 @@ class World {
     tick () {
         this.resources.tick();
         if (this.resources.focusedResource !== undefined) {
-            this.resources.focusedResource.tickFocus(1);
+            this.resources.focusedResource.tickFocus(this.focusPower);
         }
         this.creatures.tick();
         this.upgrades.tick();
@@ -114,7 +122,7 @@ class World {
 }
 
 
-function createWorld (name, ascension) {
+function createWorld (name, difficulty, ascension) {
     const world = new World(name, ascension);
 
     const config = worldConfigs[name];

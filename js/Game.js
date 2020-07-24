@@ -81,9 +81,7 @@ class Game {
     // TODO: modifiers to buy max or multiple, etc.; also visual indicator for such
     // TODO: figure out what to do if there's 10 or more creature types?
     handleKey (key) {
-        if (key >= "1" && key <= this.worlds[0].creatures.creatureList.length.toString()) {
-            this.worlds[0].creatures.creatureList[parseInt(key)-1].buy();
-        }
+        this.ascensions[0].handleKey(key);
     }
 
     // SAVING AND LOADING

@@ -132,7 +132,7 @@ const worldUpgradeConfigs = {
         },
         purchased: false,
         effect: function () {
-            this.focusPower *= 2;
+            this.world.focusPower *= 2;
         },
         unlockCondition: function () {
             return (this.world.resources.wood.amount >= 1000);

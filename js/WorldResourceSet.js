@@ -50,7 +50,14 @@ function loadWorldResourceSet (save, div, world) {
         list.push(loadWorldResource(itemSave, div, world));
     }
 
-    return new WorldResourceSet(list, div);
+    const set = new WorldResourceSet(list, div);
+    for (const resource of set.list) {
+        if (resource.internalName === save.f) {
+            set.setFocusedResource(resource);
+            break;
+        }
+    }
+    return set;
 }
 
 export { createWorldResourceSet, loadWorldResourceSet };

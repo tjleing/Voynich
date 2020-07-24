@@ -8,26 +8,31 @@ import { createAscensionUpgrade, loadAscensionUpgrade } from "./AscensionUpgrade
 import { createWorld, loadWorld } from "./World.js";
 import { stats } from "./Stats.js";
 import { setSetting } from "./Settings.js";
+import { createWorldSelection, loadWorldSelection } from "./WorldSelection.js";
 
 class Ascension {
     constructor (name) {
-        this.constructDOM();
-
         this.name = name;
+        this.worldCount = 2;
+        this.worldTypeSelects = [];
+        this.worldDifficultySelects = [];
+
+        this.constructDOM();
     }
 
-    initialize ({resources, creatures, upgrades, worlds, activeTab}) {
+    initialize ({resources, creatures, upgrades, worlds, worldSelection, activeTab}) {
         this.resources = resources;
         this.creatures = creatures;
         this.upgrades = upgrades;
         this.worlds = worlds;
+        this.worldSelection = worldSelection;
 
         // backwards (not utilizing constructor) because divs are used in both
         // tab bars, so we construct to set everything invis and then only set up
         // the one we need
         this.createWorldTabBar(0);
         this.createAscensionTabBar(0);
-        if (this.worlds === []) {
+        if (this.worlds.length === 0) {
             this.ascensionTabs.setActive(activeTab);
         }
         else {
@@ -95,6 +100,7 @@ class Ascension {
 
         this.shrineDiv = this.ascensionDiv.children[1];
         this.selectionDiv = this.ascensionDiv.children[2];
+        this.worldOptionsDiv = document.getElementById("worldOptions");
 
         document.getElementById("descend").onclick = this.descend.bind(this);
     }
@@ -146,7 +152,6 @@ class Ascension {
     }
 
     descend () {
-
         // Disable button so you can't click it twice
         document.getElementById("descend").onclick = function() {};
 
@@ -163,8 +168,10 @@ class Ascension {
             // TODO: pick new worlds
             const config = ascensionConfigs[this.name];
             this.worlds = [];
-            for (const worldName of config.baseWorlds) {
-                this.worlds.push(createWorld(worldName, this));
+            for (let i = 0; i<this.worldSelection.typeSelects.length; ++i) {
+                const worldName = this.worldSelection.typeSelects[i].value;
+                const worldDifficulty = this.worldSelection.difficultySelects[i].value;
+                this.worlds.push(createWorld(worldName, worldDifficulty, this));
             }
 
             this.constructWorldDOM();
@@ -266,7 +273,14 @@ class Ascension {
         this.ascensionTabs = new TabSet(ascensionTabInfo, topBar, activeTab);
     }
 
-
+    handleKey (key) {
+        const idx = this.worldTabs.activeIndex;
+        if (idx < this.worlds.length) {
+            if (key >= "1" && key <= this.worlds[idx].creatures.list.length.toString()) {
+                this.worlds[idx].creatures.list[parseInt(key)-1].buy();
+            }
+        }
+    }
 
     save () {
         const save = {};
@@ -280,10 +294,14 @@ class Ascension {
         else {
             save.t = this.worldTabs.save();
         }
+
         save.w = [];
         for (const world of this.worlds) {
             save.w.push(world.save());
         }
+
+        save.s = this.worldSelection.save();
+
         return save;
     }
 }
@@ -303,10 +321,12 @@ function createAscension (name) {
 
     const worlds = [];
     for (const worldName of config.baseWorlds) {
-        worlds.push(createWorld(worldName, ascension));
+        worlds.push(createWorld(worldName, 1, ascension));
     }
 
-    ascension.initialize({resources, creatures, upgrades, worlds, activeTab: 0});
+    const worldSelection = createWorldSelection(ascension.worldOptionsDiv);
+
+    ascension.initialize({resources, creatures, upgrades, worlds, worldSelection, activeTab: 0});
     return ascension;
 }
 
@@ -327,7 +347,9 @@ function loadAscension (save) {
         worlds.push(loadWorld(worldSave, ascension));
     }
 
-    ascension.initialize({resources, creatures, upgrades, worlds, activeTab});
+    const worldSelection = loadWorldSelection(save.s, ascension.worldOptionsDiv);
+
+    ascension.initialize({resources, creatures, upgrades, worlds, worldSelection, activeTab});
     return ascension;
 }
 

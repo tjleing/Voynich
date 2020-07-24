@@ -39,7 +39,7 @@ let createAchievements = function (game) {
                 effect: () => {
                     // TODO: yeah hardcoded world indices aren't great,
                     // but achievements giving resources is pretty bad too
-                    game.ascensions[0].worlds[0].resources.flowers.amount += 5;
+                    //game.ascensions[0].worlds[0].resources.flowers.amount += 5;
                 },
             }
         )
