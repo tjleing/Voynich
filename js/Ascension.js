@@ -165,8 +165,7 @@ class Ascension {
 
             document.getElementById("worldLevel").innerHTML = "";
             setSetting("bgColor", "#E82B2B");
-            // TODO: pick new worlds
-            const config = ascensionConfigs[this.name];
+
             this.worlds = [];
             for (let i = 0; i<this.worldSelection.typeSelects.length; ++i) {
                 const worldName = this.worldSelection.typeSelects[i].value;
