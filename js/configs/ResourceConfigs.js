@@ -1,4 +1,6 @@
-const resourceConfigs = {
+import { stats } from "../Stats.js";
+
+const worldResourceConfigs = {
     // 1. Lush
     "berries": {
         internalName: "berries",
@@ -58,4 +60,22 @@ const resourceConfigs = {
     },
 };
 
-export { resourceConfigs };
+const ascensionResourceConfigs = {
+    "okra": {
+        internalName: "okra",
+        displayNameSingular: "Pod of Okra",
+        displayNamePlural: "Pods of Okra",
+        flavorText: "The perfect solution to the world's drought!  Oh look, it's really dripping...  Mop it up!",
+        amount: 0,
+        active: true,
+        calculateGain: function (ascension) {
+            let gain = 0;
+            for (const name in stats.resourceCounts) {
+                gain += Math.log(stats.resourceCounts[name][0]+1)/10;
+            }
+            return Math.floor(gain);
+        },
+    },
+};
+
+export { worldResourceConfigs, ascensionResourceConfigs };

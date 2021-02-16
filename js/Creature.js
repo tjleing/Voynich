@@ -2,7 +2,6 @@
 
 import { settings } from "./Settings.js";
 import { deepCopy, fix, maximumTimeToGet } from "./Utils.js";
-import { game } from "./main.js";
 import { creatureConfigs } from "./configs/CreatureConfigs.js";
 
 class Creature {
@@ -85,12 +84,13 @@ class Creature {
         }
 
         // Actually calculate
-        const rps = {};
+        const rpt = {};
         for (const resourceName of Object.keys(this.production)) {
-            rps[resourceName] = this.production[resourceName] * this.quantity / settings.fps * productionFactor * (game.prestigeResources[0].amount + 1);
+            // TODO: fix after ascension encapsulates worlds or whatever
+            rpt[resourceName] = this.production[resourceName] * this.quantity / settings.fps * productionFactor * (this.world.ascension.calculateMultiplier());
         }
 
-        return rps;
+        return rpt;
     }
 
     draw () {
@@ -187,7 +187,7 @@ class Creature {
 
         for (var key in this.cost) {
             if (this.cost.hasOwnProperty(key)) {
-                this.world.resources[key].noTickConsume(this.cost[key]);
+                this.world.resources[key].consume(this.cost[key]);
             }
         }
 

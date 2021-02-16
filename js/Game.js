@@ -1,14 +1,12 @@
 // @ts-check
 
-import { createWorld, loadWorld } from "./World.js";
-import { baseWorlds } from "./configs/WorldConfigs.js";
-import { clearPrestigeResources, PrestigeResource } from "./PrestigeResource.js";
-import { clearAchievements, Achievement } from "./Achievement.js";
+import { clearAchievements } from "./Achievement.js";
 import { createAchievements } from "./configs/AchievementConfigs.js";
-import { loadSettings, saveSettings, settings, setSetting, setAllSettings } from "./Settings.js";
-import { TabSet } from "./TabSet.js";
-import { fix, notify } from "./Utils.js";
+import { loadSettings, saveSettings, settings, setAllSettings } from "./Settings.js";
+import { notify } from "./Utils.js";
 import { stats } from "./Stats.js";
+import { createAscension, loadAscension } from "./Ascension.js";
+import { baseAscensions } from "./configs/AscensionConfigs.js";
 
 class Game {
     constructor () {
@@ -16,168 +14,50 @@ class Game {
     }
 
     prep () {
-        this.worlds = [];
-        document.getElementById("game").innerHTML = "";
+        this.ascensions = [];
 
         // TODO: figure out why these need to be in both prep() and hardReset()
         this.achievements = createAchievements(this);
-        this.prestigeResources = [];
-        this.createPrestige();
 
         // TODO: move to own function
         document.getElementById("hardReset").onclick = this.hardReset.bind(this, true);
         document.getElementById("export").onclick = this.exportSave.bind(this);
         document.getElementById("import").onclick = this.importSave.bind(this);
-        document.getElementById("anotherOne").onclick = this.anotherOne.bind(this);
     }
 
     hardReset (prompt) {
         if (!prompt || confirm("Are you sure that you want to erase all your progress?")) {
             this.focusPower = 1; // TODO: put in World constructor or something
 
-            document.getElementById("game").innerHTML = "";
-            this.worlds = [];
+            document.getElementById("worldLevel").innerHTML = "";
+            // TODO: will need to fix this when I add the ascension level stuff
+            document.getElementById("ascensionResources").innerHTML = "";
 
-            for (const worldName of baseWorlds) {
-                this.worlds.push(createWorld(worldName));
+            this.ascensions = [];
+            for (const ascensionName of baseAscensions) {
+                const ascension = createAscension(ascensionName);
+                this.ascensions.push(ascension);
             }
 
             this.achievements = [];
             clearAchievements();
             this.achievements = createAchievements(this);
 
-            this.prestigeResources = [];
-            clearPrestigeResources();
-
-            // Put the tab creation after at least prestige resources, because
-            // it is able to check if the prestige tab is unlocked in between
-            // tab construction and prestige resource destrustion somehow...
-            this.createTopTabBar();
-
             setAllSettings({"bgColor": "#E82B2B", "fps": 20, "saveTime": 20});
-
-            this.createPrestige();
 
             // Needs to be after creating the worlds
             stats.initialize(this);
         }
     }
 
-    anotherOne () {
-        // Add prestige resources
-        for (const pResource of this.prestigeResources) {
-            pResource.amount += pResource.calculateAmountGained();
-        }
-
-        // Show +0 okra on fadeout
-        // TODO: more resetting involved in future...  another option is just to override calculateAmountGained() or something
-        for (const world of this.worlds) {
-            world.okraGain = 0;
-        }
-
-        // Fancy transition
-        document.body.classList.add("fadeout");
-
-        setTimeout((() => {
-            document.body.classList.remove("fadeout");
-
-            // Soft reset
-            this.softReset();
-        }).bind(this), 1000);
-    }
-
-    softReset () {
-        document.getElementById("game").innerHTML = "";
-        this.worlds = [];
-        for (const worldName of baseWorlds) {
-            this.worlds.push(createWorld(worldName));
-        }
-
-        // Both of these need to happen after the worlds have been created
-        this.createTopTabBar();
-        stats.startNewAsc();
-    }
-
-    // TODO: decide wtf is going on with prestige
-    createPrestige () {
-        this.prestigeResources.push(
-            new PrestigeResource(
-                {
-                    internalName: "okra",
-                    displayNameSingular: "Okra",
-                    displayNamePlural: "Okra",
-                    flavorText: "The perfect solution to the world's drought!",
-                    startingAmount: 0,
-                    calculateAmountGained: () => {
-                        let okraGain = 0;
-                        for (const world of this.worlds) {
-                            okraGain += world.okraGain;
-                        }
-                        return okraGain;
-                    },
-                    active: true,
-                }
-            )
-        );
-    }
-
-    createTopTabBar () {
-        const tabInfo = [];
-        for (let i = 0; i<this.worlds.length; ++i) {
-            const world = this.worlds[i];
-            tabInfo.push({
-                buttonText: `World ${i+1}: ${this.worlds[i].name}`,
-                divToShow: world.worldDiv,
-                unlockCondition: () => true,
-            });
-        }
-        tabInfo.push({
-            buttonText: `Prestige`,
-            divToShow: document.getElementById('prestige'),
-            unlockCondition: () => {
-                // If they've prestiged before, they know the ropes
-                for (const pResource of this.prestigeResources) {
-                    if (pResource.amount > 0) {
-                        return true;
-                    }
-                }
-                // Unlock when they would be able to get their first okra
-                for (const world of this.worlds) {
-                    if (world.okraGain > 0) {
-                        return true;
-                    }
-                }
-                return false;
-            },
-        })
-        tabInfo.push({
-            buttonText: `Achievements`,
-            divToShow: document.getElementById('achievements'),
-            unlockCondition: () => true,
-        })
-        tabInfo.push({
-            buttonText: `Stats`,
-            divToShow: document.getElementById('stats'),
-            unlockCondition: () => true,
-        })
-        tabInfo.push({
-            buttonText: `Settings`,
-            divToShow: document.getElementById('settings'),
-            unlockCondition: () => true,
-        })
-        this.tabs = new TabSet(tabInfo, document.getElementById("topBar"), 0, undefined);
-    }
-
     tick () {
-        for (const world of this.worlds) {
-            world.tick();
+        for (const ascension of this.ascensions) {
+            ascension.tick();
         }
         
         for (const achievement of this.achievements) {
             achievement.tick();
         }
-
-        this.tabs.tick();
 
         this.draw();
 
@@ -186,16 +66,12 @@ class Game {
     }
 
     draw () {
-        for (const world of this.worlds) {
-            world.draw();
+        for (const ascension of this.ascensions) {
+            ascension.draw();
         }
 
         for (const achievement of this.achievements) {
             achievement.draw();
-        }
-        
-        for (const prestigeResource of this.prestigeResources) {
-            prestigeResource.draw();
         }
 
         document.body.style.backgroundColor = settings.bgColor;
@@ -205,38 +81,7 @@ class Game {
     // TODO: modifiers to buy max or multiple, etc.; also visual indicator for such
     // TODO: figure out what to do if there's 10 or more creature types?
     handleKey (key) {
-        if (key >= "1" && key <= this.worlds[0].creatures.creatureList.length.toString()) {
-            this.worlds[0].creatures.creatureList[parseInt(key)-1].buy();
-        }
-    }
-
-    // PRESTIGE
-    prestige () {
-        // Confirmation dialog box?
-
-        // Draw the prestige menu
-        // + animations if we ever have any
-        document.getElementById("game").style.visibility = "false";
-        document.getElementById("prestige").style.visibility = "true";
-
-        // Stop tick cycle and save cycle
-        clearTimeout(this.tickTimeout);
-        //clearTimeout(this.saveTimeout);
-
-        for (const prestigeResource of this.prestigeResources) {
-            prestigeResource.amount += prestigeResource.calculateAmountGained();
-        }
-
-        this.softReset();
-    }
-
-    prestigeReturn () {
-        // Generate a tab for each world
-        // Generate each world
-
-        // Resume tick and save
-        this.tick();
-        this.save();
+        this.ascensions[0].handleKey(key);
     }
 
     // SAVING AND LOADING
@@ -244,10 +89,9 @@ class Game {
         let save = {};
 
         // Terse map key names to save space in localStorage
-        save["w"] = this.worlds.map(world => world.save());
+        // TODO: make acheivements a singleton thing like settings?
         save["a"] = this.achievements.map(achievement => achievement.save());
-        save["p"] = this.prestigeResources.map(pResource => pResource.save());
-        save["t"] = this.tabs.save();
+        save["as"] = this.ascensions.map(ascension => ascension.save());
         save["s"] = saveSettings();
         save["st"] = stats.save();
 
@@ -277,7 +121,7 @@ class Game {
         const oldSave = localStorage.getItem("save");
         const newSave = prompt("Paste your save (your current save will be overwritten)!");
 
-        document.getElementById("game").innerHTML = "";
+        document.getElementById("worldLevel").innerHTML = "";
 
         // Common exit case: user didn't mean to open the import box, don't flash at them
         if (newSave === null) {
@@ -333,27 +177,17 @@ class Game {
         save = JSON.parse(atob(save));
 
         // Initialize everything from the save string
-        const worldsSave = save.w;
-        this.worlds = [];
-        for (const worldSave of worldsSave) {
-            const world = loadWorld(worldSave);
-            this.worlds.push(world);
+        const ascensionsSave = save.as;
+        this.ascensions = [];
+        for (const ascensionSave of ascensionsSave) {
+            const ascension = loadAscension(ascensionSave);
+            this.ascensions.push(ascension);
         }
 
         const achievementsSave = save.a;
         for (let i = 0; i<this.achievements.length; ++i) {
             this.achievements[i].load(achievementsSave[i]);
         }
-
-        const prestigeResourcesSave = save.p;
-        for (let i = 0; i<this.prestigeResources.length; ++i) {
-            this.prestigeResources[i].load(prestigeResourcesSave[i]);
-        }
-
-        // TODO: eliminate (i.e. only call in prep()?) and just load tabs
-        this.createTopTabBar();
-        const tabsSave = save.t;
-        this.tabs.load(tabsSave);
 
         const settingsSave = save.s;
         loadSettings(settingsSave);

@@ -4,26 +4,29 @@ import { createWorldCreatureSet, loadWorldCreatureSet } from "./WorldCreatureSet
 import { createWorldResourceSet, loadWorldResourceSet } from "./WorldResourceSet.js";
 import { createWorldUpgradeSet, loadWorldUpgradeSet } from "./WorldUpgradeSet.js";
 import { TabSet } from "./TabSet.js";
-import { setAllSettings } from "./Settings.js";
 import { worldConfigs } from "./configs/WorldConfigs.js";
 
 class World {
-    constructor (name, okraGain) {
-        this.constructHTML();
-
+    constructor (name, ascension) {
         this.name = name;
+        this.ascension = ascension;
         this.focusPower = 1; // TODO: put in Stats or something
-        this.okraGain = okraGain; // TODO: scrap in prestige PR plz
 
-        // TODO: move up probably
-        //this.createPrestige();
-
+        this.constructDOM();
     }
 
     initialize ({resources, creatures, upgrades}) {
         this.resources = resources;
         this.creatures = creatures;
         this.upgrades = upgrades;
+
+        // Apply the effects of the purchased upgrades.  Needs to be after the
+        // world's creatures are set to apply the effects, so we're putting it
+        // here
+        for (const upgrade of this.upgrades.list) {
+            if (upgrade.purchased)
+                upgrade.effect();
+        }
 
         this.createTabs();
     }
@@ -48,13 +51,13 @@ class World {
         });
         */
 
-        this.tabs = new TabSet(tabInfo, this.tabDiv, 0, this);
+        this.tabs = new TabSet(tabInfo, this.tabDiv, 0);
     }
 
     tick () {
         this.resources.tick();
         if (this.resources.focusedResource !== undefined) {
-            this.resources.focusedResource.tickFocus(1);
+            this.resources.focusedResource.tickFocus(this.focusPower);
         }
         this.creatures.tick();
         this.upgrades.tick();
@@ -67,9 +70,9 @@ class World {
         this.upgrades.draw();
     }
 
-    constructHTML () {
+    constructDOM () {
         this.worldDiv = document.createElement("div");
-        document.getElementById("game").appendChild(this.worldDiv);
+        this.ascension.worldLevelDiv.appendChild(this.worldDiv);
 
         this.worldDiv.className = "world";
         this.worldDiv.innerHTML = `
@@ -114,14 +117,13 @@ class World {
         save.c = this.creatures.save();
         save.u = this.upgrades.save();
         save.n = this.name;
-        save.o = this.okraGain;
         return save;
     }
 }
 
 
-function createWorld (name) {
-    const world = new World(name, 0);
+function createWorld (name, difficulty, ascension) {
+    const world = new World(name, ascension);
 
     const config = worldConfigs[name];
     const resources = createWorldResourceSet(config.resourceNames, world.resourceDiv, world);
@@ -132,10 +134,9 @@ function createWorld (name) {
     return world;
 }
 
-function loadWorld (save) {
+function loadWorld (save, ascension) {
     const name = save.n;
-    const okraGain = save.o;
-    const world = new World(name, okraGain);
+    const world = new World(name, ascension);
 
     const resources = loadWorldResourceSet(save.r, world.resourceDiv, world);
     const creatures = loadWorldCreatureSet(save.c, world.creatureDiv, world);

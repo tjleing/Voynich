@@ -1,4 +1,6 @@
-const upgradeConfigs = {
+import { settings } from "../Settings.js";
+
+const worldUpgradeConfigs = {
     "twoForOne": {
         internalName: "twoForOne",
         displayName: "Two for one deal!",
@@ -9,12 +11,12 @@ const upgradeConfigs = {
         },
         purchased: false,
         effect: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 for (const resource in creature.cost) {
                     creature.cost[resource] *= 0.5;
                 }
             }
-            for (const upgrade of this.world.upgrades.upgradeList) {
+            for (const upgrade of this.world.upgrades.list) {
                 for (const resource in upgrade.cost) {
                     upgrade.cost[resource] *= 0.5;
                 }
@@ -38,7 +40,7 @@ const upgradeConfigs = {
         },
         unlockCondition: function () {
             var sum = 0;
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 sum += creature.quantity;
             }
             return (sum >= 10);
@@ -54,7 +56,7 @@ const upgradeConfigs = {
         },
         purchased: false,
         effect: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 creature.production["wood"] *= 0.001;
                 creature.production["berries"] *= 0.001;
             }
@@ -73,7 +75,7 @@ const upgradeConfigs = {
         },
         purchased: false,
         effect: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 creature.production["wood"] /= 0.001;
                 creature.production["berries"] /= 0.001;
             }
@@ -96,7 +98,7 @@ const upgradeConfigs = {
             settings.bgColor = "#888888";
         },
         unlockCondition: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 if (creature.quantity >= 13) return true;
             }
             return false;
@@ -114,7 +116,7 @@ const upgradeConfigs = {
             this.world.creatures.ptrocanfer.quantity++;
         },
         unlockCondition: function () {
-            for (const creature of this.world.creatures.creatureList) {
+            for (const creature of this.world.creatures.list) {
                 if (creature.quantity > 0) return false;
             }
             return true;
@@ -130,96 +132,14 @@ const upgradeConfigs = {
         },
         purchased: false,
         effect: function () {
-            this.focusPower *= 2;
+            this.world.focusPower *= 2;
         },
         unlockCondition: function () {
             return (this.world.resources.wood.amount >= 1000);
         },
     },
-
-
-    // World prestige upgrades (hopefully temporary)
-    // TODO: prestige rework, remove all these plz
-    "lushOkra0": {
-        internalName: "lushOkra0",
-        displayName: "Lush okra piece #0",
-        flavorText: "I'll be honest, this one is just for testing the game more easily",
-        cost: {
-            wood: 0,
-        },
-        purchased: false,
-        effect: function () {
-            // TODO: v hardcoded rn
-            this.world.okraGain += 1;
-        },
-        unlockCondition: function () {
-            return (this.world.resources.wood.amount >= 0);
-        }
-    },
-    "lushOkra1": {
-        internalName: "lushOkra1",
-        displayName: "Lush okra piece #1",
-        flavorText: "Your trip to the lush biome has not been in vain!",
-        cost: {
-            wood: 0,
-        },
-        purchased: false,
-        effect: function () {
-            // TODO: v hardcoded rn
-            this.world.okraGain += 1;
-        },
-        unlockCondition: function () {
-            return (this.world.resources.wood.amount >= 10000 && this.world.resources.flowers.amount >= 1000);
-        }
-    },
-    "lushOkra2": {
-        internalName: "lushOkra2",
-        displayName: "Lush okra piece #2",
-        flavorText: "Two pieces of okra here?  That's overpowered, seriously",
-        cost: {
-            wood: 0,
-        },
-        purchased: false,
-        effect: function () {
-            // TODO: v hardcoded rn
-            this.world.okraGain += 1;
-        },
-        unlockCondition: function () {
-            return (this.world.resources.wood.amount >= 30000 && this.world.resources.flowers.amount >= 3000);
-        }
-    },
-    "woodedOkra1": {
-        internalName: "woodedOkra1",
-        displayName: "Wooded okra piece #1",
-        flavorText: "Your trip to the wooded biome has not been in vain!",
-        cost: {
-            wood: 0,
-        },
-        purchased: false,
-        effect: function () {
-            // TODO: v hardcoded rn
-            this.world.okraGain += 1;
-        },
-        unlockCondition: function () {
-            return (this.world.resources.wood.amount >= 5000 && this.world.resources.amber.amount >= 1000);
-        }
-    },
-    "woodedOkra2": {
-        internalName: "woodedOkra2",
-        displayName: "Wooded okra piece #2",
-        flavorText: "Shucks I guess this is the end of the game huh",
-        cost: {
-            wood: 0,
-        },
-        purchased: false,
-        effect: function () {
-            // TODO: v hardcoded rn
-            this.world.okraGain += 1;
-        },
-        unlockCondition: function () {
-            return (this.world.resources.wood.amount >= 10000 && this.world.resources.amber.amount >= 10000);
-        }
-    },
 };
 
-export { upgradeConfigs };
+const ascensionUpgradeConfigs = {};
+
+export { worldUpgradeConfigs, ascensionUpgradeConfigs };

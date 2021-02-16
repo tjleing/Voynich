@@ -1,5 +1,5 @@
 import { worldConfigs } from './configs/WorldConfigs.js';
-import { resourceConfigs } from './configs/ResourceConfigs.js';
+import { worldResourceConfigs } from './configs/ResourceConfigs.js';
 import { creatureConfigs } from './configs/CreatureConfigs.js';
 import { fix, formatDuration } from './Utils.js';
 
@@ -15,7 +15,7 @@ class Stats {
 
         // How much of each resource you've accumulated all-time and this run
         this.resourceCounts = {};
-        for (const resourceType in resourceConfigs) {
+        for (const resourceType in worldResourceConfigs) {
             this.resourceCounts[resourceType] = [0, 0];
         }
 
@@ -37,8 +37,8 @@ class Stats {
     addWrappers () {
         // My very own janky solution to the stats injection problem!
         // Just redefine the worlds' and resources' functions...
-        for (const world of this.game.worlds) {
-            for (const resource of world.resources.resourceList) {
+        for (const world of this.game.ascensions[0].worlds) {
+            for (const resource of world.resources.list) {
                 const oldTickAdd = resource.tickAdd;
                 resource.tickAdd = function (amount) {
                     stats.resourceCounts[this.internalName][0] += amount;
@@ -47,7 +47,7 @@ class Stats {
                 };
             }
 
-            for (const creature of world.creatures.creatureList) {
+            for (const creature of world.creatures.list) {
                 const oldBuy = creature.buy;
                 creature.buy = function () {
                     stats.creatureCounts[this.internalName][0]++;
@@ -97,7 +97,7 @@ class Stats {
         content += "<br><u>Resource statistics:</u><br>";
         for (const resourceType in this.resourceCounts) {
             if (this.resourceCounts[resourceType][1] !== 0) {
-                content += `Collected ${resourceConfigs[resourceType].displayNamePlural}: ${fix(this.resourceCounts[resourceType][0])} this run, ${fix(this.resourceCounts[resourceType][1])} all time<br>`;
+                content += `Collected ${worldResourceConfigs[resourceType].displayNamePlural}: ${fix(this.resourceCounts[resourceType][0])} this run, ${fix(this.resourceCounts[resourceType][1])} all time<br>`;
             }
         }
 
@@ -106,7 +106,7 @@ class Stats {
 
     // Reset stats pertaining to current ascension only
     startNewAsc () {
-        for (const resourceType in resourceConfigs) {
+        for (const resourceType in worldResourceConfigs) {
             this.resourceCounts[resourceType][0] = 0;
         }
 
